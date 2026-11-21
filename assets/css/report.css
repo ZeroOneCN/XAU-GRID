@@ -18,8 +18,12 @@
 
 body{padding:20px 26px 50px;line-height:1.75}
 
-/* —— 顶部工具条：玻璃胶囊 —— */
-.bar{
+/* —— 顶部工具条：玻璃胶囊 ——
+ * 注意：不要用 .bar，会和看板“敞口进度条”的 .bar 冲突（height:10px + overflow:hidden）。
+ * 工具栏必须独立类名，避免被压扁后裁掉导航按钮。
+ */
+.report-bar{
+  position:relative;z-index:20;overflow:visible;
   max-width:920px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:13px 16px;
   background:var(--glass-bg);
@@ -27,10 +31,10 @@ body{padding:20px 26px 50px;line-height:1.75}
   border:1px solid var(--glass-border);border-radius:var(--radius);
   box-shadow:var(--glass-shadow),var(--glass-inner);
 }
-.bar b{font-size:14px;letter-spacing:.5px}
-.bar .sp{flex:1}
-.bar .theme{font-size:11px;color:var(--muted);white-space:nowrap}
-.bar a.btn{line-height:1.2}
+.rb-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.rb-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
+.report-bar b{font-size:14px;letter-spacing:.5px}
+.report-bar a.btn{line-height:1.2}
 
 /* —— 自定义交易日选择器 —— */
 .datepick{position:relative}
@@ -40,7 +44,9 @@ body{padding:20px 26px 50px;line-height:1.75}
 .dp-trigger .caret{margin-left:auto;color:var(--muted);font-size:10px}
 .dp-panel{
   position:absolute;right:0;top:calc(100% + 7px);z-index:40;width:296px;
-  background:var(--glass-bg-2);
+  /* 先铺一层不透明底色，再叠玻璃渐变：日历下方是正文，纯透明会读不清 */
+  background-color:var(--panel-top);
+  background-image:var(--glass-bg-2);
   -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
   border:1px solid var(--glass-border-hi);border-radius:14px;padding:13px;
   box-shadow:var(--glass-shadow),var(--glass-inner);
@@ -109,8 +115,10 @@ article th:last-child,article td:last-child{text-align:right}
 
 @media(max-width:700px){
   body{padding:10px 10px 30px}
-  .bar{padding:9px 11px;gap:7px}
-  .bar b{font-size:12px}
+  .report-bar{padding:9px 11px;gap:7px}
+  .report-bar b{font-size:12px}
+  .rb-brand{flex:1 1 100%}
+  .rb-actions{flex:1 1 100%;margin-left:0;justify-content:flex-start;gap:6px}
   .theme-toggle{padding:3px}
   .theme-toggle .tt-ico{width:24px;height:24px}
   .theme-toggle .tt-knob{width:24px;height:24px;top:3px;left:3px}
@@ -121,7 +129,11 @@ article th:last-child,article td:last-child{text-align:right}
   article h2{font-size:14px;margin-top:22px}
   article table{font-size:10px;display:block;overflow-x:auto;white-space:nowrap}
   article th,article td{padding:6px 7px}
-  .dp-panel{position:fixed;left:10px;right:10px;top:auto;bottom:10px;width:auto;
-    max-width:none;box-shadow:var(--glass-shadow)}
+  /* 关键：.report-bar 有 backdrop-filter，会成为 fixed 的包含块；
+     这里改成相对工具栏的 absolute，弹层才会出现在屏幕内。 */
+  .datepick{position:static}
+  .dp-panel{position:absolute;left:50%;right:auto;top:calc(100% + 10px);bottom:auto;
+    width:min(348px,calc(100vw - 20px));max-width:none;transform:translateX(-50%);
+    z-index:60;box-shadow:var(--glass-shadow)}
   .dp-trigger{min-width:140px}
 }

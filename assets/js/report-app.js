@@ -135,9 +135,9 @@ function bindEvents(){
   Theme.init();
   if(STATIC){
     // 云端静态同样可用自定义日历：返回看板用相对地址
-    const back=document.querySelector('.bar a.btn');
+    const back=document.querySelector('.report-bar a.btn');
     if(back){ back.href='index.html'; back.style.display=''; }
-    const b=document.querySelector('.bar b');
+    const b=document.querySelector('.report-bar b');
     if(b && b.firstChild) b.firstChild.textContent='XAU Grid 交易日报 · 云端快照 ';
   }
   bindEvents();
