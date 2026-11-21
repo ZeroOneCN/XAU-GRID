@@ -417,7 +417,7 @@ const cls = v => v > 0 ? 'up' : (v < 0 ? 'down' : 'neutral');
 const STATIC = true;  // publish.py: 静态托管强制静态模式
 let timer = null, start = Date.now(), period = 2000;
 let lastCurve = [], hoverIdx = -1, currentRange = 'all', baseline = 5000;
-let dailyMap = {}, calMonth = null, serverToday = null;
+let dailyMap = {}, calMonth = null, serverToday = null, serverClock = null, serverClockAt = 0;
 let dealsState = {page:1, size:20, pages:1, total:0, loading:false, lastFetch:0};
 const rangeLabels = {7:'近7天', 30:'近30天', 90:'近90天', all:'全部'};
 
@@ -496,6 +496,8 @@ function render(d){
   dailyMap = Object.fromEntries((d.daily_pnl || []).map(x => [x.d, x.v]));
   // 收益日历按 MT5 服务器日期翻月/高亮，避免本机时区在零点附近差一天
   serverToday = (d.server_time || '').slice(0, 10) || null;
+  serverClock = d.server_time || null;
+  serverClockAt = Date.now();
   renderCalendar();
   start = Date.now();
 }
@@ -741,7 +743,13 @@ async function poll(){
 }
 
 function tick(){
-  $('clock').textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+  if(serverClock){
+    const t = new Date(serverClock.replace(' ', 'T'));
+    if(!STATIC) t.setSeconds(t.getSeconds() + Math.max(0, Math.floor((Date.now() - serverClockAt) / 1000)));
+    $('clock').textContent = (STATIC ? '快照 ' : 'MT5 ') + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds());
+  }else{
+    $('clock').textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+  }
   const pct = Math.min(100, (Date.now() - start) / period * 100);
   $('bar').style.width = pct + '%';
 }
