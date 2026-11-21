@@ -417,7 +417,7 @@ const cls = v => v > 0 ? 'up' : (v < 0 ? 'down' : 'neutral');
 const STATIC = true;  // publish.py: 静态托管强制静态模式
 let timer = null, start = Date.now(), period = 2000;
 let lastCurve = [], hoverIdx = -1, currentRange = 'all', baseline = 5000;
-let dailyMap = {}, calMonth = null;
+let dailyMap = {}, calMonth = null, serverToday = null;
 let dealsState = {page:1, size:20, pages:1, total:0, loading:false, lastFetch:0};
 const rangeLabels = {7:'近7天', 30:'近30天', 90:'近90天', all:'全部'};
 
@@ -494,6 +494,8 @@ function render(d){
   $('chartNote').title = `数据更新时间 ${d.server_time}`;
   drawCurve(lastCurve, hoverIdx);
   dailyMap = Object.fromEntries((d.daily_pnl || []).map(x => [x.d, x.v]));
+  // 收益日历按 MT5 服务器日期翻月/高亮，避免本机时区在零点附近差一天
+  serverToday = (d.server_time || '').slice(0, 10) || null;
   renderCalendar();
   start = Date.now();
 }
@@ -659,7 +661,7 @@ function roundRect(ctx, x, y, w, h, r){
 const pad2 = n => String(n).padStart(2, '0');
 const monthStr = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
 function renderCalendar(){
-  const now = new Date();
+  const now = serverToday ? new Date(serverToday + 'T00:00:00') : new Date();
   const thisMonth = monthStr(now);
   if(!calMonth) calMonth = thisMonth;
   $('calMonth').textContent = calMonth;
@@ -698,7 +700,7 @@ function renderCalendar(){
 function shiftMonth(delta){
   const [y, m] = calMonth.split('-').map(Number);
   const next = monthStr(new Date(y, m - 1 + delta, 1));
-  if(next > monthStr(new Date())) return;
+  if(next > monthStr(serverToday ? new Date(serverToday + 'T00:00:00') : new Date())) return;
   calMonth = next; renderCalendar();
 }
 $('calPrev').onclick = () => shiftMonth(-1);
