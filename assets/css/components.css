@@ -1,0 +1,173 @@
+/* ============================================================
+ * components.css — 玻璃卡片 / 新拟态按钮 / 徽章 / 表格 / 主题切换
+ * ============================================================ */
+
+/* —— 液态玻璃基座：半透明渐变 + 背景模糊 + 双层描边 + 内外阴影 —— */
+.glass{
+  position:relative;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:var(--glass-blur);
+  backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  box-shadow:var(--glass-shadow),var(--glass-inner);
+}
+/* 顶部液态高光：一条从左到右渐变消失的细光带 */
+.glass::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--glass-border-hi) 18%,var(--glass-border-hi) 72%,transparent);
+  border-radius:var(--radius) var(--radius) 0 0;pointer-events:none;
+}
+
+/* —— 卡片 —— */
+.card{padding:17px 19px;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.card:hover{transform:translateY(-2px);box-shadow:var(--glass-shadow),var(--glass-inner),0 0 0 1px var(--glass-border-hi)}
+
+/* —— 新拟态按钮 —— */
+button,.btn{
+  color:var(--text);font-family:inherit;font-size:12px;cursor:pointer;
+  background:var(--neu-btn);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-sm);
+  padding:9px 14px;
+  box-shadow:var(--neu-raised);
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+button:hover,.btn:hover{border-color:var(--btn-hover-border);transform:translateY(-1px)}
+button:active,.btn:active{transform:translateY(0);box-shadow:var(--neu-pressed)}
+button:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:var(--neu-raised)}
+button:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* —— 头部 —— */
+header{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+
+/* 透明底 Logo：容器无背景/边框，只留金色 SVG + 阴影 */
+.logo{width:46px;height:46px;display:grid;place-items:center;flex:none}
+.logo svg{width:44px;height:44px;filter:drop-shadow(0 3px 7px var(--logo-shadow))}
+
+.brand h1{font-size:20px;font-weight:700;letter-spacing:1.1px;white-space:nowrap}
+.brand p{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:2.4px;text-transform:uppercase}
+.spacer{flex:1}
+
+/* —— 状态胶囊 —— */
+.chip{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 13px;
+  border:1px solid var(--glass-border);border-radius:var(--radius-pill);
+  background:var(--chip-bg);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  font-size:12px;color:var(--muted);white-space:nowrap;
+  box-shadow:var(--glass-inner);
+}
+.chip b{color:var(--text);font-family:var(--mono);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--up);box-shadow:0 0 11px var(--up);animation:pulse 1.9s infinite;flex:none}
+.dot.demo{background:var(--gold);box-shadow:0 0 11px var(--gold)}
+@keyframes pulse{50%{opacity:.32}}
+
+/* —— 主题切换按钮（日 / 月 SVG 三态：跟随系统 / 浅色 / 深色）—— */
+.theme-toggle{
+  position:relative;display:inline-flex;align-items:center;gap:3px;
+  padding:4px;border-radius:var(--radius-pill);
+  background:var(--toggle-bg);border:1px solid var(--glass-border);
+  box-shadow:var(--toggle-shadow);cursor:pointer;
+}
+.theme-toggle .tt-ico{
+  position:relative;z-index:1;width:26px;height:26px;display:grid;place-items:center;
+  color:var(--muted);transition:color .25s var(--ease);
+}
+.theme-toggle .tt-ico svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.theme-toggle .tt-knob{
+  position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;
+  background:var(--toggle-knob);box-shadow:0 2px 8px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.55);
+  transition:transform .4s var(--ease);
+}
+/* data-theme 决定滑块位置：auto=左(跟随)/ light=中 / dark=右 */
+.theme-toggle[data-mode="auto"] .tt-knob{transform:translateX(0)}
+.theme-toggle[data-mode="light"] .tt-knob{transform:translateX(30px)}
+.theme-toggle[data-mode="dark"] .tt-knob{transform:translateX(60px)}
+.theme-toggle[data-mode="auto"] .tt-auto,
+.theme-toggle[data-mode="light"] .tt-sun,
+.theme-toggle[data-mode="dark"] .tt-moon{color:var(--active-text)}
+.theme-toggle:hover{transform:none;box-shadow:var(--toggle-shadow)}
+.theme-toggle:active{box-shadow:var(--toggle-shadow)}
+
+/* —— Exness 邀请 —— */
+.invite{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+  border:1px solid var(--gold-border);border-radius:var(--radius-pill);
+  background:var(--gold-soft);color:var(--gold);font-size:12px;font-weight:600;
+  text-decoration:none;transition:.18s var(--ease);white-space:nowrap;
+  box-shadow:var(--glass-inner);
+}
+.invite:hover{background:var(--gold);color:var(--active-text);border-color:var(--gold);transform:translateY(-1px)}
+.invite span{font-size:13px;line-height:1}
+
+/* 邀请码一键复制 */
+.icode-copy{
+  display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:var(--radius-pill);
+  background:var(--gold-soft);border:1px solid var(--gold-border);color:var(--gold);
+  font-size:11px;font-weight:600;transition:.18s var(--ease);white-space:nowrap;
+}
+.icode-copy:hover{background:var(--gold);color:var(--active-text);border-color:var(--gold)}
+.icode-copy .ic-label{opacity:.8}
+.icode-copy .ic-val{font-family:var(--mono);font-weight:700;letter-spacing:.3px}
+.icode-copy .ic-ico{font-size:12px;line-height:1}
+.icode-copy.copied{background:var(--up);border-color:var(--up);color:#fff}
+
+/* —— KPI 数值 —— */
+.kpi .label{font-size:11px;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase}
+.kpi .value{font-family:var(--mono);font-size:29px;font-weight:700;margin-top:8px;line-height:1.1;letter-spacing:-1px}
+.kpi.hero .value{font-size:44px}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.up{color:var(--up)!important}.down{color:var(--down)!important}.neutral{color:var(--text)!important}
+.kpi-tag{
+  position:absolute;right:16px;top:16px;font-size:10px;padding:5px 9px;border-radius:6px;
+  background:var(--tag-bg);color:var(--tag-text);border:1px solid var(--tag-border);
+  letter-spacing:1px;line-height:1;
+}
+.kpi-tag.gold{background:var(--gold-soft);color:var(--gold);border-color:var(--gold-border)}
+
+/* —— 面板 —— */
+.panel{overflow:hidden;min-width:0}
+.panel-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:13px;font-weight:600;letter-spacing:1px}
+.panel-head .tag{font-size:10px;color:var(--muted);font-family:var(--mono);margin-left:auto}
+
+/* —— 表格 —— */
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:right;color:var(--muted);font-weight:500;font-size:10px;letter-spacing:1px;padding:11px 14px;
+   border-bottom:1px solid var(--line-soft);white-space:nowrap}
+th[title]{cursor:help;text-decoration:underline dotted var(--help-line);text-underline-offset:3px}
+th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:11px 14px;border-bottom:1px solid var(--td-line);font-family:var(--mono);white-space:nowrap}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--row-hover)}
+tbody tr:last-child td{border-bottom:none}
+.ticket{color:var(--muted)}
+
+/* 方向徽章：BUY 蓝 / SELL 琥珀，与盈亏色彻底分离 */
+.side{font-weight:700;font-size:11px;padding:4px 8px;border-radius:5px;display:inline-flex;align-items:center;
+  justify-content:center;line-height:1;min-width:48px;vertical-align:middle;
+  box-shadow:var(--glass-inner)}
+.side.buy{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border)}
+.side.sell{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-border)}
+.pos-panel th:nth-child(2),.pos-panel td:nth-child(2),
+.deals-scroll th:nth-child(4),.deals-scroll td:nth-child(4){text-align:center;vertical-align:middle}
+
+.scroll{max-height:420px;overflow:auto}
+
+/* —— 敞口条 —— */
+.expo{display:flex;justify-content:space-between;font-size:11px;margin-bottom:7px;color:var(--muted)}
+.expo b{font-family:var(--mono);color:var(--text)}
+.bar{height:10px;border-radius:10px;background:var(--bar-bg);overflow:hidden;display:flex;box-shadow:var(--neu-pressed)}
+.bar i{display:block;height:100%;transition:width .5s var(--ease)}
+.bar .b{background:linear-gradient(90deg,var(--bar-1),var(--accent))}
+.bar .s{background:linear-gradient(90deg,var(--bar-2),var(--gold))}
+.legend{display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.legend .lb::before{background:var(--accent)}.legend .ls::before{background:var(--gold)}
+
+/* —— 统计行 —— */
+.stat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--stat-line);font-size:12px}
+.stat-row:last-child{border-bottom:none}
+.stat-row span{color:var(--muted)}
+.stat-row b{font-family:var(--mono);font-weight:600}

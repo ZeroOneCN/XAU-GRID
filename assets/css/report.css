@@ -1,0 +1,127 @@
+/* ============================================================
+ * report.css — 日报页视觉（复用 tokens.css / base.css / components.css）
+ * 玻璃液态卡片 + 新拟态按钮 + 自定义交易日日历
+ * ============================================================ */
+
+/* 日报页派生色：从全局 token 映射到日报语义 */
+:root{
+  --glow:var(--glow1);--panel:var(--panel-top);--panel2:var(--panel-bottom);
+  --subtle:var(--muted-2);--input-bg:var(--btn-bg);--hover-bg:var(--btn-hover);--hover-border:var(--btn-hover-border);
+  --para:var(--text);--quote-bg:var(--cal-bg);--quote-border:var(--accent-border);--strong:var(--gold);
+  --neutral:var(--text);--buy:var(--accent);--sell:var(--gold);--pct:var(--accent);
+  --th-bg:var(--tag-bg);--th-border:var(--tag-border);--td-border:var(--td-line);
+  --zebra:rgba(127,146,169,.045);--row-hover:var(--row-hover);
+}
+:root[data-theme="light"]{
+  --zebra:rgba(30,60,100,.035);
+}
+
+body{padding:20px 26px 50px;line-height:1.75}
+
+/* —— 顶部工具条：玻璃胶囊 —— */
+.bar{
+  max-width:920px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:13px 16px;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);border-radius:var(--radius);
+  box-shadow:var(--glass-shadow),var(--glass-inner);
+}
+.bar b{font-size:14px;letter-spacing:.5px}
+.bar .sp{flex:1}
+.bar .theme{font-size:11px;color:var(--muted);white-space:nowrap}
+.bar a.btn{line-height:1.2}
+
+/* —— 自定义交易日选择器 —— */
+.datepick{position:relative}
+.dp-trigger{display:flex;align-items:center;gap:7px;min-width:158px;justify-content:flex-start;
+  font-family:var(--mono);font-size:12px;padding:7px 11px}
+.dp-trigger svg{width:14px;height:14px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.7}
+.dp-trigger .caret{margin-left:auto;color:var(--muted);font-size:10px}
+.dp-panel{
+  position:absolute;right:0;top:calc(100% + 7px);z-index:40;width:296px;
+  background:var(--glass-bg-2);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border-hi);border-radius:14px;padding:13px;
+  box-shadow:var(--glass-shadow),var(--glass-inner);
+}
+.dp-panel[hidden]{display:none}
+.dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dp-head strong{font-size:13px;letter-spacing:.4px;font-family:var(--mono)}
+.dp-nav{width:30px;height:28px;padding:0;font-size:17px;line-height:1;text-align:center}
+.dp-week,.dp-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.dp-week span{text-align:center;font-size:10px;color:var(--muted);padding:3px 0}
+.dp-grid{margin-top:3px}
+.dp-day{height:34px;min-width:0;padding:0;border:1px solid transparent;border-radius:8px;
+  background:transparent;color:var(--text);font-family:var(--mono);font-size:12px;position:relative;
+  box-shadow:none}
+.dp-day.has{border-color:var(--line);background:var(--input-bg);box-shadow:var(--neu-raised)}
+.dp-day.has:hover{border-color:var(--hover-border);background:var(--hover-bg)}
+.dp-day.off{color:var(--subtle);opacity:.4;cursor:not-allowed}
+.dp-day.off:hover{border-color:transparent;background:transparent;transform:none}
+.dp-day.sel,.dp-day.sel:hover{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;transform:none}
+.dp-day.today::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--gold)}
+.dp-day.sel.today::after{background:#fff}
+.dp-empty{height:34px}
+.dp-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
+.dp-foot small{color:var(--subtle);font-size:10px}
+.dp-latest{padding:4px 9px;font-size:11px}
+
+/* —— 日报正文：玻璃纸张 —— */
+article{
+  max-width:920px;margin:0 auto;
+  background:var(--glass-bg-2);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);border-radius:var(--radius);
+  box-shadow:var(--glass-shadow),var(--glass-inner);
+  padding:30px 36px 40px;min-height:400px;
+}
+article h1{font-size:25px;letter-spacing:.4px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+article h2{font-size:16px;letter-spacing:.6px;margin:28px 0 12px;color:var(--gold);
+  padding-left:11px;border-left:3px solid var(--gold)}
+article p{font-size:13px;color:var(--para);margin:6px 0}
+article blockquote{font-size:12px;color:var(--muted);background:var(--quote-bg);border-left:2px solid var(--quote-border);
+  border-radius:0 6px 6px 0;padding:9px 14px;margin:8px 0}
+article .bullet,article .num{padding-left:14px;position:relative}
+article .bullet::before,article .num::before{content:"";position:absolute;left:2px;top:11px;
+  width:5px;height:5px;border-radius:50%;background:var(--gold)}
+article strong{font-family:var(--mono);font-weight:700;color:var(--strong)}
+article hr{border:none;border-top:1px solid var(--line);margin:26px 0 12px}
+/* 数据配色：绿盈 / 红亏 / 金字段 / 蓝方向 */
+article .up{color:var(--up);font-weight:700}
+article .down{color:var(--down);font-weight:700}
+article .neutral{color:var(--neutral)}
+article .buy{color:var(--buy);font-weight:700}
+article .sell{color:var(--sell);font-weight:700}
+article .pct{color:var(--pct);font-weight:700}
+article table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0 4px}
+article th{text-align:left;color:var(--muted);font-weight:600;background:var(--th-bg);
+  padding:8px 10px;border-bottom:1px solid var(--th-border);white-space:nowrap}
+article td{padding:7px 10px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
+  color:var(--para);white-space:nowrap}
+article tbody tr:nth-child(even) td{background:var(--zebra)}
+article tr:hover td{background:var(--row-hover)}
+article tr:last-child td{border-bottom:none}
+article th:last-child,article td:last-child{text-align:right}
+#tip{text-align:center;color:var(--muted);font-size:12px;padding:30px}
+
+@media(max-width:700px){
+  body{padding:10px 10px 30px}
+  .bar{padding:9px 11px;gap:7px}
+  .bar b{font-size:12px}
+  .theme-toggle{padding:3px}
+  .theme-toggle .tt-ico{width:24px;height:24px}
+  .theme-toggle .tt-knob{width:24px;height:24px;top:3px;left:3px}
+  .theme-toggle[data-mode="light"] .tt-knob{transform:translateX(27px)}
+  .theme-toggle[data-mode="dark"] .tt-knob{transform:translateX(54px)}
+  article{padding:18px 15px 26px;border-radius:14px}
+  article h1{font-size:19px}
+  article h2{font-size:14px;margin-top:22px}
+  article table{font-size:10px;display:block;overflow-x:auto;white-space:nowrap}
+  article th,article td{padding:6px 7px}
+  .dp-panel{position:fixed;left:10px;right:10px;top:auto;bottom:10px;width:auto;
+    max-width:none;box-shadow:var(--glass-shadow)}
+  .dp-trigger{min-width:140px}
+}

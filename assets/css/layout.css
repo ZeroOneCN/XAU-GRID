@@ -1,0 +1,132 @@
+/* ============================================================
+ * layout.css — 网格布局 / 曲线 / 日历 / 分页 / 响应式
+ * ============================================================ */
+
+/* —— KPI 栅格 —— */
+.kpis{display:grid;grid-template-columns:1.45fr repeat(4,1fr);gap:14px;margin-bottom:14px}
+
+/* —— 主栅格 —— */
+.grid{display:grid;gap:14px}
+.row-top{grid-template-columns:minmax(0,1.65fr) minmax(300px,.85fr);align-items:start}
+.row-charts{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:14px}
+.row-charts>.panel{display:flex;flex-direction:column}
+.row-charts .pad{flex:1;display:flex;flex-direction:column}
+.side-stack{display:flex;flex-direction:column;gap:14px}
+.pad{padding:16px 18px}
+
+/* —— 权益曲线 —— */
+canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y}
+.range-bar{display:flex;gap:6px;margin-bottom:10px}
+.range-bar button{padding:7px 13px;font-size:12px;border-radius:7px}
+.range-bar button.active{color:var(--active-text);background:var(--accent);border-color:var(--accent);font-weight:700;
+  box-shadow:0 4px 12px rgba(79,179,255,.35)}
+.curve-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.curve-legend i{display:inline-block;width:14px;height:0;border-top:2px solid;margin-right:4px;vertical-align:middle}
+.curve-legend .ln1{border-color:var(--curve-up)}
+.curve-legend .ln2{border-color:var(--curve-accent);border-top-style:dashed}
+.curve-legend .ln3{border-color:var(--curve-gold);border-top-style:dashed}
+.chart-note{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:12px;color:var(--note);font-family:var(--mono)}
+
+/* —— 收益日历 —— */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.cal-nav button{padding:4px 9px;font-size:11px}
+.cal-nav button:disabled{opacity:.3;cursor:not-allowed}
+.cal-nav span{font-family:var(--mono);font-size:16px;color:var(--text)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.cal-head{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
+.cal-cell{
+  aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-family:var(--mono);color:var(--cal-text);background:var(--cal-bg);line-height:1.1;
+  border:1px solid var(--line-soft);transition:transform .2s var(--ease);
+}
+.cal-cell.has{color:var(--cal-has-text);text-shadow:0 1px 2px var(--cal-shadow);box-shadow:var(--glass-inner)}
+.cal-cell.has:hover{transform:scale(1.06)}
+.cal-cell.has .d{opacity:.95}
+.cal-cell.blank{background:transparent;border-color:transparent}
+.cal-cell.today{outline:1.5px solid var(--gold);outline-offset:-1px}
+.cal-cell .d{font-size:15px;opacity:.9}
+.cal-cell .v{font-size:14px;font-weight:700;letter-spacing:-.6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cal-stats{grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.cal-stats b{font-weight:700}
+.cal-legend{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-top:14px}
+.cal-legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin:0 4px -1px 0;border:1px solid var(--line)}
+
+/* —— 平仓历史分页 —— */
+.deal-nav{margin-left:auto;display:flex;align-items:center;gap:7px}
+.deal-nav .tag{margin-left:0}
+.deal-nav button{padding:4px 9px;font-size:12px;line-height:1.2}
+.deal-nav #dealPage{font-family:var(--mono);font-size:12px;color:var(--text);min-width:54px;text-align:center}
+.deal-nav select{background:var(--btn-bg);color:var(--text);border:1px solid var(--glass-border);border-radius:8px;
+  padding:4px 6px;font-size:11px;font-family:inherit;cursor:pointer;box-shadow:var(--neu-raised)}
+.deals-scroll{max-height:330px}
+.deals-scroll td:first-child,.deals-scroll th:first-child{color:var(--muted)}
+.deals-scroll .side{vertical-align:middle}
+
+/* —— 页脚 —— */
+footer{margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;color:var(--footer-text);font-size:11px}
+footer b{color:var(--footer-b);font-weight:500}
+footer b.money-legend-up{color:var(--up)}footer b.money-legend-down{color:var(--down)}
+.progress{height:3px;background:var(--progress-bg);border-radius:3px;margin-top:14px;overflow:hidden;box-shadow:var(--neu-pressed)}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--bar-1),var(--accent));width:100%;
+  box-shadow:0 0 8px var(--accent)}
+
+/* ============================================================
+ * 响应式
+ * ============================================================ */
+@media(max-width:1100px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid,.row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
+}
+
+@media(max-width:700px){
+  body{padding:12px 12px 20px}
+  header{gap:8px;margin-bottom:12px}
+  .logo{width:38px;height:38px}
+  .logo svg{width:36px;height:36px}
+  .brand h1{font-size:15px;letter-spacing:.5px;white-space:nowrap}
+  .brand p{font-size:9px;letter-spacing:1px}
+  .spacer{display:none}
+  .chip{padding:6px 9px;font-size:10px}
+  button,.btn{padding:7px 10px;font-size:10px}
+  .theme-toggle{padding:3px}
+  .theme-toggle .tt-ico{width:24px;height:24px}
+  .theme-toggle .tt-knob{width:24px;height:24px;top:3px;left:3px}
+  .theme-toggle[data-mode="light"] .tt-knob{transform:translateX(27px)}
+  .theme-toggle[data-mode="dark"] .tt-knob{transform:translateX(54px)}
+  .invite{padding:6px 10px;font-size:10px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .kpis .hero{grid-column:1/-1}
+  .card{padding:12px 13px;border-radius:14px}
+  .kpi .label{font-size:9px;letter-spacing:.6px}
+  .kpi .value{font-size:22px;margin-top:6px}
+  .kpi.hero .value{font-size:34px}
+  .kpi .sub{font-size:9px;margin-top:6px}
+  .kpi-tag{right:10px;top:10px;font-size:9px;padding:3px 6px}
+  .grid{gap:9px;margin-top:9px!important}
+  .row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
+  .panel-head{padding:11px 12px}
+  .panel-head h2{font-size:12px}
+  .pad{padding:12px}
+  canvas{height:170px}
+  .range-bar button{padding:6px 9px;font-size:10px}
+  .curve-legend{gap:8px;font-size:9px}
+  .chart-note{font-size:9px}
+  .cal-cell .d{font-size:11px}
+  .cal-cell .v{font-size:clamp(9px,2.65vw,11px);letter-spacing:-.9px}
+  .cal-head{font-size:9px}
+  .cal-nav span{font-size:12px}
+  .cal-stats{font-size:10px}
+  .cal-legend{font-size:9px}
+  .cal-grid{gap:3px}
+  .deal-nav{gap:4px}
+  .deal-nav #dealPage{min-width:42px;font-size:10px}
+  .deal-nav select{font-size:10px;padding:3px 4px}
+  table{table-layout:fixed;font-size:10px}
+  th,td{padding:9px 6px;font-size:10px;letter-spacing:0}
+  th{font-size:9px}
+  .hide-mobile{display:none}
+  .scroll{max-height:none}
+  .deals-scroll{max-height:260px}
+  section.panel{margin-top:9px!important}
+  footer{font-size:9px;gap:7px;line-height:1.6}
+}
