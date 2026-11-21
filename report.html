@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>XAU Grid 交易日报 · 文字版</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#080d16;--glow:#14243a;--panel:#0f1826;--panel2:#0b131f;--line:#1e2b3d;
+  --text:#e8eef7;--muted:#8496ad;--subtle:#6d7f96;
+  --up:#00c087;--down:#ff4d5e;--gold:#f2b84b;--accent:#3fa9f5;
+  --input-bg:#0d1624;--hover-bg:#142235;--hover-border:#3b6188;
+  --para:#c3d1e2;--quote-bg:#0c1522;--quote-border:#2b5578;--strong:#f0d18a;
+  --neutral:#d4e4f7;--buy:#4da6ff;--sell:#f0a04b;--pct:#7fd3ff;
+  --th-bg:#122033;--th-border:#2a3c52;--td-border:#142032;--zebra:#101c2c;--row-hover:#15263a;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+}
+/* 浅色模式：跟随设备系统主题，全部颜色重新配对比度 */
+@media (prefers-color-scheme: light){
+  :root{
+    color-scheme:light;
+    --bg:#eef2f7;--glow:#d3e3f4;--panel:#ffffff;--panel2:#f8fafd;--line:#ccd8e6;
+    --text:#15233a;--muted:#56677d;--subtle:#7a889a;
+    --up:#007d54;--down:#d32f3f;--gold:#a66a06;--accent:#1257a8;
+    --input-bg:#ffffff;--hover-bg:#eaf1fa;--hover-border:#8fb0d4;
+    --para:#33445c;--quote-bg:#f0f5fa;--quote-border:#a9c3de;--strong:#8a5d0b;
+    --neutral:#15233a;--buy:#1257a8;--sell:#a66a06;--pct:#1257a8;
+    --th-bg:#eff4fa;--th-border:#d3dfeb;--td-border:#e6edf5;--zebra:#f6f9fd;--row-hover:#e9f1fb;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(900px 380px at 10% -8%,var(--glow) 0%,transparent 60%),var(--bg);
+  color:var(--text);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  padding:20px 26px 50px;line-height:1.75}
+.bar{max-width:920px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.bar b{font-size:14px;letter-spacing:.5px}
+.bar .sp{flex:1}
+.bar .theme{font-size:11px;color:var(--muted);white-space:nowrap}
+.bar input[type=date]{background:var(--input-bg);color:var(--text);border:1px solid var(--line);
+  border-radius:8px;padding:6px 9px;font-family:var(--mono);font-size:12px;color-scheme:inherit}
+button,a.btn{background:var(--input-bg);color:var(--text);border:1px solid var(--line);border-radius:8px;
+  padding:7px 12px;font-size:12px;cursor:pointer;text-decoration:none;font-family:inherit;transition:.15s}
+button:hover,a.btn:hover{border-color:var(--hover-border);background:var(--hover-bg)}
+.bar a.btn{line-height:1.2}
+
+article{max-width:920px;margin:0 auto;background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:14px;padding:30px 36px 40px;min-height:400px}
+article h1{font-size:25px;letter-spacing:.4px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+article h2{font-size:16px;letter-spacing:.6px;margin:28px 0 12px;color:var(--gold);
+  padding-left:11px;border-left:3px solid var(--gold)}
+article p{font-size:13px;color:var(--para);margin:6px 0}
+article blockquote{font-size:12px;color:var(--muted);background:var(--quote-bg);border-left:2px solid var(--quote-border);
+  border-radius:0 6px 6px 0;padding:9px 14px;margin:8px 0}
+article .bullet,article .num{padding-left:14px;position:relative}
+article .bullet::before,article .num::before{content:"";position:absolute;left:2px;top:11px;
+  width:5px;height:5px;border-radius:50%;background:var(--gold)}
+article strong{font-family:var(--mono);font-weight:700;color:var(--strong)}
+article hr{border:none;border-top:1px solid var(--line);margin:26px 0 12px}
+/* 数据配色：绿盈 / 红亏 / 金字段 / 蓝方向 */
+article .up{color:var(--up);font-weight:700}
+article .down{color:var(--down);font-weight:700}
+article .neutral{color:var(--neutral)}
+article .buy{color:var(--buy);font-weight:700}
+article .sell{color:var(--sell);font-weight:700}
+article .pct{color:var(--pct);font-weight:700}
+article table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0 4px}
+article th{text-align:left;color:var(--muted);font-weight:600;background:var(--th-bg);
+  padding:8px 10px;border-bottom:1px solid var(--th-border);white-space:nowrap}
+article td{padding:7px 10px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
+  color:var(--para);white-space:nowrap}
+article tbody tr:nth-child(even) td{background:var(--zebra)}
+article tr:hover td{background:var(--row-hover)}
+article tr:last-child td{border-bottom:none}
+article th:last-child,article td:last-child{text-align:right}
+#tip{text-align:center;color:var(--muted);font-size:12px;padding:30px}
+
+@media(max-width:700px){
+  body{padding:10px 10px 30px}
+  .bar{padding:9px 11px;gap:7px}
+  .bar b{font-size:12px}
+  article{padding:18px 15px 26px;border-radius:10px}
+  article h1{font-size:19px}
+  article h2{font-size:14px;margin-top:22px}
+  article table{font-size:10px;display:block;overflow-x:auto;white-space:nowrap}
+  article th,article td{padding:6px 7px}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>XAU Grid 交易日报 <span style="color:var(--subtle)">· 文字版</span></b>
+  <span class="theme" id="themeLabel"></span>
+  <span class="sp"></span>
+  <input type="date" id="dateInput" title="选择交易日">
+  <button id="goBtn">查看</button>
+  <button id="copyBtn">复制全文</button>
+  <button id="dlBtn">下载 .md</button>
+  <a class="btn" href="index.html">返回看板</a>
+</div>
+<article id="md"><div id="tip">正在读取日报正文…</div></article>
+
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const STATIC = true;  // publish.py: 静态托管强制静态模式
+let currentDate = params.get('date') || '';
+let rawText = '';
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function inline(s){
+  let t=esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  // 金额：带 + 为盈（绿），带 −/- 为亏（红），无符号为中性
+  t=t.replace(/([+＋−－-])?\$\s*([\d,]+(?:\.\d+)?)/g,(m,sign,num)=>{
+    if(sign==='+'||sign==='＋') return '<span class="up">+$'+num+'</span>';
+    if(sign) return '<span class="down">−$'+num+'</span>';
+    return '<span class="neutral">$'+num+'</span>';
+  });
+  t=t.replace(/(\d+(?:\.\d+)?)%/g,'<span class="pct">$1%</span>');       // 胜率 / 保证金率
+  t=t.replace(/(\d+)\s*笔/g,'<span class="pct">$1</span> 笔');           // 笔数
+  t=t.replace(/盈利/g,'<span class="up">盈利</span>')
+     .replace(/亏损/g,'<span class="down">亏损</span>');
+  t=t.replace(/\bBUY\b/g,'<span class="buy">BUY</span>')
+     .replace(/\bSELL\b/g,'<span class="sell">SELL</span>');
+  return t;
+}
+function md2html(src){
+  const lines=src.split('\n');
+  let out='',i=0,inTable=false,firstRow=false;
+  const closeTable=()=>{if(inTable){out+='</table>';inTable=false;}};
+  while(i<lines.length){
+    const l=lines[i];
+    if(l.startsWith('| ')){
+      if(/^[\s:|-]+$/.test(l)){i++;continue;}       // 分隔行
+      const cells=l.split('|').slice(1,-1).map(x=>x.trim());
+      if(!inTable){out+='<table>';inTable=true;firstRow=true;}
+      const tag=firstRow?'th':'td';
+      out+='<tr>'+cells.map(c=>`<${tag}>${inline(c)}</${tag}>`).join('')+'</tr>';
+      firstRow=false;i++;continue;
+    }
+    closeTable();
+    if(l.startsWith('# ')) out+=`<h1>${inline(l.slice(2))}</h1>`;
+    else if(l.startsWith('## ')) out+=`<h2>${inline(l.slice(3))}</h2>`;
+    else if(l.startsWith('> ')) out+=`<blockquote>${inline(l.slice(2))}</blockquote>`;
+    else if(/^\d+\.\s/.test(l)) out+=`<p class="num">${inline(l)}</p>`;
+    else if(l.startsWith('- ')) out+=`<p class="bullet">${inline(l)}</p>`;
+    else if(l.trim()==='---') out+='<hr>';
+    else if(l.trim()) out+=`<p>${inline(l)}</p>`;
+    i++;
+  }
+  closeTable();
+  return out;
+}
+
+async function load(dateValue){
+  currentDate=dateValue||'';
+  $('md').innerHTML='<div id="tip">正在读取日报正文…</div>';
+  try{
+    let text;
+    if(STATIC){
+      // 云端静态：读推送脚本生成的 report.json（最近交易日完整日报）
+      const r=await fetch('report.json',{cache:'no-store'});
+      const j=await r.json();
+      text=j.text||'';
+    }else{
+      const url='/api/report/text'+(currentDate?'?date='+encodeURIComponent(currentDate):'');
+      const r=await fetch(url,{cache:'no-store'});
+      text=await r.text();
+    }
+    rawText=text;
+    const day=(rawText.match(/报告交易日\*\*：(\d{4}-\d{2}-\d{2})/)||[])[1];
+    if(day){$('dateInput').value=day;currentDate=day;}
+    $('md').innerHTML=md2html(rawText);
+  }catch(e){
+    $('md').innerHTML='<div id="tip" style="color:var(--down)">日报读取失败：'+e+'</div>';
+  }
+}
+
+$('goBtn').onclick=()=>{const v=$('dateInput').value;history.replaceState(null,'',v?'?date='+v:'');load(v);};
+$('dateInput').onchange=()=>$('goBtn').click();
+$('copyBtn').onclick=async()=>{
+  try{await navigator.clipboard.writeText(rawText);$('copyBtn').textContent='已复制';}
+  catch(e){$('copyBtn').textContent='复制失败';}
+  setTimeout(()=>$('copyBtn').textContent='复制全文',1500);
+};
+$('dlBtn').onclick=()=>{
+  const blob=new Blob([rawText],{type:'text/markdown;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`XAU_Grid_daily_report_${currentDate||'latest'}.md`;
+  a.click();URL.revokeObjectURL(a.href);
+};
+
+if(STATIC){
+  // 云端静态只读：隐藏日期切换与「返回看板」（无本机地址）
+  $('dateInput').style.display='none'; $('goBtn').style.display='none';
+  const back=document.querySelector('.bar a.btn'); if(back) back.style.display='none';
+  document.querySelector('.bar b').firstChild.textContent='XAU Grid 交易日报 · 云端快照 ';
+}
+// 跟随设备主题
+function applyThemeLabel(){
+  const light=window.matchMedia('(prefers-color-scheme: light)').matches;
+  $('themeLabel').textContent = light ? '主题 白天（跟随设备）' : '主题 夜间（跟随设备）';
+}
+applyThemeLabel();
+const themeMq=window.matchMedia('(prefers-color-scheme: light)');
+themeMq.addEventListener ? themeMq.addEventListener('change',applyThemeLabel) : themeMq.addListener(applyThemeLabel);
+load(currentDate);
+</script>
+</body>
+</html>

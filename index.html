@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAU GRID · 实况看板</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{
+  /* 语义色：绿=盈利 红=亏损（色相固定，仅按模式调整明度保证对比度） */
+  --up:#00c087;--down:#ff4d5e;--accent:#3fa9f5;--gold:#f2b84b;
+  --up-rgb:0,192,135;--down-rgb:255,77,94;
+  --up-soft:#00c0871a;--down-soft:#ff4d5e1a;
+  --accent-soft:#3fa9f51a;--gold-soft:#f2b84b1a;
+  --accent-border:#3fa9f52e;--gold-border:#f2b84b33;--gold-line:#f2b84b99;
+  --dot-up:#6ee7c4;--dot-down:#ff8a95;
+  /* 文字 */
+  --text:#e8eef7;--muted:#7f8fa6;--muted-2:#60718a;--note:#6d7f96;
+  --footer-text:#5d6d82;--footer-b:#8497ad;--symbol:#94a6bb;--duration:#7f8fa6;
+  /* 结构 */
+  --bg:#070b13;--glow1:#14243a;--glow2:#13202f;
+  --panel-top:#0e1725;--panel-bottom:#0b131f;
+  --card-top:#101a29;--card-bottom:#0c1420;
+  --line:#1e2b3d;--line-soft:#172235;--td-line:#121d2c;--stat-line:#142032;
+  --chip-bg:#0d1624cc;--btn-bg:#0d1624;--btn-hover:#142235;--btn-hover-border:#3b6188;
+  --tag-bg:#162438;--tag-text:#9fb2c9;--tag-border:#2a3f59;--active-text:#0b1422;
+  --card-sheen:#ffffff05;--row-hover:#14213688;--scrollbar:#26384f;
+  --bar-bg:#182537;--bar-1:#1d6ea8;--bar-2:#b57d1f;
+  --progress-bg:#162234;--brand-slash:#4a6b8a;--help-line:#3b4c63;
+  /* 日历 / 曲线 */
+  --cal-bg:#101a29;--cal-text:#8fa2b8;--cal-has-text:#ffffff;--cal-shadow:#000a;
+  --grid-line:#1b2a3c;--axis:#7f8fa6;--axis-2:#6d7f96;--hover-line:#5b7695;
+  --tip-bg:#0b1422f2;--tip-border:#2b5578;--tip-text:#9fb2c9;
+  /* Logo 金色渐变 */
+  --gold-1:#ffe6a0;--gold-2:#f2b84b;--gold-3:#b8801e;--logo-shadow:#0009;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+}
+/* 浅色模式：跟随设备系统主题，提升所有文字/金额对比度 */
+@media (prefers-color-scheme: light){
+  :root{
+    --up:#007d54;--down:#d32f3f;--accent:#1257a8;--gold:#a66a06;
+    --up-rgb:0,125,84;--down-rgb:211,47,63;
+    --up-soft:#007d5418;--down-soft:#d32f3f18;
+    --accent-soft:#1257a818;--gold-soft:#a66a0618;
+    --accent-border:#1257a83a;--gold-border:#a66a0638;--gold-line:#a66a0699;
+    --dot-up:#00a878;--dot-down:#e53948;
+    --text:#15233a;--muted:#56677d;--muted-2:#64758a;--note:#62748a;
+    --footer-text:#74849a;--footer-b:#46586e;--symbol:#3d5068;--duration:#5b6d82;
+    --bg:#eef2f7;--glow1:#d3e3f4;--glow2:#e0ebf6;
+    --panel-top:#ffffff;--panel-bottom:#f8fafd;
+    --card-top:#ffffff;--card-bottom:#f6f9fd;
+    --line:#ccd8e6;--line-soft:#dce6f0;--td-line:#e6edf5;--stat-line:#e6edf5;
+    --chip-bg:#ffffffd9;--btn-bg:#ffffff;--btn-hover:#eaf1fa;--btn-hover-border:#8fb0d4;
+    --tag-bg:#eff4fa;--tag-text:#46586e;--tag-border:#d3dfeb;--active-text:#ffffff;
+    --card-sheen:#ffffff00;--row-hover:#e9f1fb;--scrollbar:#b6c6d8;
+    --bar-bg:#dde6f0;--bar-1:#3f83c9;--bar-2:#c99328;
+    --progress-bg:#dce6f0;--brand-slash:#9aadc1;--help-line:#9aadc1;
+    --cal-bg:#eef3f8;--cal-text:#3d5068;--cal-has-text:#ffffff;--cal-shadow:#0006;
+    --grid-line:#d6e1ed;--axis:#5a6d83;--axis-2:#63768c;--hover-line:#8ba4c0;
+    --tip-bg:#fffffffa;--tip-border:#a9c3de;--tip-text:#384b61;
+    --gold-1:#f2cd78;--gold-2:#b8860b;--gold-3:#7a5406;--logo-shadow:#b8860b40;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:radial-gradient(1200px 600px at 15% -10%,var(--glow1) 0%,transparent 60%),
+             radial-gradient(900px 500px at 95% 0%,var(--glow2) 0%,transparent 55%),var(--bg);
+  color:var(--text);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  min-height:100vh;padding:22px 26px 30px;letter-spacing:.2px;
+}
+.wrap{max-width:1680px;margin:0 auto}
+
+header{display:flex;align-items:center;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+/* 透明底 Logo：容器无背景/边框，金色 SVG 可适配任意页面底色 */
+.logo{width:44px;height:44px;display:grid;place-items:center}
+.logo svg{width:42px;height:42px;filter:drop-shadow(0 2px 4px var(--logo-shadow))}
+.brand h1{font-size:19px;font-weight:700;letter-spacing:1.2px}
+.brand p{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:2px}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border:1px solid var(--line);
+  border-radius:999px;background:var(--chip-bg);font-size:12px;color:var(--muted)}
+.chip b{color:var(--text);font-family:var(--mono);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 10px var(--up);animation:pulse 1.8s infinite}
+.dot.demo{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+@keyframes pulse{50%{opacity:.35}}
+button{background:var(--btn-bg);color:var(--text);border:1px solid var(--line);border-radius:10px;
+  padding:9px 14px;font-size:12px;cursor:pointer;transition:.15s;font-family:inherit}
+button:hover{border-color:var(--btn-hover-border);background:var(--btn-hover)}
+/* Exness 邀请链接 */
+.invite{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--gold-border);
+  border-radius:999px;background:var(--gold-soft);color:var(--gold);font-size:12px;
+  text-decoration:none;font-weight:600;transition:.15s;white-space:nowrap}
+.invite:hover{background:var(--gold);color:var(--active-text);border-color:var(--gold)}
+.invite span{font-size:13px;line-height:1}
+/* 邀请码一键复制按钮：与跳转链接分离，点击只复制不跳转 */
+.icode-copy{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;
+  background:var(--gold-soft);border:1px solid var(--gold-border);color:var(--gold);
+  font-size:11px;font-weight:600;transition:.15s;white-space:nowrap}
+.icode-copy:hover{background:var(--gold);color:var(--active-text);border-color:var(--gold)}
+.icode-copy .ic-label{opacity:.8}
+.icode-copy .ic-val{font-family:var(--mono);font-weight:700;letter-spacing:.3px}
+.icode-copy .ic-ico{font-size:12px;line-height:1}
+.icode-copy.copied{background:var(--up);border-color:var(--up);color:#fff}
+
+.kpis{display:grid;grid-template-columns:1.45fr repeat(4,1fr);gap:14px;margin-bottom:14px}
+.card{background:linear-gradient(180deg,var(--card-top),var(--card-bottom));border:1px solid var(--line);border-radius:16px;
+  padding:17px 19px;position:relative;overflow:hidden}
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 65%,var(--card-sheen));pointer-events:none}
+.kpi .label{font-size:11px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
+.kpi .value{font-family:var(--mono);font-size:29px;font-weight:700;margin-top:8px;line-height:1.1}
+.kpi.hero .value{font-size:44px}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.up{color:var(--up)!important}.down{color:var(--down)!important}.neutral{color:var(--text)!important}
+.kpi-tag{position:absolute;right:16px;top:16px;font-size:10px;padding:5px 9px;border-radius:6px;
+  background:var(--tag-bg);color:var(--tag-text);border:1px solid var(--tag-border);letter-spacing:1px;line-height:1}
+.kpi-tag.gold{background:var(--gold-soft);color:var(--gold);border-color:var(--gold-border)}
+
+.grid{display:grid;gap:14px}
+.row-top{grid-template-columns:minmax(0,1.65fr) minmax(300px,.85fr);align-items:start}
+.row-charts{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:14px}
+.row-charts>.panel{display:flex;flex-direction:column}
+.row-charts .pad{flex:1;display:flex;flex-direction:column}
+.panel{background:linear-gradient(180deg,var(--panel-top),var(--panel-bottom));border:1px solid var(--line);border-radius:16px;overflow:hidden;min-width:0}
+.panel-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:13px;font-weight:600;letter-spacing:1.1px}
+.panel-head .tag{font-size:10px;color:var(--muted);font-family:var(--mono);margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:right;color:var(--muted);font-weight:500;font-size:10px;letter-spacing:1px;padding:11px 14px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+th[title]{cursor:help;text-decoration:underline dotted var(--help-line);text-underline-offset:3px}
+th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:11px 14px;border-bottom:1px solid var(--td-line);font-family:var(--mono);white-space:nowrap}
+tbody tr:hover{background:var(--row-hover)}
+tbody tr:last-child td{border-bottom:none}
+.side{font-weight:700;font-size:11px;padding:4px 8px;border-radius:5px;display:inline-flex;align-items:center;
+  justify-content:center;line-height:1;min-width:48px;vertical-align:middle}
+.side.buy{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border)}
+.side.sell{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-border)}
+/* 方向列统一居中：表头与单元格对齐，徽章不歪 */
+.pos-panel th:nth-child(2),.pos-panel td:nth-child(2),
+.deals-scroll th:nth-child(4),.deals-scroll td:nth-child(4){text-align:center;vertical-align:middle}
+.ticket{color:var(--muted)}
+.scroll{max-height:420px;overflow:auto}
+.scroll::-webkit-scrollbar{width:6px;height:6px}
+.scroll::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:6px}
+
+.side-stack{display:flex;flex-direction:column;gap:14px}
+.pad{padding:16px 18px}
+.expo{display:flex;justify-content:space-between;font-size:11px;margin-bottom:7px;color:var(--muted)}
+.expo b{font-family:var(--mono);color:var(--text)}
+.bar{height:9px;border-radius:9px;background:var(--bar-bg);overflow:hidden;display:flex}
+.bar i{display:block;height:100%;transition:width .5s}
+.bar .b{background:linear-gradient(90deg,var(--bar-1),var(--accent))}
+.bar .s{background:linear-gradient(90deg,var(--bar-2),var(--gold))}
+.legend{display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.legend .lb::before{background:var(--accent)}.legend .ls::before{background:var(--gold)}
+canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y}
+.range-bar{display:flex;gap:6px;margin-bottom:10px}
+.range-bar button{padding:7px 13px;font-size:12px;border-radius:7px}
+.range-bar button.active{color:var(--active-text);background:var(--accent);border-color:var(--accent);font-weight:700}
+.curve-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.curve-legend i{display:inline-block;width:14px;height:0;border-top:2px solid;margin-right:4px;vertical-align:middle}
+.curve-legend .ln1{border-color:var(--up)}.curve-legend .ln2{border-color:var(--accent);border-top-style:dashed}
+.curve-legend .ln3{border-color:var(--gold);border-top-style:dashed}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.cal-nav button{padding:4px 9px;font-size:11px}
+.cal-nav button:disabled{opacity:.3;cursor:not-allowed}
+.cal-nav span{font-family:var(--mono);font-size:16px;color:var(--text)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-head{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
+.cal-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-family:var(--mono);color:var(--cal-text);background:var(--cal-bg);line-height:1.1}
+.cal-cell .d{font-size:15px;opacity:.9}
+.cal-cell .v{font-size:12px;font-weight:700;letter-spacing:-.3px}
+.cal-cell.has{color:var(--cal-has-text);text-shadow:0 1px 2px var(--cal-shadow)}
+.cal-cell.has .d{opacity:.95}
+.cal-cell.blank{background:transparent}
+.cal-cell.today{outline:1px solid var(--gold)}
+.cal-stats{grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.cal-stats b{font-weight:700}
+.cal-legend{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-top:14px}
+.cal-legend .sw{display:inline-block;width:12px;height:12px;border-radius:2px;margin:0 4px -1px 0;border:1px solid var(--line)}
+.chart-note{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:12px;color:var(--note);font-family:var(--mono)}
+.stat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--stat-line);font-size:12px}
+.stat-row:last-child{border-bottom:none}
+.stat-row span{color:var(--muted)}
+.stat-row b{font-family:var(--mono);font-weight:600}
+
+.deal-nav{margin-left:auto;display:flex;align-items:center;gap:7px}
+.deal-nav .tag{margin-left:0}
+.deal-nav button{padding:4px 9px;font-size:12px;line-height:1.2}
+.deal-nav button:disabled{opacity:.3;cursor:not-allowed}
+.deal-nav #dealPage{font-family:var(--mono);font-size:12px;color:var(--text);min-width:54px;text-align:center}
+.deal-nav select{background:var(--btn-bg);color:var(--text);border:1px solid var(--line);border-radius:8px;
+  padding:4px 6px;font-size:11px;font-family:inherit;cursor:pointer}
+.deals-scroll{max-height:330px}
+.deals-scroll td:first-child,.deals-scroll th:first-child{color:var(--muted)}
+.deals-scroll .side{vertical-align:middle}
+
+footer{margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;color:var(--footer-text);font-size:11px}
+footer b{color:var(--footer-b);font-weight:500}
+footer b.money-legend-up{color:var(--up)}footer b.money-legend-down{color:var(--down)}
+.progress{height:2px;background:var(--progress-bg);border-radius:2px;margin-top:14px;overflow:hidden}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--bar-1),var(--accent));width:100%}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid,.row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
+  .deals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+  body{padding:12px 12px 20px}
+  header{gap:8px;margin-bottom:12px}
+  .logo{width:38px;height:38px}
+  .logo svg{width:36px;height:36px}
+  .brand h1{font-size:15px;letter-spacing:.5px;white-space:nowrap}
+  .brand p{font-size:9px;letter-spacing:1px}
+  .spacer{display:none}
+  .chip{padding:6px 9px;font-size:10px}
+  button{padding:7px 10px;font-size:10px}
+  .invite{padding:6px 10px;font-size:10px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .kpis .hero{grid-column:1/-1}
+  .card{padding:12px 13px;border-radius:12px}
+  .kpi .label{font-size:9px;letter-spacing:.6px}
+  .kpi .value{font-size:22px;margin-top:6px}
+  .kpi.hero .value{font-size:34px}
+  .kpi .sub{font-size:9px;margin-top:6px}
+  .kpi-tag{right:10px;top:10px;font-size:9px;padding:3px 6px}
+  .grid{gap:9px;margin-top:9px!important}
+  .row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
+  .panel-head{padding:11px 12px}
+  .panel-head h2{font-size:12px}
+  .pad{padding:12px}
+  canvas{height:170px}
+  .range-bar button{padding:6px 9px;font-size:10px}
+  .curve-legend{gap:8px;font-size:9px}
+  .chart-note{font-size:9px}
+  .cal-cell .d{font-size:11px}
+  .cal-cell .v{font-size:9px}
+  .cal-head{font-size:9px}
+  .cal-nav span{font-size:12px}
+  .cal-stats{font-size:10px}
+  .cal-legend{font-size:9px}
+  .cal-grid{gap:3px}
+  .deal-nav{gap:4px}
+  .deal-nav #dealPage{min-width:42px;font-size:10px}
+  .deal-nav select{font-size:10px;padding:3px 4px}
+  table{table-layout:fixed;font-size:10px}
+  th,td{padding:9px 6px;font-size:10px;letter-spacing:0}
+  th{font-size:9px}
+  .hide-mobile{display:none}
+  .scroll{max-height:none}
+  .deals-scroll{max-height:260px}
+  section.panel{margin-top:9px!important}
+  footer{font-size:9px;gap:7px;line-height:1.6}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-label="黄金金库图标">
+      <svg viewBox="0 0 1408 1024" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="goldFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--gold-1)"/><stop offset=".5" stop-color="var(--gold-2)"/><stop offset="1" stop-color="var(--gold-3)"/>
+          </linearGradient>
+        </defs>
+        <path d="M149.83552 896H192.07552a64 64 0 0 1 0 128H64.07552a64 64 0 0 1-61.376-82.176l132.672-448A64 64 0 0 1 196.74752 448h374.656a64 64 0 0 1 61.376 45.824l132.672 448A64 64 0 0 1 704.07552 1024H448.07552a64 64 0 0 1 0-128h170.24L523.59552 576H244.55552l-94.72 320z" fill="url(#goldFill)"/>
+        <path d="M789.83552 896h468.48l-94.72-320h-279.04l-94.72 320z m46.912-448h374.656a64 64 0 0 1 61.376 45.824l132.672 448A64 64 0 0 1 1344.07552 1024H704.07552a64 64 0 0 1-61.376-82.176l132.672-448A64 64 0 0 1 836.74752 448z" fill="url(#goldFill)"/>
+        <path d="M564.55552 128L469.83552 448h468.48l-94.72-320H564.55552z m-47.808-128h374.656a64 64 0 0 1 61.376 45.824l132.672 448A64 64 0 0 1 1024.07552 576H384.07552a64 64 0 0 1-61.376-82.176l132.672-448A64 64 0 0 1 516.74752 0z" fill="url(#goldFill)"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <h1>XAU GRID <span style="color:var(--brand-slash);font-weight:400">/</span> 实况看板</h1>
+      <p>LIVE POSITION MONITOR</p>
+    </div>
+    <div class="spacer"></div>
+    <div class="chip" id="modeChip"><i class="dot demo"></i><span id="modeText">连接中…</span></div>
+    <div class="chip">账户 <b id="login">****</b></div>
+    <div class="chip" id="clock">--:--:--</div>
+    <a class="invite" href="https://one.toexness.com/a/p62earilg5" target="_blank" rel="noopener noreferrer" title="欢迎使用Exness进行交易">欢迎使用 Exness 进行交易 <span>↗</span></a>
+    <button class="icode-copy" id="icodeBtn" title="点击一键复制邀请码"><span class="ic-label">邀请码</span><span class="ic-val">p62earilg5</span><span class="ic-ico">⧉</span></button>
+    <button id="pngBtn" title="导出当前看板 PNG">导出PNG</button>
+    <button id="reportBtn" title="查看文字版日报（可复制 / 下载 .md）">日报</button>
+  </header>
+
+  <section class="kpis">
+    <div class="card kpi hero">
+      <div class="label">当前持仓浮盈 / USD</div>
+      <div class="value money up" id="floating">$0.00</div>
+      <div class="sub" id="equityLine">权益 $0.00 · 余额 $0.00</div>
+      <div class="kpi-tag gold" id="priceBadge">XAUUSDm —</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-tag">USD</div>
+      <div class="label">今日已实现 / USD</div>
+      <div class="value money up" id="realized">$0.00</div>
+      <div class="sub" id="closedLine">0 笔平仓</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-tag">ORDERS</div>
+      <div class="label">持仓笔数</div>
+      <div class="value neutral" id="count">0</div>
+      <div class="sub" id="lotLine">多 0.00 / 空 0.00 手</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-tag">LOTS</div>
+      <div class="label">净敞口 / 手</div>
+      <div class="value neutral" id="net">0.00</div>
+      <div class="sub" id="expoLine">双边网格对冲</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-tag">PCT</div>
+      <div class="label">今日胜率</div>
+      <div class="value neutral" id="win">—</div>
+      <div class="sub" id="marginLine">保证金率 —</div>
+    </div>
+  </section>
+
+  <section class="grid row-top">
+    <div class="panel pos-panel">
+      <div class="panel-head"><h2>持仓明细</h2><span class="tag" id="tableTag">OPEN POSITIONS</span></div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th title="1 点 = 0.01 美元价格变动，不是盈亏金额">波动(点)</th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
+          <tbody id="positions"><tr><td colspan="8" style="text-align:center;color:var(--muted-2);padding:30px">等待数据…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="side-stack">
+      <div class="panel">
+        <div class="panel-head"><h2>双边敞口</h2><span class="tag">EXPOSURE</span></div>
+        <div class="pad">
+          <div class="expo"><span>多头 BUY</span><b class="money" id="buyLots">0.00 手</b></div>
+          <div class="bar"><i class="b" id="buyBar" style="width:50%"></i><i class="s" id="sellBar" style="width:50%"></i></div>
+          <div class="expo" style="margin-top:12px"><span>空头 SELL</span><b class="money" id="sellLots">0.00 手</b></div>
+          <div class="legend"><span class="lb">BUY</span><span class="ls">SELL</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>风险快照</h2><span class="tag">RISK</span></div>
+        <div class="pad" style="padding-top:8px;padding-bottom:8px">
+          <div class="stat-row"><span>账户权益</span><b class="money" id="sEquity">—</b></div>
+          <div class="stat-row"><span>已用保证金</span><b class="money" id="sMargin">—</b></div>
+          <div class="stat-row"><span>保证金率</span><b id="sLevel">—</b></div>
+          <div class="stat-row"><span>数据来源</span><b id="sSource">—</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid row-charts">
+    <div class="panel">
+      <div class="panel-head"><h2>权益曲线</h2><span class="tag" id="curveTag">EQUITY</span></div>
+      <div class="pad">
+        <div class="range-bar" id="rangeBar">
+          <button data-range="7">近7天</button><button data-range="30">近30天</button>
+          <button data-range="90">近90天</button><button data-range="all" class="active">全部</button>
+        </div>
+        <div class="curve-legend"><span><i class="ln1"></i>已实现权益</span><span><i class="ln2"></i>账户权益(含浮动)</span><span><i class="ln3"></i>入金基线</span></div>
+        <canvas id="curve"></canvas><div class="chart-note" id="chartNote">—</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>收益日历</h2><span class="tag" id="calTag">DAILY P&L</span></div>
+      <div class="pad">
+        <div class="cal-nav"><button id="calPrev">‹</button><span id="calMonth">—</span><button id="calNext">›</button></div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend"><span>亏 <i class="sw" style="background:var(--down)"></i></span>
+          <span><i class="sw" style="background:var(--cal-bg)"></i> 无交易</span>
+          <span>盈 <i class="sw" style="background:var(--up)"></i></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:14px">
+    <div class="panel-head">
+      <h2>平仓历史</h2>
+      <div class="deal-nav">
+        <span class="tag" id="dealsTag">ALL DEALS</span>
+        <select id="dealSize" title="每页条数"><option value="10">10 条</option><option value="20" selected>20 条</option><option value="50">50 条</option></select>
+        <button id="dealPrev" title="上一页">‹</button>
+        <span id="dealPage">1 / 1</span>
+        <button id="dealNext" title="下一页">›</button>
+      </div>
+    </div>
+    <div class="scroll deals-scroll">
+      <table>
+        <thead><tr><th>成交时间</th><th class="hide-mobile">订单</th><th>品种</th><th>方向</th><th class="hide-mobile">手数</th><th>盈亏 / USD</th></tr></thead>
+        <tbody id="deals"><tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:24px">加载平仓历史…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>刷新间隔 <b>2 秒</b></span>
+    <span>盈亏配色：<b class="money-legend-up">绿=盈利</b> / <b class="money-legend-down">红=亏损</b></span>
+    <span id="themeLabel"></span>
+    <span>账户号码默认脱敏</span>
+    <span id="hint"></span>
+  </footer>
+  <div class="progress"><i id="bar"></i></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const lightMode = () => window.matchMedia('(prefers-color-scheme: light)').matches;
+const money = v => (v >= 0 ? '+$' : '−$') + Math.abs(v).toFixed(2);
+const cls = v => v > 0 ? 'up' : (v < 0 ? 'down' : 'neutral');
+// B 方案：static=1 时读云端静态 JSON（snapshot.json / deals.json），本机默认仍走 /api
+const STATIC = true;  // publish.py: 静态托管强制静态模式
+let timer = null, start = Date.now(), period = 2000;
+let lastCurve = [], hoverIdx = -1, currentRange = 'all', baseline = 5000;
+let dailyMap = {}, calMonth = null;
+let dealsState = {page:1, size:20, pages:1, total:0, loading:false, lastFetch:0};
+const rangeLabels = {7:'近7天', 30:'近30天', 90:'近90天', all:'全部'};
+
+function setText(id, value, klass){
+  const el = $(id); el.textContent = value;
+  if(klass !== undefined){
+    el.className = el.className.replace(/\b(up|down|neutral)\b/g, '').replace(/\s+/g, ' ').trim();
+    el.className += ' ' + klass;
+  }
+}
+
+function render(d){
+  period = d.refresh_ms || 2000;
+  const live = d.mode === 'live', cached = d.mode === 'cached';
+  const modeText = live ? 'LIVE · MT5 已连接' : (cached ? 'CACHED · 离线快照' : 'DEMO · 演示数据');
+  const dotClass = live ? '' : 'demo';
+  $('modeChip').innerHTML = `<i class="dot ${dotClass}"></i><span id="modeText">${modeText}</span>`;
+  $('login').textContent = d.account.login;
+  $('priceBadge').textContent = `${d.summary.symbol} ${d.summary.price ? d.summary.price.toFixed(2) : '—'}`;
+  if(STATIC){
+    const ageMin = d.published_at
+      ? Math.floor((Date.now() - new Date(d.published_at.replace(' ','T')).getTime()) / 60000) : 0;
+    $('hint').textContent = `云端快照 · 数据时间 ${d.server_time || d.published_at || '—'}`
+      + (ageMin > 15 ? ` · 已延迟 ${ageMin} 分钟` : '');
+  }else{
+    $('hint').textContent = live ? '当前显示真实终端数据'
+      : (cached ? `MT5 未连接，显示 ${d.cache_saved_at} 的缓存快照（${d.cache_age_seconds}秒前）`
+                : 'MT5 与缓存均不可用，当前为演示数据');
+  }
+
+  setText('floating', money(d.summary.floating), cls(d.summary.floating));
+  setText('realized', money(d.summary.today_realized), cls(d.summary.today_realized));
+  $('equityLine').textContent = `权益 $${d.account.equity.toFixed(2)} · 余额 $${d.account.balance.toFixed(2)}`;
+  $('closedLine').textContent = `${d.summary.closed_today} 笔平仓`;
+  $('count').textContent = d.summary.positions;
+  $('lotLine').textContent = `多 ${d.summary.buy_lots.toFixed(2)} / 空 ${d.summary.sell_lots.toFixed(2)} 手`;
+  setText('net', d.summary.net_lots.toFixed(2), 'neutral');
+  $('expoLine').textContent = Math.abs(d.summary.net_lots) < 0.01 ? '双边完全对冲' : (d.summary.net_lots > 0 ? '偏多敞口' : '偏空敞口');
+  setText('win', d.summary.win_rate == null ? '—' : d.summary.win_rate.toFixed(1) + '%',
+          d.summary.win_rate == null ? 'neutral' : (d.summary.win_rate >= 70 ? 'up' : 'neutral'));
+  $('marginLine').textContent = `保证金率 ${d.account.margin_level.toFixed(0)}%`;
+
+  const rows = d.positions.map(p => `<tr>
+      <td class="ticket hide-mobile">#${p.ticket}</td>
+      <td><span class="side ${p.type === 'BUY' ? 'buy' : 'sell'}">${p.type}</span></td>
+      <td>${p.lots.toFixed(2)}</td>
+      <td class="hide-mobile">${p.price_open.toFixed(2)}</td>
+      <td class="hide-mobile">${p.price_now.toFixed(2)}</td>
+      <td class="${cls(p.pips)}">${p.pips > 0 ? '+' : ''}${p.pips.toFixed(1)}</td>
+      <td class="money ${cls(p.profit)}">${money(p.profit)}</td>
+      <td class="hide-mobile" style="color:var(--duration)">${p.minutes < 60 ? p.minutes + 'm' : Math.floor(p.minutes / 60) + 'h' + (p.minutes % 60) + 'm'}</td>
+    </tr>`).join('');
+  $('positions').innerHTML = rows || '<tr><td colspan="4" style="text-align:center;color:var(--muted-2);padding:30px">当前无持仓</td></tr>';
+  $('tableTag').textContent = `OPEN POSITIONS · ${d.summary.positions}`;
+
+  const total = d.summary.buy_lots + d.summary.sell_lots || 1;
+  const bp = 100 * d.summary.buy_lots / total;
+  $('buyBar').style.width = bp + '%'; $('sellBar').style.width = (100 - bp) + '%';
+  $('buyLots').textContent = d.summary.buy_lots.toFixed(2) + ' 手';
+  $('sellLots').textContent = d.summary.sell_lots.toFixed(2) + ' 手';
+
+  $('sEquity').textContent = '$' + d.account.equity.toFixed(2);
+  $('sMargin').textContent = '$' + d.account.margin.toFixed(2);
+  $('sLevel').textContent = d.account.margin_level.toFixed(0) + '%';
+  $('sSource').textContent = live ? 'MT5 终端' : (cached ? '离线缓存' : '演示模拟器');
+
+  baseline = d.baseline || 5000;
+  $('curveTag').textContent = live ? `历史权益 · ${d.summary.curve_deals || 0} 笔` : '权益曲线';
+  lastCurve = d.equity_curve || [];
+  if(hoverIdx >= lastCurve.length) hoverIdx = -1;
+  if(lastCurve.length) baseline = lastCurve[lastCurve.length - 1].base ?? baseline;
+  const firstT = lastCurve.length ? lastCurve[0].t : '—';
+  $('chartNote').innerHTML = `<span>${rangeLabels[currentRange]} · ${firstT} → 现在</span><span>更新 ${(d.server_time || '').slice(11)}</span>`;
+  $('chartNote').title = `数据更新时间 ${d.server_time}`;
+  drawCurve(lastCurve, hoverIdx);
+  dailyMap = Object.fromEntries((d.daily_pnl || []).map(x => [x.d, x.v]));
+  renderCalendar();
+  start = Date.now();
+}
+
+async function loadDeals(page){
+  if(dealsState.loading) return;
+  dealsState.loading = true;
+  dealsState.lastFetch = Date.now();
+  try{
+    const target = page || dealsState.page;
+    let j;
+    if(STATIC){
+      // 云端静态：一次性读全量 deals.json，前端切片分页
+      if(!dealsState.all){
+        const r = await fetch('deals.json', {cache:'no-store'});
+        const all = await r.json();
+        dealsState.all = all.deals || [];
+        dealsState.mode = all.mode || 'live';
+      }
+      const size = dealsState.size;
+      const total = dealsState.all.length;
+      const pages = Math.max(1, Math.ceil(total / size));
+      const p = Math.min(Math.max(1, target), pages);
+      j = {page:p, pages, total, mode:dealsState.mode, deals:dealsState.all.slice((p-1)*size, p*size)};
+    }else{
+      const r = await fetch(`/api/deals?page=${target}&size=${dealsState.size}`, {cache:'no-store'});
+      j = await r.json();
+    }
+    dealsState.page = j.page; dealsState.pages = j.pages; dealsState.total = j.total;
+    $('dealsTag').textContent = `${j.total} DEALS · ${j.mode.toUpperCase()}`;
+    $('dealPage').textContent = `${j.page} / ${j.pages}`;
+    $('dealPrev').disabled = j.page <= 1;
+    $('dealNext').disabled = j.page >= j.pages;
+    $('deals').innerHTML = j.deals.length ? j.deals.map(x => `<tr>
+        <td>${x.time || '—'}</td>
+        <td class="ticket hide-mobile">#${x.ticket}</td>
+        <td style="text-align:left;color:var(--symbol)">${x.symbol}</td>
+        <td><span class="side ${x.type === 'BUY' ? 'buy' : 'sell'}">${x.type}</span></td>
+        <td class="hide-mobile">${(x.lots || 0).toFixed(2)}</td>
+        <td class="money ${cls(x.profit)}">${money(x.profit)}</td>
+      </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:24px">暂无平仓记录</td></tr>';
+  }catch(e){
+    $('deals').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--down);padding:24px">历史加载失败，重试中…</td></tr>';
+  }finally{
+    dealsState.loading = false;
+  }
+}
+$('dealPrev').onclick = () => loadDeals(dealsState.page - 1);
+$('dealNext').onclick = () => loadDeals(dealsState.page + 1);
+$('dealSize').onchange = e => { dealsState.size = Number(e.target.value); loadDeals(1); };
+
+function drawCurve(points, hover = -1){
+  const cv = $('curve'), ctx = cv.getContext('2d');
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if(!w || !h) return;
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = w * dpr; cv.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  if(!points || points.length < 2) return;
+
+  const cGrid = cssVar('--grid-line'), cAxis = cssVar('--axis'), cAxis2 = cssVar('--axis-2');
+  const cUp = cssVar('--up'), cDown = cssVar('--down'), cGold = cssVar('--gold');
+  const cAccent = cssVar('--accent'), cHover = cssVar('--hover-line');
+  const cGoldLine = cssVar('--gold-line');
+  const cTipBg = cssVar('--tip-bg'), cTipBorder = cssVar('--tip-border'), cTipText = cssVar('--tip-text');
+
+  const padL = w < 480 ? 48 : 58, padR = 12, padT = 12, padB = 26;
+  const pw = w - padL - padR, ph = h - padT - padB;
+  const rv = points.map(p => p.v ?? 0);
+  const ev = points.map(p => p.eq ?? p.v ?? 0);
+  const bv = points.map(p => p.base ?? baseline);
+  const all = rv.concat(ev, bv);
+  let lo = Math.min(...all), hi = Math.max(...all);
+  const pad = Math.max((hi - lo) * 0.12, 1);
+  lo -= pad; hi += pad;
+  const px = i => padL + i * pw / (points.length - 1);
+  const py = v => padT + (hi - v) / (hi - lo) * ph;
+  const last = points.length - 1;
+  const baseNow = bv[last];
+  const rising = ev[last] >= baseNow;
+  const line = rising ? cUp : cDown;
+  const dot = rising ? cssVar('--dot-up') : cssVar('--dot-down');
+  const rgb = rising ? cssVar('--up-rgb') : cssVar('--down-rgb');
+
+  ctx.font = '10px Consolas, "SFMono-Regular", monospace';
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
+  [0, 0.5, 1].forEach(k => {
+    const y = padT + k * ph;
+    ctx.strokeStyle = cGrid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+    ctx.fillStyle = cAxis;
+    ctx.fillText('$' + Math.round(hi - k * (hi - lo)).toLocaleString('en-US'), padL - 7, y);
+  });
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+  ctx.fillStyle = cAxis2; ctx.fillText(points[0].t, padL, h - 7);
+  ctx.textAlign = 'right'; ctx.fillText(points[last].t, w - padR, h - 7);
+
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + ph);
+  grad.addColorStop(0, `rgba(${rgb},0.33)`); grad.addColorStop(1, `rgba(${rgb},0)`);
+  ctx.beginPath(); ctx.moveTo(px(0), padT + ph);
+  rv.forEach((v, i) => ctx.lineTo(px(i), py(v)));
+  ctx.lineTo(px(last), padT + ph); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.setLineDash([5, 4]); ctx.strokeStyle = cGoldLine; ctx.lineWidth = 1;
+  ctx.beginPath(); bv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = cGold; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.fillText('入金 $' + Math.round(baseNow).toLocaleString('en-US'), padL + 4, py(baseNow) - 3);
+  ctx.textBaseline = 'middle';
+
+  ctx.beginPath();
+  rv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
+  ctx.strokeStyle = line; ctx.lineWidth = 1.8; ctx.stroke();
+
+  ctx.setLineDash([6, 3]); ctx.strokeStyle = cAccent; ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ev.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(px(last), py(ev[last]), 3.4, 0, Math.PI * 2);
+  ctx.fillStyle = dot; ctx.fill();
+
+  if(hover >= 0 && hover < points.length){
+    const x = px(hover), y = py(ev[hover]);
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = cHover; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(x, y, 3.8, 0, Math.PI * 2); ctx.fillStyle = dot; ctx.fill();
+    const label = points[hover].t;
+    const rText = '已实现 $' + rv[hover].toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const eText = '账户   $' + ev[hover].toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    ctx.font = '11px Consolas, "SFMono-Regular", monospace';
+    const bw = Math.max(ctx.measureText(label).width, ctx.measureText(rText).width, ctx.measureText(eText).width) + 18;
+    const bh = 56;
+    let bx = x + 10; if(bx + bw > w - padR) bx = x - bw - 10;
+    let by = y - bh - 8; if(by < padT) by = y + 10;
+    ctx.fillStyle = cTipBg; ctx.strokeStyle = cTipBorder; ctx.lineWidth = 1;
+    roundRect(ctx, bx, by, bw, bh, 7); ctx.fill(); ctx.stroke();
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = cTipText; ctx.fillText(label, bx + 9, by + 12);
+    ctx.fillStyle = line; ctx.fillText(rText, bx + 9, by + 28);
+    ctx.fillStyle = cAccent; ctx.fillText(eText, bx + 9, by + 44);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath(); ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+
+const pad2 = n => String(n).padStart(2, '0');
+const monthStr = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+function renderCalendar(){
+  const now = new Date();
+  const thisMonth = monthStr(now);
+  if(!calMonth) calMonth = thisMonth;
+  $('calMonth').textContent = calMonth;
+  $('calPrev').disabled = false;
+  $('calNext').disabled = calMonth >= thisMonth;
+  const [y, m] = calMonth.split('-').map(Number);
+  const first = new Date(y, m - 1, 1).getDay();
+  const days = new Date(y, m, 0).getDate();
+  const todayStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+  const maxAbs = Math.max(...Object.values(dailyMap).map(Math.abs), 1);
+  const light = lightMode();
+  let html = ['日','一','二','三','四','五','六'].map(x => `<div class="cal-head">${x}</div>`).join('');
+  for(let i = 0; i < first; i++) html += '<div class="cal-cell blank"></div>';
+  let monthTotal = 0, wins = 0, losses = 0;
+  for(let day = 1; day <= days; day++){
+    const key = `${y}-${pad2(m)}-${pad2(day)}`;
+    if(key > todayStr){ html += '<div class="cal-cell blank"></div>'; continue; }
+    const v = dailyMap[key] ?? 0;
+    const has = Object.prototype.hasOwnProperty.call(dailyMap, key) && v !== 0;
+    if(has){ monthTotal += v; v > 0 ? wins++ : losses++; }
+    const ratio = Math.min(Math.abs(v) / maxAbs, 1);
+    // 浅色模式提高底色不透明度，保证白色金额文字可读
+    const alpha = has ? (light ? 0.58 + 0.38 * ratio : 0.32 + 0.6 * ratio) : 0;
+    const rgb = cssVar(v > 0 ? '--up-rgb' : '--down-rgb');
+    const bg = has ? `rgba(${rgb},${alpha.toFixed(2)})` : 'var(--cal-bg)';
+    const label = has ? `${v > 0 ? '+' : '−'}$${Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(1) + 'k' : Math.round(Math.abs(v))}` : '';
+    html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}${key === todayStr ? ' today' : ''}" style="background:${bg}" `
+          + `title="${key}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}"><span class="d">${day}</span>`
+          + `${has ? `<span class="v">${label}</span>` : ''}</div>`;
+  }
+  html += `<div class="cal-stats"><span>本月 <b style="color:${monthTotal >= 0 ? 'var(--up)' : 'var(--down)'}">${monthTotal >= 0 ? '+' : '−'}$${Math.abs(monthTotal).toFixed(2)}</b></span>`
+        + `<span>盈 ${wins} / 亏 ${losses}</span></div>`;
+  $('calGrid').innerHTML = html;
+  $('calTag').textContent = `${Object.keys(dailyMap).filter(k => dailyMap[k] !== 0).length} DAYS`;
+}
+function shiftMonth(delta){
+  const [y, m] = calMonth.split('-').map(Number);
+  const next = monthStr(new Date(y, m - 1 + delta, 1));
+  if(next > monthStr(new Date())) return;
+  calMonth = next; renderCalendar();
+}
+$('calPrev').onclick = () => shiftMonth(-1);
+$('calNext').onclick = () => shiftMonth(1);
+$('pngBtn').onclick = () => { location.href = '/api/export/png'; };
+// 当前页跳转：日报页已有「返回看板」按钮，避免来回点击堆积标签页
+// 静态托管（GitHub Pages 子路径）必须用相对地址，否则会跳到账号根域导致 404
+$('reportBtn').onclick = () => { location.href = STATIC ? 'report.html' : '/report.html'; };
+
+// 邀请码一键复制（静态云端页同样可用）
+$('icodeBtn').onclick = async () => {
+  const code = 'p62earilg5', btn = $('icodeBtn');
+  try{
+    await navigator.clipboard.writeText(code);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = code; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(_){}
+    ta.remove();
+  }
+  const ico = btn.querySelector('.ic-ico'), old = ico.textContent;
+  btn.classList.add('copied'); ico.textContent = '✓';
+  btn.querySelector('.ic-val').textContent = '已复制';
+  setTimeout(() => { btn.classList.remove('copied'); ico.textContent = old; btn.querySelector('.ic-val').textContent = code; }, 1600);
+};
+
+async function poll(){
+  try{
+    const url = STATIC ? 'snapshot.json' : `/api/snapshot?range=${currentRange}`;
+    const r = await fetch(url, {cache:'no-store'});
+    const d = await r.json();
+    render(d);
+    if(!dealsState.loading && Date.now() - dealsState.lastFetch > 10000) loadDeals();
+  }catch(e){
+    $('modeText').textContent = STATIC ? '快照读取失败，请检查部署' : '连接失败，重试中…';
+  }
+}
+
+function tick(){
+  $('clock').textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+  const pct = Math.min(100, (Date.now() - start) / period * 100);
+  $('bar').style.width = pct + '%';
+}
+setInterval(tick, 200); tick();
+if(STATIC){
+  // 云端静态页：数据由本机推送脚本更新，前端 30 秒拉一次即可
+  $('pngBtn').style.display = 'none';
+  document.querySelectorAll('#rangeBar button').forEach(b => {
+    if(b.dataset.range !== 'all'){ b.disabled = true; b.title = '云端快照为全量数据'; b.style.opacity = '.4'; }
+  });
+}
+poll(); loadDeals(1); setInterval(poll, STATIC ? 30000 : 2000);
+document.querySelectorAll('#rangeBar button').forEach(btn => {
+  btn.onclick = () => {
+    currentRange = btn.dataset.range;
+    document.querySelectorAll('#rangeBar button').forEach(b => b.classList.toggle('active', b === btn));
+    hoverIdx = -1;
+    poll();
+  };
+});
+function curveHover(e){
+  if(!lastCurve.length) return;
+  const cv = $('curve'), r = cv.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const x = clientX - r.left;
+  const padL = cv.clientWidth < 480 ? 48 : 58, padR = 12;
+  const pw = cv.clientWidth - padL - padR;
+  const i = Math.round((x - padL) / pw * (lastCurve.length - 1));
+  hoverIdx = Math.max(0, Math.min(lastCurve.length - 1, i));
+  drawCurve(lastCurve, hoverIdx);
+}
+$('curve').addEventListener('mousemove', curveHover);
+$('curve').addEventListener('mouseleave', () => { hoverIdx = -1; drawCurve(lastCurve, -1); });
+$('curve').addEventListener('touchmove', curveHover, {passive:true});
+window.addEventListener('resize', () => { const cv = $('curve'); if(cv.clientWidth) drawCurve(lastCurve, hoverIdx); });
+
+// 跟随设备主题：首次标注 + 系统主题切换时重绘 Canvas 与日历
+function applyThemeLabel(){
+  $('themeLabel').textContent = lightMode() ? '主题 白天（跟随设备）' : '主题 夜间（跟随设备）';
+}
+applyThemeLabel();
+const themeMq = window.matchMedia('(prefers-color-scheme: light)');
+const onThemeChange = () => { applyThemeLabel(); drawCurve(lastCurve, hoverIdx); renderCalendar(); };
+themeMq.addEventListener ? themeMq.addEventListener('change', onThemeChange) : themeMq.addListener(onThemeChange);
+</script>
+</body>
+</html>
