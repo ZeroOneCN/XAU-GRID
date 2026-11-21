@@ -176,7 +176,7 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
 .cal-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   font-family:var(--mono);color:var(--cal-text);background:var(--cal-bg);line-height:1.1}
 .cal-cell .d{font-size:15px;opacity:.9}
-.cal-cell .v{font-size:12px;font-weight:700;letter-spacing:-.3px}
+.cal-cell .v{font-size:14px;font-weight:700;letter-spacing:-.6px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .cal-cell.has{color:var(--cal-has-text);text-shadow:0 1px 2px var(--cal-shadow)}
 .cal-cell.has .d{opacity:.95}
 .cal-cell.blank{background:transparent}
@@ -239,7 +239,7 @@ footer b.money-legend-up{color:var(--up)}footer b.money-legend-down{color:var(--
   .curve-legend{gap:8px;font-size:9px}
   .chart-note{font-size:9px}
   .cal-cell .d{font-size:11px}
-  .cal-cell .v{font-size:9px}
+  .cal-cell .v{font-size:clamp(9px,2.65vw,11px);letter-spacing:-.9px}
   .cal-head{font-size:9px}
   .cal-nav span{font-size:12px}
   .cal-stats{font-size:10px}
@@ -605,26 +605,33 @@ function drawCurve(points, hover = -1){
   ctx.lineTo(px(last), padT + ph); ctx.closePath();
   ctx.fillStyle = grad; ctx.fill();
 
-  ctx.setLineDash([5, 4]); ctx.strokeStyle = cCurveGold; ctx.lineWidth = 1.3;
-  ctx.beginPath(); bv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
-  ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle = cCurveGold; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
-  ctx.fillText('入金 $' + Math.round(baseNow).toLocaleString('en-US'), padL + 4, py(baseNow) - 3);
-  ctx.textBaseline = 'middle';
-
-  // 先画账户权益虚线，避免它盖住主权益线的颜色（两者重叠时尤其明显）
+  // 先画账户权益虚线，再画主权益线，避免两者重叠时盖住主线颜色
   ctx.setLineDash([6, 3]); ctx.strokeStyle = cCurveAccent; ctx.lineWidth = 1.6;
   ctx.beginPath();
   ev.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
   ctx.stroke(); ctx.setLineDash([]);
 
-  // 主权益线：先描一圈底色，浅色模式下与同色填充拉开对比
   ctx.beginPath();
   rv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
   ctx.lineJoin = 'round';
   ctx.strokeStyle = cHalo; ctx.lineWidth = 4.4; ctx.stroke();
   ctx.strokeStyle = line; ctx.lineWidth = 2.2; ctx.stroke();
   ctx.lineJoin = 'miter';
+
+  // 入金基线移到最后绘制：先铺一圈底色再画加粗金色虚线，避免被权益曲线盖住
+  ctx.setLineDash([7, 5]);
+  ctx.beginPath(); bv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
+  ctx.strokeStyle = cHalo; ctx.lineWidth = 5.4; ctx.stroke();
+  ctx.strokeStyle = cCurveGold; ctx.lineWidth = 2.6; ctx.stroke();
+  ctx.setLineDash([]);
+  const baseLabel = '入金 $' + Math.round(baseNow).toLocaleString('en-US');
+  const blw = ctx.measureText(baseLabel).width + 10;
+  const blx = Math.max(padL + 2, Math.min(w - padR - blw, padL + 4));
+  const bly = Math.max(padT, py(baseNow) - 18);
+  ctx.fillStyle = cTipBg; roundRect(ctx, blx, bly, blw, 15, 4); ctx.fill();
+  ctx.fillStyle = cCurveGold; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(baseLabel, blx + 5, bly + 8);
+  ctx.textBaseline = 'alphabetic';
 
   ctx.beginPath(); ctx.arc(px(last), py(ev[last]), 3.6, 0, Math.PI * 2);
   ctx.fillStyle = dot; ctx.fill();
@@ -689,7 +696,7 @@ function renderCalendar(){
     const alpha = has ? (light ? 0.58 + 0.38 * ratio : 0.32 + 0.6 * ratio) : 0;
     const rgb = cssVar(v > 0 ? '--up-rgb' : '--down-rgb');
     const bg = has ? `rgba(${rgb},${alpha.toFixed(2)})` : 'var(--cal-bg)';
-    const label = has ? `${v > 0 ? '+' : '−'}$${Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(1) + 'k' : Math.round(Math.abs(v))}` : '';
+    const label = has ? `${v > 0 ? '+' : '−'}$${Math.abs(v).toFixed(2)}` : '';
     html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}${key === todayStr ? ' today' : ''}" style="background:${bg}" `
           + `title="${key}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}"><span class="d">${day}</span>`
           + `${has ? `<span class="v">${label}</span>` : ''}</div>`;

@@ -230,10 +230,13 @@ async function load(dateValue){
   try{
     let text;
     if(STATIC){
-      // 云端静态：读推送脚本生成的 report.json（最近交易日完整日报）
-      const r=await fetch('report.json',{cache:'no-store'});
-      const j=await r.json();
-      text=j.text||'';
+      // 云端静态：按选中交易日读 reports/YYYY-MM-DD.md，缺失时回退最新一份 report.json
+      const r=await fetch(`reports/${currentDate}.md`,{cache:'no-store'});
+      if(r.ok){ text=await r.text(); }
+      else{
+        const j=await (await fetch('report.json',{cache:'no-store'})).json();
+        text=j.text||'';
+      }
     }else{
       const url='/api/report/text'+(currentDate?'?date='+encodeURIComponent(currentDate):'');
       const r=await fetch(url,{cache:'no-store'});
@@ -325,8 +328,7 @@ $('dlBtn').onclick=()=>{
 };
 
 if(STATIC){
-  // 云端静态只读：隐藏日期切换；但保留返回看板（GitHub Pages 同站有 index.html）
-  $('datePick').style.display='none'; $('goBtn').style.display='none';
+  // 云端静态同样可用自定义日历：日期列表来自 report_dates.json，正文来自 reports/YYYY-MM-DD.md
   const back=document.querySelector('.bar a.btn');
   if(back){ back.href='index.html'; back.style.display=''; }
   document.querySelector('.bar b').firstChild.textContent='XAU Grid 交易日报 · 云端快照 ';
