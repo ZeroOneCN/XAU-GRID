@@ -194,9 +194,10 @@ $('dlBtn').onclick=()=>{
 };
 
 if(STATIC){
-  // 云端静态只读：隐藏日期切换与「返回看板」（无本机地址）
+  // 云端静态只读：隐藏日期切换；但保留返回看板（GitHub Pages 同站有 index.html）
   $('dateInput').style.display='none'; $('goBtn').style.display='none';
-  const back=document.querySelector('.bar a.btn'); if(back) back.style.display='none';
+  const back=document.querySelector('.bar a.btn');
+  if(back){ back.href='index.html'; back.style.display=''; }
   document.querySelector('.bar b').firstChild.textContent='XAU Grid 交易日报 · 云端快照 ';
 }
 // 跟随设备主题

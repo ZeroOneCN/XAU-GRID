@@ -13,6 +13,9 @@
   --up-soft:#00c0871a;--down-soft:#ff4d5e1a;
   --accent-soft:#3fa9f51a;--gold-soft:#f2b84b1a;
   --accent-border:#3fa9f52e;--gold-border:#f2b84b33;--gold-line:#f2b84b99;
+  /* Canvas 专用色：主线条比文字色更亮，浅色模式单独提对比度 */
+  --curve-up:#00c087;--curve-down:#ff4d5e;--curve-accent:#5cc0ff;--curve-gold:#f2b84b;
+  --curve-fill-a:0.30;
   --dot-up:#6ee7c4;--dot-down:#ff8a95;
   /* 文字 */
   --text:#e8eef7;--muted:#7f8fa6;--muted-2:#60718a;--note:#6d7f96;
@@ -43,6 +46,8 @@
     --up-soft:#007d5418;--down-soft:#d32f3f18;
     --accent-soft:#1257a818;--gold-soft:#a66a0618;
     --accent-border:#1257a83a;--gold-border:#a66a0638;--gold-line:#a66a0699;
+    --curve-up:#006644;--curve-down:#b31224;--curve-accent:#0b4f96;--curve-gold:#8a5600;
+    --curve-fill-a:0.14;
     --dot-up:#00a878;--dot-down:#e53948;
     --text:#15233a;--muted:#56677d;--muted-2:#64758a;--note:#62748a;
     --footer-text:#74849a;--footer-b:#46586e;--symbol:#3d5068;--duration:#5b6d82;
@@ -160,8 +165,8 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
 .range-bar button.active{color:var(--active-text);background:var(--accent);border-color:var(--accent);font-weight:700}
 .curve-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
 .curve-legend i{display:inline-block;width:14px;height:0;border-top:2px solid;margin-right:4px;vertical-align:middle}
-.curve-legend .ln1{border-color:var(--up)}.curve-legend .ln2{border-color:var(--accent);border-top-style:dashed}
-.curve-legend .ln3{border-color:var(--gold);border-top-style:dashed}
+.curve-legend .ln1{border-color:var(--curve-up)}.curve-legend .ln2{border-color:var(--curve-accent);border-top-style:dashed}
+.curve-legend .ln3{border-color:var(--curve-gold);border-top-style:dashed}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .cal-nav button{padding:4px 9px;font-size:11px}
 .cal-nav button:disabled{opacity:.3;cursor:not-allowed}
@@ -552,10 +557,11 @@ function drawCurve(points, hover = -1){
   if(!points || points.length < 2) return;
 
   const cGrid = cssVar('--grid-line'), cAxis = cssVar('--axis'), cAxis2 = cssVar('--axis-2');
-  const cUp = cssVar('--up'), cDown = cssVar('--down'), cGold = cssVar('--gold');
-  const cAccent = cssVar('--accent'), cHover = cssVar('--hover-line');
-  const cGoldLine = cssVar('--gold-line');
+  const cCurveUp = cssVar('--curve-up'), cCurveDown = cssVar('--curve-down');
+  const cCurveAccent = cssVar('--curve-accent'), cCurveGold = cssVar('--curve-gold');
+  const cHalo = cssVar('--panel-top'), cHover = cssVar('--hover-line');
   const cTipBg = cssVar('--tip-bg'), cTipBorder = cssVar('--tip-border'), cTipText = cssVar('--tip-text');
+  const fillAlpha = parseFloat(cssVar('--curve-fill-a')) || 0.22;
 
   const padL = w < 480 ? 48 : 58, padR = 12, padT = 12, padB = 26;
   const pw = w - padL - padR, ph = h - padT - padB;
@@ -571,7 +577,7 @@ function drawCurve(points, hover = -1){
   const last = points.length - 1;
   const baseNow = bv[last];
   const rising = ev[last] >= baseNow;
-  const line = rising ? cUp : cDown;
+  const line = rising ? cCurveUp : cCurveDown;
   const dot = rising ? cssVar('--dot-up') : cssVar('--dot-down');
   const rgb = rising ? cssVar('--up-rgb') : cssVar('--down-rgb');
 
@@ -589,29 +595,37 @@ function drawCurve(points, hover = -1){
   ctx.textAlign = 'right'; ctx.fillText(points[last].t, w - padR, h - 7);
 
   const grad = ctx.createLinearGradient(0, padT, 0, padT + ph);
-  grad.addColorStop(0, `rgba(${rgb},0.33)`); grad.addColorStop(1, `rgba(${rgb},0)`);
+  grad.addColorStop(0, `rgba(${rgb},${fillAlpha})`); grad.addColorStop(1, `rgba(${rgb},0)`);
   ctx.beginPath(); ctx.moveTo(px(0), padT + ph);
   rv.forEach((v, i) => ctx.lineTo(px(i), py(v)));
   ctx.lineTo(px(last), padT + ph); ctx.closePath();
   ctx.fillStyle = grad; ctx.fill();
 
-  ctx.setLineDash([5, 4]); ctx.strokeStyle = cGoldLine; ctx.lineWidth = 1;
+  ctx.setLineDash([5, 4]); ctx.strokeStyle = cCurveGold; ctx.lineWidth = 1.3;
   ctx.beginPath(); bv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
   ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle = cGold; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.fillStyle = cCurveGold; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
   ctx.fillText('入金 $' + Math.round(baseNow).toLocaleString('en-US'), padL + 4, py(baseNow) - 3);
   ctx.textBaseline = 'middle';
 
-  ctx.beginPath();
-  rv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
-  ctx.strokeStyle = line; ctx.lineWidth = 1.8; ctx.stroke();
-
-  ctx.setLineDash([6, 3]); ctx.strokeStyle = cAccent; ctx.lineWidth = 1.6;
+  // 先画账户权益虚线，避免它盖住主权益线的颜色（两者重叠时尤其明显）
+  ctx.setLineDash([6, 3]); ctx.strokeStyle = cCurveAccent; ctx.lineWidth = 1.6;
   ctx.beginPath();
   ev.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
   ctx.stroke(); ctx.setLineDash([]);
-  ctx.beginPath(); ctx.arc(px(last), py(ev[last]), 3.4, 0, Math.PI * 2);
+
+  // 主权益线：先描一圈底色，浅色模式下与同色填充拉开对比
+  ctx.beginPath();
+  rv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = cHalo; ctx.lineWidth = 4.4; ctx.stroke();
+  ctx.strokeStyle = line; ctx.lineWidth = 2.2; ctx.stroke();
+  ctx.lineJoin = 'miter';
+
+  ctx.beginPath(); ctx.arc(px(last), py(ev[last]), 3.6, 0, Math.PI * 2);
   ctx.fillStyle = dot; ctx.fill();
+  const ln1 = document.querySelector('.curve-legend .ln1');
+  if(ln1) ln1.style.borderColor = line;
 
   if(hover >= 0 && hover < points.length){
     const x = px(hover), y = py(ev[hover]);
@@ -632,7 +646,7 @@ function drawCurve(points, hover = -1){
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillStyle = cTipText; ctx.fillText(label, bx + 9, by + 12);
     ctx.fillStyle = line; ctx.fillText(rText, bx + 9, by + 28);
-    ctx.fillStyle = cAccent; ctx.fillText(eText, bx + 9, by + 44);
+    ctx.fillStyle = cCurveAccent; ctx.fillText(eText, bx + 9, by + 44);
   }
 }
 
