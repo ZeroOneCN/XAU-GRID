@@ -137,8 +137,10 @@ function bindEvents(){
     // 云端静态同样可用自定义日历：返回看板用相对地址
     const back=document.querySelector('.report-bar a.btn');
     if(back){ back.href='index.html'; back.style.display=''; }
-    const b=document.querySelector('.report-bar b');
-    if(b && b.firstChild) b.firstChild.textContent='XAU Grid 交易日报 · 云端快照 ';
+    // 品牌标题保持与看板一致的固定文案，避免云端长标题挤占状态与按钮的同一行空间；
+    // 「云端快照」这一状态改由中间状态位标注。
+    const status = document.querySelector('.rb-meta .rb-status');
+    if(status) status.innerHTML = '<i class="dot"></i>REPORT · 云端快照';
   }
   bindEvents();
   await loadDates();
