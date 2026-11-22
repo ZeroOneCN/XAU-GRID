@@ -76,11 +76,11 @@ function render(d){
   $('sLevel').textContent = d.account.margin_level.toFixed(0) + '%';
   $('sSource').textContent = live ? 'MT5 终端' : (cached ? '离线缓存' : '演示模拟器');
 
-  $('curveTag').textContent = live ? `历史权益 · ${d.summary.curve_deals || 0} 笔` : '权益曲线';
+  $('curveTag').textContent = live ? `剔除出入金 · ${d.summary.curve_deals || 0} 笔` : '交易权益 · 剔除出入金';
   lastCurve = d.equity_curve || [];
   if(hoverIdx >= lastCurve.length) hoverIdx = -1;
   const firstT = lastCurve.length ? lastCurve[0].t : '—';
-  $('chartNote').innerHTML = `<span>${rangeLabels[currentRange]} · ${firstT} → 现在</span><span>更新 ${(d.server_time || '').slice(11)} ${srvTz}</span>`;
+  $('chartNote').innerHTML = `<span>${rangeLabels[currentRange]} · 剔除出入金 · ${firstT} → 现在</span><span>更新 ${(d.server_time || '').slice(11)} ${srvTz}</span>`;
   $('chartNote').title = `数据更新时间 ${d.server_time} ${srvTz}`;
   drawCurve(lastCurve, hoverIdx);
   dailyMap = Object.fromEntries((d.daily_pnl || []).map(x => [x.d, x.v]));
