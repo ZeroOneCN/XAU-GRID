@@ -29,7 +29,7 @@ function drawCurve(points, hover = -1){
   const fillAlpha = parseFloat(cssVar('--curve-fill-a')) || 0.22;
 
   const narrow = w < 520;
-  const padR = 10, padT = 14, padB = narrow ? 24 : 28;
+  const padR = 10, padT = 16, padB = narrow ? 30 : 32;
   const rv = points.map(p => p.v ?? 0);
   const ev = points.map(p => p.eq ?? p.v ?? 0);
   const all = rv.concat(ev);
@@ -45,9 +45,9 @@ function drawCurve(points, hover = -1){
   for(let k = 0; k < yTicks; k++){
     yTexts.push(fmtY(hi - k * (hi - lo) / (yTicks - 1)));
   }
-  ctx.font = `${narrow ? 9 : 10}px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
+  ctx.font = `13px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
   const maxLabelW = Math.max(...yTexts.map(t => ctx.measureText(t).width));
-  const padL = Math.ceil(maxLabelW) + 14;
+  const padL = Math.ceil(maxLabelW) + 16;
   const pw = w - padL - padR, ph = h - padT - padB;
   if(pw <= 20 || ph <= 20) return;
 
@@ -72,7 +72,7 @@ function drawCurve(points, hover = -1){
     if(multiDay) return long ? `${d} ${hm}` : d;
     return long ? `${d} ${hm}` : hm;
   };
-  const minGap = narrow ? 76 : 108;
+  const minGap = narrow ? 88 : 118;
   const tickN = Math.max(2, Math.min(6, Math.floor(pw / minGap) + 1));
   const tickIdx = [];
   for(let j = 0; j < tickN; j++){
@@ -92,11 +92,11 @@ function drawCurve(points, hover = -1){
   });
 
   // —— Y 轴标签 ——
-  ctx.font = `${narrow ? 9 : 10}px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
+  ctx.font = `13px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
   ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillStyle = cAxis;
   for(let k = 0; k < yTicks; k++){
     const y = padT + k * ph / (yTicks - 1);
-    ctx.fillText(yTexts[k], padL - 7, y);
+    ctx.fillText(yTexts[k], padL - 8, y);
   }
 
   // —— X 轴标签：先放首尾，再放中间，重叠则跳过 ——
@@ -167,10 +167,10 @@ function drawCurve(points, hover = -1){
     const label = tOf(points[hover]) || '';
     const rText = '已实现 ' + money(rv[hover]);
     const eText = '账户   ' + moneyAbs(ev[hover]);
-    ctx.font = `${narrow ? 10 : 11}px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
+    ctx.font = `13px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
     const bw = Math.min(Math.max(ctx.measureText(label).width, ctx.measureText(rText).width,
-      ctx.measureText(eText).width) + 18, w - 8);
-    const bh = narrow ? 52 : 56;
+      ctx.measureText(eText).width) + 20, w - 8);
+    const bh = 68;
     let bx = x + 12;
     if(bx + bw > w - 4) bx = x - bw - 12;
     bx = Math.max(4, Math.min(bx, w - bw - 4));
@@ -181,9 +181,9 @@ function drawCurve(points, hover = -1){
     ctx.fillStyle = cTipBg; ctx.strokeStyle = cTipBorder; ctx.lineWidth = 1;
     roundRect(ctx, bx, by, bw, bh, 2); ctx.fill(); ctx.stroke();
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = cTipText; ctx.fillText(label, bx + 9, by + (narrow ? 10 : 12));
-    ctx.fillStyle = line; ctx.fillText(rText, bx + 9, by + (narrow ? 24 : 28));
-    ctx.fillStyle = cCurveAccent; ctx.fillText(eText, bx + 9, by + (narrow ? 38 : 44));
+    ctx.fillStyle = cTipText; ctx.fillText(label, bx + 10, by + 15);
+    ctx.fillStyle = line; ctx.fillText(rText, bx + 10, by + 34);
+    ctx.fillStyle = cCurveAccent; ctx.fillText(eText, bx + 10, by + 53);
     ctx.textBaseline = 'alphabetic';
   }
 }

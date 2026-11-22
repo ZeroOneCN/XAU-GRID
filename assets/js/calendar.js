@@ -47,8 +47,9 @@ function renderCalendar(){
     const alpha = has ? (light ? 0.20 + 0.40 * ratio : 0.32 + 0.6 * ratio) : 0;
     const rgb = cssVar(v > 0 ? '--up-rgb' : '--down-rgb');
     const bg = has ? `rgba(${rgb},${alpha.toFixed(2)})` : '';
-    // 收益日历保留紧凑口径：≥1000 为 x.xxk，<1000 两位小数
-    const label = has ? moneyCompact(v) : '';
+    // 收益日历保留紧凑口径（≥1000 为 x.xxk，<1000 两位小数）；
+    // 单元格内省略货币符号以适配窄格，完整金额见 title 提示。
+    const label = has ? (v >= 0 ? '+' : '−') + compactNum(v) : '';
     const ink = has ? inkFor(rgb, alpha) : '';
     const darkInk = ink === '#050607';
     html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}`

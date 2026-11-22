@@ -17,7 +17,7 @@
 
 /* —— 按钮 —— */
 button,.btn{
-  color:var(--text);font-family:var(--mono);font-size:11px;cursor:pointer;
+  color:var(--text);font-family:var(--mono);font-size:13px;cursor:pointer;
   background:transparent;border:1px solid var(--line);border-radius:0;
   padding:9px 14px;height:34px;letter-spacing:.08em;text-transform:uppercase;
   box-shadow:none;
@@ -44,7 +44,7 @@ button:focus-visible,.btn:focus-visible{outline:1px solid var(--accent);outline-
 }
 .brand h1 .slash{color:var(--accent);font-weight:400;margin:0 .16em}
 .brand p{
-  font-size:10px;color:var(--muted);margin-top:7px;letter-spacing:.26em;
+  font-size:12px;color:var(--muted);margin-top:7px;letter-spacing:.18em;
   text-transform:uppercase;white-space:nowrap;font-family:var(--mono);
 }
 .mast-side{display:flex;flex-direction:column;align-items:flex-end;gap:12px;min-width:0}
@@ -54,7 +54,7 @@ button:focus-visible,.btn:focus-visible{outline:1px solid var(--accent);outline-
 /* —— 状态文本（无胶囊底） —— */
 .chip{
   display:inline-flex;align-items:center;gap:8px;padding:0;border:0;border-radius:0;
-  background:transparent;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  background:transparent;font-family:var(--mono);font-size:13px;letter-spacing:.05em;
   color:var(--muted);white-space:nowrap;box-shadow:none;
 }
 .chip b{color:var(--text);font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
@@ -122,16 +122,16 @@ button:focus-visible,.btn:focus-visible{outline:1px solid var(--accent);outline-
 .panel{overflow:hidden;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:0;box-shadow:none}
 .panel:hover{border-color:var(--glass-border-hi)}
 .panel-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
-.panel-head h2{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-.panel-head .tag{font-size:10px;color:var(--muted-2);font-family:var(--mono);margin-left:auto;letter-spacing:.08em;white-space:nowrap}
+.panel-head h2{font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.panel-head .tag{font-size:13px;color:var(--muted-2);font-family:var(--mono);margin-left:auto;letter-spacing:.06em;white-space:nowrap}
 
 /* —— 表格：加高行、严格垂直居中、等宽右对齐、滚动吸附表头 —— */
 .table-scroll{overflow:auto;max-height:460px;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:15px}
 th{
   position:sticky;top:0;z-index:3;vertical-align:middle;
-  text-align:right;color:var(--muted);font-weight:500;font-size:10px;letter-spacing:.10em;
-  text-transform:uppercase;padding:12px 16px;background:var(--panel);
+  text-align:right;color:var(--muted);font-weight:500;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;padding:13px 16px;background:var(--panel);
   border-bottom:1px solid var(--line);white-space:nowrap;
 }
 th[title]{cursor:help;text-decoration:underline dotted var(--help-line);text-underline-offset:3px}
@@ -149,7 +149,7 @@ tbody tr:last-child td{border-bottom:none}
 
 /* 方向徽章：BUY 国际橙 / SELL 钢灰，与盈亏色分离 */
 .side{
-  font-weight:700;font-size:10px;padding:4px 8px;border-radius:1px;display:inline-flex;
+  font-weight:700;font-size:12px;padding:4px 8px;border-radius:1px;display:inline-flex;
   align-items:center;justify-content:center;line-height:1;min-width:48px;vertical-align:middle;
   letter-spacing:.08em;box-shadow:none;
 }
@@ -163,13 +163,13 @@ tbody tr:last-child td{border-bottom:none}
 .deals-scroll{max-height:400px}
 
 /* —— 敞口条 —— */
-.expo{display:flex;justify-content:space-between;font-size:11px;margin-bottom:8px;color:var(--muted);font-family:var(--mono)}
+.expo{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:var(--muted);font-family:var(--mono)}
 .expo b{font-family:var(--mono);color:var(--text);font-variant-numeric:tabular-nums}
 .bar{height:8px;border-radius:0;background:var(--bar-bg);overflow:hidden;display:flex;box-shadow:none}
 .bar i{display:block;height:100%;transition:width .4s linear}
 .bar .b{background:var(--accent)}
 .bar .s{background:var(--gold)}
-.legend{display:flex;gap:18px;margin-top:10px;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em}
+.legend{display:flex;gap:18px;margin-top:10px;font-size:13px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
 .legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:0;margin-right:6px}
 .legend .lb::before{background:var(--accent)}
 .legend .ls::before{background:var(--gold)}
@@ -177,7 +177,7 @@ tbody tr:last-child td{border-bottom:none}
 /* —— 统计行 —— */
 .stat-row{
   display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;
-  border-bottom:1px solid var(--stat-line);font-size:12px;
+  border-bottom:1px solid var(--stat-line);font-size:14px;
 }
 .stat-row:last-child{border-bottom:none}
 .stat-row span{color:var(--muted)}
@@ -193,9 +193,9 @@ tbody tr:last-child td{border-bottom:none}
   .panel-head{flex-wrap:wrap;row-gap:8px}
   .panel-head h2{white-space:nowrap;flex:none}
   .deal-nav{margin-left:0;width:100%;flex-wrap:wrap;justify-content:flex-start}
-  th{padding:10px 8px;font-size:9px;letter-spacing:.04em}
-  td{padding:13px 8px;font-size:11px}
-  .side{min-width:40px;padding:3px 6px;font-size:9px;letter-spacing:.04em}
+  th{padding:10px 8px;font-size:14px;letter-spacing:.02em}
+  td{padding:13px 8px;font-size:14px}
+  .side{min-width:44px;padding:3px 6px;font-size:12px;letter-spacing:.02em}
   .table-scroll{max-height:58vh}
   .deals-scroll{max-height:54vh}
 }

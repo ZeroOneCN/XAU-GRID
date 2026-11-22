@@ -35,18 +35,18 @@ body{padding:0;line-height:1.75}
   letter-spacing:.02em;white-space:nowrap;
 }
 .rb-title small{
-  display:block;margin-top:6px;font-family:var(--mono);font-size:9px;
-  color:var(--muted-2);letter-spacing:.20em;white-space:nowrap;
+  display:block;margin-top:6px;font-family:var(--mono);font-size:12px;
+  color:var(--muted-2);letter-spacing:.14em;white-space:nowrap;
 }
 .rb-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
 .report-bar a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;line-height:1.2}
 
 /* —— 自定义交易日选择器 —— */
 .datepick{position:relative}
-.dp-trigger{display:flex;align-items:center;gap:7px;min-width:158px;justify-content:flex-start;
-  font-family:var(--mono);font-size:12px;padding:7px 11px}
+.dp-trigger{display:flex;align-items:center;gap:7px;min-width:170px;justify-content:flex-start;
+  font-family:var(--mono);font-size:14px;padding:7px 11px}
 .dp-trigger svg{width:14px;height:14px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.7}
-.dp-trigger .caret{margin-left:auto;color:var(--muted);font-size:10px}
+.dp-trigger .caret{margin-left:auto;color:var(--muted);font-size:13px}
 .dp-panel{
   position:absolute;right:0;top:calc(100% + 7px);z-index:40;width:296px;
   background:var(--panel);border:1px solid var(--line);border-radius:0;padding:13px;
@@ -54,13 +54,13 @@ body{padding:0;line-height:1.75}
 }
 .dp-panel[hidden]{display:none}
 .dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.dp-head strong{font-size:13px;letter-spacing:.4px;font-family:var(--mono)}
-.dp-nav{width:30px;height:28px;padding:0;font-size:17px;line-height:1;text-align:center}
+.dp-head strong{font-size:15px;letter-spacing:.3px;font-family:var(--mono)}
+.dp-nav{width:32px;height:30px;padding:0;font-size:18px;line-height:1;text-align:center}
 .dp-week,.dp-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
-.dp-week span{text-align:center;font-size:10px;color:var(--muted);padding:3px 0;letter-spacing:.08em}
+.dp-week span{text-align:center;font-size:13px;color:var(--muted);padding:3px 0;letter-spacing:.04em}
 .dp-grid{margin-top:3px}
-.dp-day{height:34px;min-width:0;padding:0;border:1px solid transparent;border-radius:0;
-  background:transparent;color:var(--text);font-family:var(--mono);font-size:12px;position:relative;
+.dp-day{height:36px;min-width:0;padding:0;border:1px solid transparent;border-radius:0;
+  background:transparent;color:var(--text);font-family:var(--mono);font-size:14px;position:relative;
   box-shadow:none}
 .dp-day.has{border-color:var(--line);background:var(--bg-2)}
 .dp-day.has:hover{border-color:var(--accent-border);background:var(--hover-bg);color:var(--accent)}
@@ -74,19 +74,19 @@ body{padding:0;line-height:1.75}
 .dp-empty{height:34px}
 .dp-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;
   margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
-.dp-foot small{color:var(--subtle);font-size:10px}
-.dp-latest{padding:4px 9px;font-size:11px}
+.dp-foot small{color:var(--subtle);font-size:13px}
+.dp-latest{padding:4px 9px;font-size:13px}
 
 /* —— 日报标题带 —— */
 .report-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .report-head .sec-index{
-  font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);
-  letter-spacing:.08em;line-height:1;
+  font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);
+  letter-spacing:.06em;line-height:1;
 }
-.report-head h2{font-family:var(--mono);font-size:11px;font-weight:700;
-  letter-spacing:.16em;color:var(--muted)}
-.report-tag{margin-left:auto;font-family:var(--mono);font-size:9px;
-  color:var(--muted-2);letter-spacing:.14em;white-space:nowrap}
+.report-head h2{font-family:var(--mono);font-size:14px;font-weight:700;
+  letter-spacing:.12em;color:var(--muted)}
+.report-tag{margin-left:auto;font-family:var(--mono);font-size:13px;
+  color:var(--muted-2);letter-spacing:.08em;white-space:nowrap}
 
 /* —— 日报正文：平面文档 —— */
 article{
@@ -100,15 +100,15 @@ article h1{
 }
 article h2{
   display:flex;align-items:center;gap:10px;
-  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  margin:30px 0 12px;padding-top:16px;border-top:1px solid var(--line-soft);
+  font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  margin:32px 0 12px;padding-top:16px;border-top:1px solid var(--line-soft);
 }
 article h2::before{content:"";width:3px;height:14px;background:var(--accent);flex:none}
-article p{font-size:13px;color:var(--para);margin:7px 0;line-height:1.85}
+article p{font-size:15px;color:var(--para);margin:8px 0;line-height:1.8}
 article blockquote{
-  font-family:var(--mono);font-size:11px;color:var(--para);letter-spacing:.02em;
+  font-family:var(--mono);font-size:14px;color:var(--para);letter-spacing:.01em;
   background:var(--quote-bg);border-left:2px solid var(--quote-border);border-radius:0;
-  padding:9px 14px;margin:0 0 1px;
+  padding:10px 15px;margin:0 0 1px;
 }
 article blockquote:first-of-type{margin-top:14px}
 article .bullet,article .num{padding-left:18px;position:relative}
@@ -127,14 +127,15 @@ article .sell{color:var(--sell);font-weight:700}
 article .pct{color:var(--pct);font-weight:700}
 
 /* —— 日报表格 —— */
-article table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin:12px 0 6px}
+article table{width:100%;border-collapse:separate;border-spacing:0;font-size:15px;margin:14px 0 6px}
 article th{
   text-align:left;color:var(--muted);font-weight:500;background:transparent;
-  font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-  padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  font-family:var(--mono);font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+  padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  vertical-align:middle;
 }
 article td{
-  padding:11px 12px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
+  padding:12px 12px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
   font-variant-numeric:tabular-nums;color:var(--para);white-space:nowrap;vertical-align:middle;
 }
 article tbody tr:nth-child(even) td{background:var(--zebra)}
@@ -143,12 +144,12 @@ article tr:last-child td{border-bottom:none}
 article th:last-child,article td:last-child{text-align:right}
 article .ta-r{text-align:right}
 article .ta-c{text-align:center}
-#tip{text-align:center;color:var(--muted);font-size:12px;padding:34px}
+#tip{text-align:center;color:var(--muted);font-size:14px;padding:34px}
 
 .report-foot{
   display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   margin-top:18px;padding-top:12px;border-top:1px solid var(--line);
-  font-family:var(--mono);font-size:9px;color:var(--muted-2);letter-spacing:.12em;
+  font-family:var(--mono);font-size:13px;color:var(--muted-2);letter-spacing:.06em;
 }
 
 @media(max-width:900px){
@@ -162,25 +163,25 @@ article .ta-c{text-align:center}
   .rb-brand{gap:10px}
   .rb-mark{width:32px;height:32px}
   .rb-mark svg{width:17px;height:17px}
-  .rb-title b{font-size:15px}
-  .rb-title small{font-size:8px;letter-spacing:.14em}
+  .rb-title b{font-size:16px}
+  .rb-title small{font-size:11px;letter-spacing:.08em}
   .rb-actions{flex:1 1 100%;margin-left:0;justify-content:flex-start;gap:6px}
   .report-head{gap:8px}
-  .report-head h2{font-size:10px;letter-spacing:.10em}
-  .report-tag{font-size:8px;letter-spacing:.08em}
+  .report-head h2{font-size:13px;letter-spacing:.06em}
+  .report-tag{font-size:13px;letter-spacing:.04em}
   article{padding:18px 15px 26px;min-height:320px}
-  article h1{font-size:20px;padding-bottom:12px}
-  article h2{font-size:11px;margin-top:22px;padding-top:12px}
-  article p{font-size:12px;line-height:1.8}
-  article blockquote{font-size:10px;padding:8px 10px}
-  article table{font-size:10px;display:block;overflow-x:auto;white-space:nowrap;margin:10px 0 4px}
+  article h1{font-size:22px;padding-bottom:12px}
+  article h2{font-size:15px;margin-top:24px;padding-top:12px}
+  article p{font-size:15px;line-height:1.75}
+  article blockquote{font-size:13px;padding:8px 10px}
+  article table{font-size:15px;display:block;overflow-x:auto;white-space:nowrap;margin:10px 0 4px}
   article th,article td{padding:8px 8px}
   /* 窄屏隐藏次要列：平仓明细去掉订单/品种，持仓去掉订单/开仓价 */
   article table.al-llllrr th:nth-child(2),article table.al-llllrr td:nth-child(2),
   article table.al-llllrr th:nth-child(3),article table.al-llllrr td:nth-child(3),
   article table.al-llrrrr th:nth-child(1),article table.al-llrrrr td:nth-child(1),
   article table.al-llrrrr th:nth-child(4),article table.al-llrrrr td:nth-child(4){display:none}
-  .report-foot{font-size:8px;letter-spacing:.06em}
+  .report-foot{font-size:13px;letter-spacing:.03em}
   /* .report-bar 有 backdrop-filter 时是 fixed 的包含块；此处保持相对定位弹层 */
   .datepick{position:static}
   .dp-panel{position:absolute;left:50%;right:auto;top:calc(100% + 10px);bottom:auto;

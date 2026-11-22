@@ -24,6 +24,7 @@ function render(d){
 
   setText('floating', money(d.summary.floating), cls(d.summary.floating));
   setText('realized', money(d.summary.today_realized), cls(d.summary.today_realized));
+  setText('realizedTotal', money(d.summary.history_realized ?? 0), cls(d.summary.history_realized ?? 0));
   setText('balValue', moneyAbs(d.account.balance), cls(d.account.balance));
   $('closedLine').textContent = `${d.summary.closed_today} 笔平仓`;
   $('count').textContent = d.summary.positions;
@@ -31,6 +32,9 @@ function render(d){
   setText('net', d.summary.net_lots.toFixed(2), 'neutral');
   setText('win', d.summary.win_rate == null ? '—' : d.summary.win_rate.toFixed(1) + '%',
           d.summary.win_rate == null ? 'neutral' : (d.summary.win_rate >= 70 ? 'up' : 'neutral'));
+  $('winHist').textContent = d.summary.history_win_rate == null
+    ? `历史 — · 累计 ${d.summary.history_closed ?? 0} 笔`
+    : `历史 ${d.summary.history_win_rate.toFixed(1)}% · 累计 ${d.summary.history_closed ?? 0} 笔`;
 
   const rows = d.positions.map(p => `<tr>
       <td class="ticket hide-mobile">#${p.ticket}</td>
@@ -46,7 +50,7 @@ function render(d){
   $('tableTag').textContent = `OPEN POSITIONS · ${d.summary.positions}`;
 
   setText('sEquity', moneyAbs(d.account.equity), cls(d.account.equity));
-  setText('sMargin', moneyAbs(d.account.margin), cls(d.account.margin));
+  setText('sMargin', moneyAbs(d.account.margin), 'neutral');
   $('sLevel').textContent = d.account.margin_level.toFixed(0) + '%';
   $('sSource').textContent = live ? 'MT5 终端' : (cached ? '离线缓存' : '演示模拟器');
 
@@ -97,7 +101,7 @@ async function loadDeals(page){
     $('deals').innerHTML = j.deals.length ? j.deals.map(x => `<tr>
         <td>${x.time || '—'}</td>
         <td class="ticket hide-mobile">#${x.ticket}</td>
-        <td class="hide-narrow" style="text-align:left;color:var(--symbol)">${x.symbol}</td>
+        <td class="hide-narrow ta-l" style="color:var(--symbol)">${x.symbol}</td>
         <td><span class="side ${x.type === 'BUY' ? 'buy' : 'sell'}">${x.type}</span></td>
         <td class="hide-mobile">${(x.lots || 0).toFixed(2)}</td>
         <td class="money ${cls(x.profit)}">${money(x.profit)}</td>
@@ -107,6 +111,32 @@ async function loadDeals(page){
     $('deals').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--down);padding:24px">历史加载失败，重试中…</td></tr>';
   }finally{
     dealsState.loading = false;
+  }
+}
+
+/* 出入金：仅展示 MT5 balance 类成交的真实聚合，无任何估算 */
+function renderCashflow(c){
+  setText('cfDeposits', moneyAbs(c.deposits || 0), 'neutral');
+  setText('cfWithdrawals', moneyAbs(c.withdrawals || 0), 'neutral');
+  setText('cfNet', money(c.net || 0), cls(c.net || 0));
+  $('cfCount').textContent = `${c.total || 0} 笔`;
+  $('cashflowTag').textContent = `BALANCE DEALS · ${(c.mode || '').toUpperCase()}`;
+  const rows = (c.items || []).map(x => `<tr>
+      <td>${x.time || '—'}</td>
+      <td class="ticket ta-l hide-mobile">#${x.ticket || '—'}</td>
+      <td class="ta-c"><span class="side ${x.type === 'DEPOSIT' ? 'buy' : 'sell'}">${x.type === 'DEPOSIT' ? '入金' : '出金'}</span></td>
+      <td class="money ${cls(x.amount)}">${money(x.amount || 0)}</td>
+    </tr>`).join('');
+  $('cashflow').innerHTML = rows
+    || '<tr><td colspan="4" class="empty">暂无出入金记录</td></tr>';
+}
+
+async function loadCashflow(){
+  try{
+    const r = await fetch(STATIC ? 'cashflow.json' : '/api/cashflow', {cache:'no-store'});
+    renderCashflow(await r.json());
+  }catch(e){
+    // 读取失败时保留上一次结果，不覆盖为 0
   }
 }
 
@@ -229,7 +259,9 @@ function init(){
   }
   bindEvents();
   setInterval(tick, 200); tick();
-  poll(); loadDeals(1); setInterval(poll, STATIC ? 30000 : 2000);
+  poll(); loadDeals(1); loadCashflow();
+  setInterval(poll, STATIC ? 30000 : 2000);
+  setInterval(loadCashflow, 60000);
 }
 
 init();
