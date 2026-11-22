@@ -1,6 +1,6 @@
 /* ============================================================
- * layout.css — 全局骨架 / KPI 数据带 / 曲线 / 日历 / 分页 / 响应式
- * 极简任务控制风：细线分隔、方角、克制留白、稳定栅格。
+ * layout.css — 任务控制台架构
+ * 指挥主视窗（权益/余额/敞口）→ 次级数据带 → 持仓 → 历史/图表
  * ============================================================ */
 
 .wrap{
@@ -11,48 +11,136 @@
   z-index:1;
 }
 
-/* —— 主栅格 —— */
-.grid{display:grid;gap:20px}
-.row-top{grid-template-columns:minmax(0,1.7fr) minmax(320px,.8fr);align-items:start}
-.row-charts{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:20px}
-.row-charts>.panel{display:flex;flex-direction:column}
-.row-charts .pad{flex:1;display:flex;flex-direction:column}
-.side-stack{display:flex;flex-direction:column;gap:20px}
-.pad{padding:18px 20px}
-
-/* —— KPI 数据带 ——
- * 主指标独占一行，其余四项等分；1px 网格线由 gap + 背景色构成，
- * 这样在 4/2/1 列切换时分割线自动成立，不需要为每个断点补边框。
- */
-.kpis{
+/* —— 01/02 指挥主视窗 —— */
+.command-deck{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-columns:minmax(0,1.7fr) minmax(320px,.9fr);
   gap:1px;
   background:var(--line);
   border:1px solid var(--line);
+  margin-bottom:1px;
+}
+.cmd-main,.cmd-exposure{background:var(--panel);min-width:0}
+.cmd-exposure{display:flex;flex-direction:column}
+
+.cmd-head{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 22px;border-bottom:1px solid var(--line);
+}
+.sec-index{
+  font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);
+  letter-spacing:.08em;line-height:1;
+}
+.cmd-title{
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;
+}
+.cmd-tag{
+  margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--accent);
+  letter-spacing:.10em;white-space:nowrap;
+}
+
+/* 权益 / 余额：主视觉 */
+.cmd-equity{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+  gap:1px;background:var(--line);
+}
+.cmd-metric{background:var(--panel);padding:26px 28px 22px;min-width:0}
+.cmd-label{
+  display:block;font-family:var(--mono);font-size:10px;color:var(--muted);
+  letter-spacing:.20em;text-transform:uppercase;margin-bottom:12px;
+}
+.cmd-value{
+  display:block;font-family:var(--mono);
+  font-size:clamp(48px,5.4vw,84px);
+  font-weight:700;line-height:.95;letter-spacing:-.045em;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.cmd-value.sm{font-size:clamp(34px,3.8vw,60px);color:var(--text)}
+.cmd-note{
+  display:block;margin-top:12px;font-family:var(--mono);font-size:11px;
+  color:var(--muted);letter-spacing:.03em;line-height:1.5;
+}
+.cmd-note b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* 次级指标条 */
+.cmd-strip{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1px;background:var(--line);border-top:1px solid var(--line);
+}
+.strip-cell{background:var(--panel);padding:16px 22px;min-width:0}
+.strip-cell span{
+  display:block;font-family:var(--mono);font-size:9px;color:var(--muted-2);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;
+}
+.strip-cell b{
+  display:block;font-family:var(--mono);font-size:18px;font-weight:700;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+
+/* 当前敞口 */
+.expo-hero{display:flex;align-items:baseline;gap:10px;padding:24px 24px 0;min-width:0}
+.expo-hero .cmd-value{font-size:clamp(40px,4.4vw,72px)}
+.expo-unit{
+  font-family:var(--mono);font-size:9px;color:var(--muted-2);
+  letter-spacing:.16em;white-space:nowrap;
+}
+.cmd-exposure>.cmd-note{padding:0 24px}
+.expo-side-list{padding:18px 24px 0;display:flex;flex-direction:column;gap:10px}
+.expo-side{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.10em;
+}
+.expo-side b{color:var(--text);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.cmd-exposure .bar{margin:14px 24px 0}
+.cmd-exposure>.cmd-note:last-child{padding:10px 24px 20px;margin-top:auto}
+
+/* —— 次级数据带 —— */
+.aux-band{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-top:0;
   margin-bottom:20px;
 }
-.kpi{
-  position:relative;
-  min-width:0;
-  min-height:132px;
-  padding:22px 24px 20px;
-  background:var(--panel);
-  container-type:inline-size;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
+.aux-cell{background:var(--panel);padding:14px 22px;min-width:0}
+.aux-cell span{
+  display:block;font-family:var(--mono);font-size:9px;color:var(--muted-2);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px;white-space:nowrap;
 }
-.kpi.hero{
-  grid-column:1/-1;
-  min-height:0;
-  padding:30px 28px 26px;
-  box-shadow:inset 3px 0 0 var(--accent);
+.aux-cell b{
+  display:block;font-family:var(--mono);font-size:20px;font-weight:700;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
 }
+.aux-cell small{
+  display:block;margin-top:3px;font-family:var(--mono);font-size:9px;
+  color:var(--muted-2);white-space:nowrap;
+}
+
+/* —— 分区面板 —— */
+.section-block{margin-bottom:20px}
+.section-block .panel-head .sec-index{margin-right:2px}
+.archive{margin-bottom:20px}
+.archive-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.archive-head h2{
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);
+}
+.archive-tag{
+  margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--muted-2);
+  letter-spacing:.14em;white-space:nowrap;
+}
+.row-charts{
+  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(320px,.9fr);
+  gap:1px;background:var(--line);border:1px solid var(--line);
+}
+.row-charts>.panel{border:0}
+.row-charts>.panel{display:flex;flex-direction:column}
+.row-charts .pad{flex:1;display:flex;flex-direction:column}
+.pad{padding:18px 20px}
 
 /* —— 权益曲线 —— */
 canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y}
-.range-bar{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--line);width:max-content}
+.range-bar{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--line);width:max-content;max-width:100%}
 .range-bar button{
   padding:7px 14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   border:0;border-left:1px solid var(--line);border-radius:0;color:var(--muted);
@@ -65,7 +153,10 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
 .curve-legend .ln1{border-color:var(--curve-up)}
 .curve-legend .ln2{border-color:var(--curve-accent);border-top-style:dashed}
 .curve-legend .ln3{border-color:var(--curve-gold);border-top-style:dashed}
-.chart-note{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:11px;color:var(--note);font-family:var(--mono);font-variant-numeric:tabular-nums}
+.chart-note{
+  display:flex;justify-content:space-between;gap:8px;margin-top:10px;
+  font-size:11px;color:var(--note);font-family:var(--mono);font-variant-numeric:tabular-nums;
+}
 
 /* —— 收益日历 —— */
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -86,7 +177,10 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
 .cal-cell.today{outline:1px solid var(--accent);outline-offset:-1px}
 .cal-cell .d{font-size:15px;opacity:.9}
 .cal-cell .v{font-size:14px;font-weight:700;letter-spacing:-.6px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.cal-stats{grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+.cal-stats{
+  grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;
+  font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums;
+}
 .cal-stats b{font-weight:700}
 .cal-legend{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-top:14px}
 .cal-legend .sw{display:inline-block;width:12px;height:12px;border-radius:0;margin:0 4px -1px 0;border:1px solid var(--line)}
@@ -94,18 +188,18 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
 /* —— 平仓历史分页 —— */
 .deal-nav{margin-left:auto;display:flex;align-items:center;gap:8px}
 .deal-nav .tag{margin-left:0}
-.deal-nav button{padding:4px 10px;font-size:11px;line-height:1.2}
+.deal-nav button{padding:4px 10px;font-size:11px;line-height:1.2;height:auto}
 .deal-nav #dealPage{font-family:var(--mono);font-size:11px;color:var(--text);min-width:54px;text-align:center;font-variant-numeric:tabular-nums}
 .deal-nav select{
   background:var(--input-bg);color:var(--text);border:1px solid var(--line);border-radius:0;
-  padding:4px 6px;font-size:11px;font-family:var(--mono);cursor:pointer;box-shadow:none;
+  padding:5px 6px;font-size:11px;font-family:var(--mono);cursor:pointer;box-shadow:none;
 }
-.deals-scroll{max-height:330px}
-.deals-scroll td:first-child,.deals-scroll th:first-child{color:var(--muted)}
-.deals-scroll .side{vertical-align:middle}
 
 /* —— 页脚 —— */
-footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap;color:var(--footer-text);font-size:11px;font-family:var(--mono)}
+footer{
+  margin-top:20px;padding-top:14px;border-top:1px solid var(--line);
+  display:flex;gap:18px;flex-wrap:wrap;color:var(--footer-text);font-size:11px;font-family:var(--mono);
+}
 footer b{color:var(--footer-b);font-weight:500}
 footer b.money-legend-up{color:var(--up)}
 footer b.money-legend-down{color:var(--down)}
@@ -117,15 +211,21 @@ footer b.money-legend-down{color:var(--down)}
  * ============================================================ */
 @media(max-width:1240px){
   .wrap{padding:24px 24px 40px}
-  .row-top{grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr)}
+  .command-deck{grid-template-columns:minmax(0,1.5fr) minmax(300px,.9fr)}
+  .cmd-metric{padding:22px 24px 20px}
 }
 
-@media(max-width:1100px){
-  .grid,.row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
+@media(max-width:920px){
+  .row-charts{grid-template-columns:minmax(0,1fr)}
+  .cal-grid{max-width:520px}
 }
 
 @media(max-width:900px){
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .command-deck{grid-template-columns:minmax(0,1fr)}
+  .cmd-exposure{border-top:1px solid var(--line)}
+  .cmd-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .aux-band{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .archive-head{margin-top:4px}
 }
 
 @media(max-width:700px){
@@ -144,14 +244,21 @@ footer b.money-legend-down{color:var(--down)}
   .theme-toggle .tt-ico{width:26px;height:26px}
   .invite{padding:0 10px;font-size:10px;height:32px}
   .icode-copy{height:32px}
-  .kpi{padding:18px 16px 16px;min-height:112px}
-  .kpi.hero{padding:22px 18px 20px}
-  .kpi .label{font-size:9px;letter-spacing:.10em}
-  .kpi .value{margin-top:8px}
-  .kpi .sub{font-size:9px;margin-top:6px}
-  .kpi-tag{right:14px;top:16px;font-size:9px;padding:0}
-  .grid{gap:12px}
-  .row-top,.row-charts{grid-template-columns:minmax(0,1fr);margin-top:12px}
+  .cmd-head{padding:11px 16px}
+  .cmd-title{font-size:9px;letter-spacing:.12em}
+  .cmd-metric{padding:18px 16px 16px}
+  .cmd-label{font-size:9px;letter-spacing:.14em;margin-bottom:9px}
+  .cmd-value{font-size:clamp(46px,11vw,58px)}
+  .cmd-value.sm{font-size:clamp(34px,8vw,44px)}
+  .cmd-note{font-size:10px;margin-top:9px}
+  .strip-cell{padding:13px 16px}
+  .strip-cell b{font-size:16px}
+  .expo-hero{padding:18px 16px 0}
+  .cmd-exposure>.cmd-note,.expo-side-list{padding-left:16px;padding-right:16px}
+  .cmd-exposure .bar{margin-left:16px;margin-right:16px}
+  .aux-cell{padding:12px 16px}
+  .aux-cell b{font-size:17px}
+  .row-charts{grid-template-columns:minmax(0,1fr)}
   .panel-head{padding:12px 14px}
   .panel-head h2{font-size:12px}
   .pad{padding:14px}
@@ -169,16 +276,15 @@ footer b.money-legend-down{color:var(--down)}
   .deal-nav{gap:4px}
   .deal-nav #dealPage{min-width:42px;font-size:10px}
   .deal-nav select{font-size:10px;padding:3px 4px}
-  table{table-layout:fixed;font-size:10px}
-  th,td{padding:9px 6px;font-size:10px;letter-spacing:0}
-  th{font-size:9px}
   .hide-mobile{display:none}
-  .scroll{max-height:none}
-  .deals-scroll{max-height:260px}
-  section.panel{margin-top:12px!important}
   footer{font-size:9px;gap:7px;line-height:1.6}
 }
 
-@media(max-width:380px){
-  .kpis{grid-template-columns:minmax(0,1fr)}
+@media(max-width:600px){
+  .cmd-equity{grid-template-columns:minmax(0,1fr)}
+  .cmd-metric+.cmd-metric{border-top:1px solid var(--line)}
+}
+
+@media(max-width:460px){
+  .hide-narrow{display:none}
 }

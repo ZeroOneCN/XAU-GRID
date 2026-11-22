@@ -24,7 +24,8 @@ function render(d){
 
   setText('floating', money(d.summary.floating), cls(d.summary.floating));
   setText('realized', money(d.summary.today_realized), cls(d.summary.today_realized));
-  $('equityLine').textContent = `权益 $${d.account.equity.toFixed(2)} · 余额 $${d.account.balance.toFixed(2)}`;
+  $('equityLine').textContent = `入金基线 $${Number(d.baseline || 0).toFixed(2)}`;
+  $('balValue').textContent = '$' + d.account.balance.toFixed(2);
   $('closedLine').textContent = `${d.summary.closed_today} 笔平仓`;
   $('count').textContent = d.summary.positions;
   $('lotLine').textContent = `多 ${d.summary.buy_lots.toFixed(2)} / 空 ${d.summary.sell_lots.toFixed(2)} 手`;
@@ -44,7 +45,7 @@ function render(d){
       <td class="money ${cls(p.profit)}">${money(p.profit)}</td>
       <td class="hide-mobile" style="color:var(--duration)">${p.minutes < 60 ? p.minutes + 'm' : Math.floor(p.minutes / 60) + 'h' + (p.minutes % 60) + 'm'}</td>
     </tr>`).join('');
-  $('positions').innerHTML = rows || '<tr><td colspan="4" style="text-align:center;color:var(--muted-2);padding:30px">当前无持仓</td></tr>';
+  $('positions').innerHTML = rows || '<tr><td colspan="8" style="text-align:center;color:var(--muted-2);padding:30px">当前无持仓</td></tr>';
   $('tableTag').textContent = `OPEN POSITIONS · ${d.summary.positions}`;
 
   const total = d.summary.buy_lots + d.summary.sell_lots || 1;
@@ -107,7 +108,7 @@ async function loadDeals(page){
     $('deals').innerHTML = j.deals.length ? j.deals.map(x => `<tr>
         <td>${x.time || '—'}</td>
         <td class="ticket hide-mobile">#${x.ticket}</td>
-        <td style="text-align:left;color:var(--symbol)">${x.symbol}</td>
+        <td class="hide-narrow" style="text-align:left;color:var(--symbol)">${x.symbol}</td>
         <td><span class="side ${x.type === 'BUY' ? 'buy' : 'sell'}">${x.type}</span></td>
         <td class="hide-mobile">${(x.lots || 0).toFixed(2)}</td>
         <td class="money ${cls(x.profit)}">${money(x.profit)}</td>

@@ -69,7 +69,7 @@
         </div>
 
         <a class="invite" href="https://one.toexness.com/a/p62earilg5" target="_blank" rel="noopener noreferrer"
-           title="欢迎使用 Exness 进行交易" aria-label="欢迎使用 Exness 进行交易">EXNESS <span>↗</span></a>
+           title="欢迎使用 Exness 进行交易" aria-label="欢迎使用 Exness 进行交易">黄金交易，点这里！ <span>↗</span></a>
         <button class="icode-copy" id="icodeBtn" title="点击一键复制邀请码"><span class="ic-label">邀请码</span><span class="ic-val">p62earilg5</span><span class="ic-ico">⧉</span></button>
         <button id="pngBtn" title="导出当前看板 PNG">PNG</button>
         <button id="reportBtn" title="查看文字版日报（可复制 / 下载 .md）">日报</button>
@@ -77,98 +77,109 @@
     </div>
   </header>
 
-  <section class="kpis">
-    <div class="card glass kpi hero">
-      <div class="label">当前持仓浮盈 / USD</div>
-      <div class="value money up" id="floating">$0.00</div>
-      <div class="sub" id="equityLine">权益 $0.00 · 余额 $0.00</div>
-      <div class="kpi-tag gold" id="priceBadge">XAUUSDm —</div>
-    </div>
-    <div class="card glass kpi">
-      <div class="kpi-tag">USD</div>
-      <div class="label">今日已实现 / USD</div>
-      <div class="value money up" id="realized">$0.00</div>
-      <div class="sub" id="closedLine">0 笔平仓</div>
-    </div>
-    <div class="card glass kpi">
-      <div class="kpi-tag">ORDERS</div>
-      <div class="label">持仓笔数</div>
-      <div class="value neutral" id="count">0</div>
-      <div class="sub" id="lotLine">多 0.00 / 空 0.00 手</div>
-    </div>
-    <div class="card glass kpi">
-      <div class="kpi-tag">LOTS</div>
-      <div class="label">净敞口 / 手</div>
-      <div class="value neutral" id="net">0.00</div>
-      <div class="sub" id="expoLine">双边网格对冲</div>
-    </div>
-    <div class="card glass kpi">
-      <div class="kpi-tag">PCT</div>
-      <div class="label">今日胜率</div>
-      <div class="value neutral" id="win">—</div>
-      <div class="sub" id="marginLine">保证金率 —</div>
-    </div>
-  </section>
-
-  <section class="grid row-top">
-    <div class="panel glass pos-panel">
-      <div class="panel-head"><h2>持仓明细</h2><span class="tag" id="tableTag">OPEN POSITIONS</span></div>
-      <div class="scroll">
-        <table>
-          <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th title="1 点 = 0.01 美元价格变动，不是盈亏金额">波动(点)</th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
-          <tbody id="positions"><tr><td colspan="8" style="text-align:center;color:var(--muted-2);padding:30px">等待数据…</td></tr></tbody>
-        </table>
+  <section class="command-deck">
+    <div class="cmd-main">
+      <div class="cmd-head">
+        <span class="sec-index">01</span>
+        <span class="cmd-title">ACCOUNT OVERVIEW / 账户总览</span>
+        <span class="cmd-tag" id="priceBadge">XAUUSDm —</span>
       </div>
-    </div>
 
-    <div class="side-stack">
-      <div class="panel glass">
-        <div class="panel-head"><h2>双边敞口</h2><span class="tag">EXPOSURE</span></div>
-        <div class="pad">
-          <div class="expo"><span>多头 BUY</span><b class="money" id="buyLots">0.00 手</b></div>
-          <div class="bar"><i class="b" id="buyBar" style="width:50%"></i><i class="s" id="sellBar" style="width:50%"></i></div>
-          <div class="expo" style="margin-top:12px"><span>空头 SELL</span><b class="money" id="sellLots">0.00 手</b></div>
-          <div class="legend"><span class="lb">BUY</span><span class="ls">SELL</span></div>
+      <div class="cmd-equity">
+        <div class="cmd-metric">
+          <span class="cmd-label">权益 EQUITY / USD</span>
+          <b class="cmd-value" id="sEquity">—</b>
+          <span class="cmd-note" id="equityLine">入金基线 —</span>
+        </div>
+        <div class="cmd-metric">
+          <span class="cmd-label">余额 BALANCE / USD</span>
+          <b class="cmd-value sm" id="balValue">—</b>
+          <span class="cmd-note">已用保证金 <b id="sMargin">—</b></span>
         </div>
       </div>
-      <div class="panel glass">
-        <div class="panel-head"><h2>风险快照</h2><span class="tag">RISK</span></div>
-        <div class="pad" style="padding-top:8px;padding-bottom:8px">
-          <div class="stat-row"><span>账户权益</span><b class="money" id="sEquity">—</b></div>
-          <div class="stat-row"><span>已用保证金</span><b class="money" id="sMargin">—</b></div>
-          <div class="stat-row"><span>保证金率</span><b id="sLevel">—</b></div>
-          <div class="stat-row"><span>数据来源</span><b id="sSource">—</b></div>
-        </div>
+
+      <div class="cmd-strip">
+        <div class="strip-cell"><span>当前浮盈</span><b class="money up" id="floating">$0.00</b></div>
+        <div class="strip-cell"><span>今日已实现</span><b class="money up" id="realized">$0.00</b></div>
+        <div class="strip-cell"><span>风险</span><b id="marginLine">保证金率 —</b></div>
+        <div class="strip-cell"><span>持仓笔数</span><b id="count">0</b></div>
       </div>
     </div>
+
+    <aside class="cmd-exposure">
+      <div class="cmd-head">
+        <span class="sec-index">02</span>
+        <span class="cmd-title">CURRENT EXPOSURE / 当前敞口</span>
+      </div>
+      <div class="expo-hero">
+        <b class="cmd-value" id="net">0.00</b>
+        <span class="expo-unit">LOTS NET</span>
+      </div>
+      <div class="cmd-note" id="expoLine">双边完全对冲</div>
+      <div class="expo-side-list">
+        <div class="expo-side"><span>BUY</span><b id="buyLots">0.00 手</b></div>
+        <div class="expo-side"><span>SELL</span><b id="sellLots">0.00 手</b></div>
+      </div>
+      <div class="bar"><i class="b" id="buyBar" style="width:50%"></i><i class="s" id="sellBar" style="width:50%"></i></div>
+      <div class="cmd-note" id="lotLine">多 0.00 / 空 0.00 手</div>
+    </aside>
   </section>
 
-  <section class="grid row-charts">
-    <div class="panel glass">
-      <div class="panel-head"><h2>权益曲线</h2><span class="tag" id="curveTag">EQUITY</span></div>
-      <div class="pad">
-        <div class="range-bar" id="rangeBar">
-          <button data-range="7">近7天</button><button data-range="30">近30天</button>
-          <button data-range="90">近90天</button><button data-range="all" class="active">全部</button>
-        </div>
-        <div class="curve-legend"><span><i class="ln1"></i>已实现权益</span><span><i class="ln2"></i>账户权益(含浮动)</span><span><i class="ln3"></i>入金基线</span></div>
-        <canvas id="curve"></canvas><div class="chart-note" id="chartNote">—</div>
-      </div>
-    </div>
-    <div class="panel glass">
-      <div class="panel-head"><h2>收益日历</h2><span class="tag" id="calTag">DAILY P&L</span></div>
-      <div class="pad">
-        <div class="cal-nav"><button id="calPrev">‹</button><span id="calMonth">—</span><button id="calNext">›</button></div>
-        <div class="cal-grid" id="calGrid"></div>
-        <div class="cal-legend"><span>亏 <i class="sw" style="background:var(--down)"></i></span>
-          <span><i class="sw" style="background:var(--cal-bg)"></i> 无交易</span>
-          <span>盈 <i class="sw" style="background:var(--up)"></i></span></div>
-      </div>
-    </div>
+  <section class="aux-band">
+    <div class="aux-cell"><span>今日胜率</span><b id="win">—</b><small id="closedLine">0 笔平仓</small></div>
+    <div class="aux-cell"><span>维持保证金率</span><b id="sLevel">—</b></div>
+    <div class="aux-cell"><span>数据来源</span><b id="sSource">—</b></div>
+    <div class="aux-cell"><span>刷新间隔</span><b>2 SEC</b></div>
   </section>
 
-  <section class="panel glass" style="margin-top:14px">
+  <section class="panel glass pos-panel section-block">
     <div class="panel-head">
+      <span class="sec-index">03</span>
+      <h2>持仓明细</h2>
+      <span class="tag" id="tableTag">OPEN POSITIONS</span>
+    </div>
+    <div class="scroll table-scroll">
+      <table>
+        <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th title="1 点 = 0.01 美元价格变动，不是盈亏金额">波动(点)</th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
+        <tbody id="positions"><tr><td colspan="8" style="text-align:center;color:var(--muted-2);padding:30px">等待数据…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="archive">
+    <div class="archive-head">
+      <span class="sec-index">04</span>
+      <h2>历史与复盘</h2>
+      <span class="archive-tag">ARCHIVE / SECONDARY</span>
+    </div>
+    <div class="row-charts">
+      <div class="panel glass">
+        <div class="panel-head"><h2>权益曲线</h2><span class="tag" id="curveTag">EQUITY</span></div>
+        <div class="pad">
+          <div class="range-bar" id="rangeBar">
+            <button data-range="7">近7天</button><button data-range="30">近30天</button>
+            <button data-range="90">近90天</button><button data-range="all" class="active">全部</button>
+          </div>
+          <div class="curve-legend"><span><i class="ln1"></i>已实现权益</span><span><i class="ln2"></i>账户权益(含浮动)</span><span><i class="ln3"></i>入金基线</span></div>
+          <canvas id="curve"></canvas><div class="chart-note" id="chartNote">—</div>
+        </div>
+      </div>
+      <div class="panel glass">
+        <div class="panel-head"><h2>收益日历</h2><span class="tag" id="calTag">DAILY P&L</span></div>
+        <div class="pad">
+          <div class="cal-nav"><button id="calPrev">‹</button><span id="calMonth">—</span><button id="calNext">›</button></div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-legend"><span>亏 <i class="sw" style="background:var(--down)"></i></span>
+            <span><i class="sw" style="background:var(--cal-bg)"></i> 无交易</span>
+            <span>盈 <i class="sw" style="background:var(--up)"></i></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel glass section-block">
+    <div class="panel-head">
+      <span class="sec-index">05</span>
       <h2>平仓历史</h2>
       <div class="deal-nav">
         <span class="tag" id="dealsTag">ALL DEALS</span>
@@ -178,9 +189,9 @@
         <button id="dealNext" title="下一页">›</button>
       </div>
     </div>
-    <div class="scroll deals-scroll">
+    <div class="scroll deals-scroll table-scroll">
       <table>
-        <thead><tr><th>成交时间</th><th class="hide-mobile">订单</th><th>品种</th><th>方向</th><th class="hide-mobile">手数</th><th>盈亏 / USD</th></tr></thead>
+        <thead><tr><th>成交时间</th><th class="hide-mobile">订单</th><th class="hide-narrow">品种</th><th>方向</th><th class="hide-mobile">手数</th><th>盈亏 / USD</th></tr></thead>
         <tbody id="deals"><tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:24px">加载平仓历史…</td></tr></tbody>
       </table>
     </div>

@@ -1,6 +1,6 @@
 /* ============================================================
  * 设计基调：极简 / 高对比 / 美式航天任务控制
- * 近黑底、冷白字、单一国际橙强调色；无玻璃模糊、无光斑。
+ * 近黑底、冷白字、单一冷青强调色；无玻璃模糊、无光斑。
  * 所有变量名保持不变，供 dashboard / report / canvas / calendar 复用。
  * ============================================================ */
 :root{
@@ -45,10 +45,11 @@
   --neu-pressed:none;
   --neu-btn:#11151A;
 
-  --accent:#FF4D00;
-  --accent-border:rgba(255,77,0,.52);
-  --accent-soft:rgba(255,77,0,.12);
-  --active-text:#050607;
+  --accent:#3DDCFF;
+  --accent-border:rgba(61,220,255,.48);
+  --accent-soft:rgba(61,220,255,.10);
+  --active-text:#031016;
+  --accent-ink:#031016;
 
   --up:#3BE08F;
   --down:#FF5A67;
@@ -56,21 +57,21 @@
   --up-rgb:59,224,143;
   --down-rgb:255,90,103;
 
-  --gold:#A7B3BD;
-  --gold-border:rgba(167,179,189,.34);
-  --gold-soft:rgba(167,179,189,.10);
-  --gold-line:rgba(167,179,189,.40);
-  --gold-1:#FFC2A6;
-  --gold-2:#FF4D00;
-  --gold-3:#7A2200;
-  --brand-slash:#FF4D00;
+  --gold:#7E93A3;
+  --gold-border:rgba(126,147,163,.34);
+  --gold-soft:rgba(126,147,163,.10);
+  --gold-line:rgba(126,147,163,.40);
+  --gold-1:#C9F7FF;
+  --gold-2:#3DDCFF;
+  --gold-3:#0A5A70;
+  --brand-slash:#3DDCFF;
 
-  --buy:#FF4D00;
-  --sell:#A7B3BD;
+  --buy:#3DDCFF;
+  --sell:#7E93A3;
 
   --bar-bg:#171D23;
-  --bar-1:#FF4D00;
-  --bar-2:#A7B3BD;
+  --bar-1:#3DDCFF;
+  --bar-2:#7E93A3;
 
   --btn-bg:#0B0E11;
   --btn-hover:#141A20;
@@ -89,7 +90,7 @@
   --quote-border:#242C34;
   --scrollbar:#2C343C;
   --toggle-bg:#0B0E11;
-  --toggle-knob:#FF4D00;
+  --toggle-knob:#3DDCFF;
   --toggle-shadow:none;
   --footer-text:#6E7881;
   --footer-b:#A7B3BD;
@@ -118,7 +119,7 @@
   --dot-down:#FF5A67;
   --curve-up:#3BE08F;
   --curve-down:#FF5A67;
-  --curve-accent:#FF4D00;
+  --curve-accent:#3DDCFF;
   --curve-gold:#A7B3BD;
   --curve-fill-a:.10;
   --cal-bg:#0B0E11;
@@ -128,10 +129,9 @@
 
   /* 页面专用 */
   --grid-faint:rgba(255,255,255,.018);
-  --accent-ink:#050607;
 }
 
-/* —— 浅色：纸白 + 近黑字 + 同一国际橙 —— */
+/* —— 浅色：纸白 + 近黑字 + 同一冷青 —— */
 [data-theme="light"]{
   --bg:#F4F5F6;
   --bg-2:#EDEFF1;
@@ -171,9 +171,9 @@
   --neu-pressed:none;
   --neu-btn:#F0F2F4;
 
-  --accent:#D93F00;
-  --accent-border:rgba(217,63,0,.50);
-  --accent-soft:rgba(217,63,0,.08);
+  --accent:#00708F;
+  --accent-border:rgba(0,112,143,.45);
+  --accent-soft:rgba(0,112,143,.08);
   --active-text:#FFFFFF;
 
   --up:#0E8A5F;
@@ -182,21 +182,21 @@
   --up-rgb:14,138,95;
   --down-rgb:198,40,57;
 
-  --gold:#6E7A84;
-  --gold-border:rgba(110,122,132,.34);
-  --gold-soft:rgba(110,122,132,.08);
-  --gold-line:rgba(110,122,132,.40);
-  --gold-1:#FF9A66;
-  --gold-2:#D93F00;
-  --gold-3:#7A2200;
-  --brand-slash:#D93F00;
+  --gold:#5C7280;
+  --gold-border:rgba(92,114,128,.34);
+  --gold-soft:rgba(92,114,128,.08);
+  --gold-line:rgba(92,114,128,.40);
+  --gold-1:#A9E9F7;
+  --gold-2:#00708F;
+  --gold-3:#06485C;
+  --brand-slash:#00708F;
 
-  --buy:#D93F00;
-  --sell:#6E7A84;
+  --buy:#00708F;
+  --sell:#5C7280;
 
   --bar-bg:#E3E7EA;
-  --bar-1:#D93F00;
-  --bar-2:#6E7A84;
+  --bar-1:#00708F;
+  --bar-2:#5C7280;
 
   --btn-bg:#FFFFFF;
   --btn-hover:#F0F2F4;
@@ -215,7 +215,7 @@
   --quote-border:#D6DBE0;
   --scrollbar:#C1C8CE;
   --toggle-bg:#FFFFFF;
-  --toggle-knob:#D93F00;
+  --toggle-knob:#00708F;
   --toggle-shadow:none;
   --footer-text:#7E8790;
   --footer-b:#3B444B;
@@ -237,7 +237,7 @@
   --dot-down:#C62839;
   --curve-up:#0E8A5F;
   --curve-down:#C62839;
-  --curve-accent:#D93F00;
+  --curve-accent:#00708F;
   --curve-gold:#6E7A84;
   --curve-fill-a:.08;
   --cal-bg:#FFFFFF;
