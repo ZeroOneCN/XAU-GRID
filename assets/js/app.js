@@ -3,22 +3,41 @@
  * 依赖 core.js / chart.js / calendar.js
  * ============================================================ */
 
+/* 时区标签：off 为相对 UTC 的小时数（8 → UTC+8，5.5 → UTC+5:30） */
+function tzTag(off){
+  if(off == null || !isFinite(off)) return '';
+  const sign = off < 0 ? '-' : '+';
+  const abs = Math.abs(off);
+  const h = Math.floor(abs + 1e-6);
+  const m = Math.round((abs - h) * 60);
+  return `UTC${sign}${h}${m ? ':' + pad2(m) : ''}`;
+}
+/* 浏览器本机时区偏移（小时） */
+const LOCAL_TZ = -new Date().getTimezoneOffset() / 60;
+/* 当前数据的 MT5 服务器时区偏移，接口未提供时为 null */
+let serverTz = null;
+
 function render(d){
   period = d.refresh_ms || 2000;
   const live = d.mode === 'live', cached = d.mode === 'cached';
   const modeText = live ? 'LIVE · MT5 已连接' : (cached ? 'CACHED · 离线快照' : 'DEMO · 演示数据');
   const dotClass = live ? '' : 'demo';
+  serverTz = (typeof d.server_tz_offset === 'number' && isFinite(d.server_tz_offset))
+    ? d.server_tz_offset : null;
+  const srvTz = tzTag(serverTz), localTz = tzTag(LOCAL_TZ);
   $('modeChip').innerHTML = `<i class="dot ${dotClass}"></i><span id="modeText">${modeText}</span>`;
   $('login').textContent = d.account.login;
   $('priceBadge').textContent = `${d.summary.symbol} ${d.summary.price ? d.summary.price.toFixed(2) : '—'}`;
   if(STATIC){
     const ageMin = d.published_at
       ? Math.floor((Date.now() - new Date(d.published_at.replace(' ','T')).getTime()) / 60000) : 0;
-    $('hint').textContent = `云端快照 · 数据时间 ${d.server_time || d.published_at || '—'}`
+    // 快照发布时间由发布机本地时钟生成，按本机时区标注；行情时间按 MT5 服务器时区标注
+    $('hint').textContent = `云端快照 · MT5 数据 ${d.server_time || '—'} ${srvTz}`
+      + (d.published_at ? ` · 发布 ${d.published_at.slice(5, 16)} ${localTz}` : '')
       + (ageMin > 15 ? ` · 已延迟 ${ageMin} 分钟` : '');
   }else{
     $('hint').textContent = live ? '当前显示真实终端数据'
-      : (cached ? `MT5 未连接，显示 ${d.cache_saved_at} 的缓存快照（${d.cache_age_seconds}秒前）`
+      : (cached ? `MT5 未连接，显示 ${d.cache_saved_at} ${localTz} 的缓存快照（${d.cache_age_seconds}秒前）`
                 : 'MT5 与缓存均不可用，当前为演示数据');
   }
 
@@ -61,8 +80,8 @@ function render(d){
   lastCurve = d.equity_curve || [];
   if(hoverIdx >= lastCurve.length) hoverIdx = -1;
   const firstT = lastCurve.length ? lastCurve[0].t : '—';
-  $('chartNote').innerHTML = `<span>${rangeLabels[currentRange]} · ${firstT} → 现在</span><span>更新 ${(d.server_time || '').slice(11)}</span>`;
-  $('chartNote').title = `数据更新时间 ${d.server_time}`;
+  $('chartNote').innerHTML = `<span>${rangeLabels[currentRange]} · ${firstT} → 现在</span><span>更新 ${(d.server_time || '').slice(11)} ${srvTz}</span>`;
+  $('chartNote').title = `数据更新时间 ${d.server_time} ${srvTz}`;
   drawCurve(lastCurve, hoverIdx);
   dailyMap = Object.fromEntries((d.daily_pnl || []).map(x => [x.d, x.v]));
   // 收益日历按 MT5 服务器日期翻月/高亮，避免本机时区在零点附近差一天
@@ -161,13 +180,17 @@ function tick(){
     const t = new Date(serverClock.replace(' ', 'T'));
     if(!STATIC) t.setSeconds(t.getSeconds() + Math.max(0, Math.floor((Date.now() - serverClockAt) / 1000)));
     const day = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
-    $('clock').textContent = (STATIC ? '快照 ' : 'MT5 ') + day + ' '
-      + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds());
+    // 服务器时钟：时间来自 MT5 终端，按 MT5 服务器时区标注
+    $('clock').textContent = 'MT5 ' + day + ' '
+      + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds())
+      + ' ' + tzTag(serverTz);
   }else{
+    // 尚未取到数据时退回本机时钟，明确标注本机时区
     const t = new Date();
     const day = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
-    $('clock').textContent = (STATIC ? '快照 ' : 'MT5 ') + day + ' '
-      + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds());
+    $('clock').textContent = '本机 ' + day + ' '
+      + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds())
+      + ' ' + tzTag(LOCAL_TZ);
   }
   const pct = Math.min(100, (Date.now() - start) / period * 100);
   $('bar').style.width = pct + '%';

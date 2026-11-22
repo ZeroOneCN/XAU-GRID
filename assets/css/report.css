@@ -15,16 +15,15 @@
 body{padding:0;line-height:1.75}
 body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;background:var(--accent);z-index:80}
 
-.report-shell{max-width:1120px;margin:0 auto;padding:0 32px 46px}
+.report-shell{max-width:1220px;margin:0 auto;padding:0 32px 46px}
 
-/* —— 顶部任务栏：与看板同款结构（品牌 / 状态 / 工具） —— */
+/* —— 顶部任务栏：与看板同款结构（品牌 / 状态 / 工具），桌面端单行 —— */
 .report-bar{
   position:relative;z-index:20;
-  display:grid;grid-template-columns:minmax(0,1fr) auto;
-  grid-template-areas:"brand actions" "meta meta";align-items:center;
-  gap:14px 24px;padding:22px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
+  gap:16px 20px;padding:22px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;
 }
-.rb-brand{grid-area:brand;display:flex;align-items:center;gap:14px;min-width:0}
+.rb-brand{display:flex;align-items:center;gap:12px;min-width:0}
 .rb-logo{width:56px;height:56px;flex:none;display:grid;place-items:center}
 .rb-logo svg{width:52px;height:52px;display:block}
 .rb-title{min-width:0}
@@ -34,24 +33,24 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 }
 .rb-title small{
   display:block;margin-top:7px;font-family:var(--mono);font-size:12px;
-  color:var(--muted-2);letter-spacing:.12em;white-space:nowrap;
+  color:var(--muted-2);letter-spacing:.06em;white-space:nowrap;
 }
 .rb-meta{
-  grid-area:meta;
-  display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;
-  gap:8px 20px;font-family:var(--mono);font-size:13px;color:var(--muted);min-width:0;
+  display:flex;align-items:center;justify-content:center;
+  gap:0 16px;font-family:var(--mono);font-size:13px;color:var(--muted);
+  min-width:0;white-space:nowrap;
 }
 .rb-status{display:inline-flex;align-items:center;gap:8px;color:var(--text);
   letter-spacing:.04em;white-space:nowrap}
 .rb-status .dot{width:6px;height:6px;background:var(--accent);display:inline-block;flex:none}
-.rb-actions{grid-area:actions;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.rb-actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;justify-content:flex-end}
 .report-bar a.btn{display:inline-flex;align-items:center;justify-content:center;
   text-decoration:none;line-height:1.2;height:34px}
 .rb-actions button{height:34px}
 
 /* —— 自定义交易日选择器 —— */
 .datepick{position:relative}
-.dp-trigger{display:flex;align-items:center;gap:7px;min-width:170px;justify-content:flex-start;
+.dp-trigger{display:flex;align-items:center;gap:7px;min-width:150px;justify-content:flex-start;
   font-family:var(--mono);font-size:14px;padding:7px 11px}
 .dp-trigger svg{width:14px;height:14px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.7}
 .dp-trigger .caret{margin-left:auto;color:var(--muted);font-size:13px}
@@ -161,6 +160,11 @@ article .ta-c{text-align:center}
   font-family:var(--mono);font-size:13px;color:var(--muted-2);letter-spacing:.06em;
 }
 
+/* 窄一点的桌面宽度：隐藏副标题，保证状态信息与全部按钮保持单行不换行 */
+@media(max-width:1200px){
+  .rb-title small{display:none}
+}
+
 @media(max-width:900px){
   .report-shell{padding:0 22px 38px}
   article{padding:26px 24px 30px}
@@ -170,7 +174,6 @@ article .ta-c{text-align:center}
   .report-shell{padding:0 14px 30px}
   .report-bar{
     grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"brand" "meta" "actions";
     padding:18px 0 14px;gap:12px;
   }
   .rb-brand{gap:10px}
@@ -179,7 +182,7 @@ article .ta-c{text-align:center}
   .rb-title b{font-size:16px;letter-spacing:.06em}
   .rb-title small{font-size:11px;letter-spacing:.08em}
   .rb-meta{justify-content:flex-start;gap:6px 14px}
-  .rb-actions{width:100%;justify-content:flex-start;gap:6px}
+  .rb-actions{width:100%;justify-content:flex-start;gap:6px;flex-wrap:wrap}
   .report-head{gap:8px}
   .report-head h2{font-size:13px;letter-spacing:.06em}
   .report-tag{font-size:13px;letter-spacing:.04em}

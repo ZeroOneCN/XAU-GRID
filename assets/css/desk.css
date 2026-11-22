@@ -175,7 +175,8 @@ a{color:var(--accent)}
 
 /* —— 表格 —— */
 .table-wrap{overflow:auto;max-height:460px;-webkit-overflow-scrolling:touch}
-.table-wrap-deals{max-height:380px}
+/* 平仓表填满右栏剩余高度，与左侧日历等高，底部不留空块 */
+.table-wrap-deals{flex:1 1 0;max-height:none;min-height:320px}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:15px}
 th{
   position:sticky;top:0;z-index:2;vertical-align:middle;
@@ -272,17 +273,20 @@ canvas{
   font-variant-numeric:tabular-nums;
 }
 
-/* —— 日历 + 平仓分栏 —— */
+/* —— 日历 + 平仓分栏：两块同排、顶边与内容起始线严格对齐 —— */
 .split{
   display:grid;grid-template-columns:minmax(350px,1.05fr) minmax(0,1.95fr);
-  gap:40px;margin-top:40px;
+  gap:40px;margin-top:40px;align-items:stretch;
 }
-.split>.block{margin-top:0}
+/* 左右两栏都改为纵向弹性布局：右栏表格自动填满与日历等高的空间 */
+.split>.block{margin-top:0;display:flex;flex-direction:column;min-width:0}
 
-.cal-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 0 10px;
+/* 次级工具行：日期翻月 / 平仓分页共用，高度一致，避免内容起点错位 */
+.row-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 0 10px;min-height:54px;flex:none;
 }
+.cal-nav{justify-content:space-between}
 .cal-nav button{height:32px;padding:0 11px;font-size:16px;line-height:1}
 .cal-nav span{
   font-family:var(--mono);font-size:18px;color:var(--text);letter-spacing:.04em;
@@ -326,12 +330,8 @@ canvas{
   border:1px solid var(--line);border-radius:0;
 }
 
-/* —— 平仓分页 —— */
-.deal-nav{
-  margin-left:auto;display:flex;align-items:center;justify-content:flex-end;
-  gap:7px;flex-wrap:wrap;
-}
-.deal-nav .stamp{margin-left:0}
+/* —— 平仓分页（与日历翻月同一行高） —— */
+.deal-nav{justify-content:flex-end}
 .deal-nav button{height:30px;padding:0 10px;font-size:15px;line-height:1}
 .deal-nav #dealPage{
   min-width:58px;text-align:center;font-family:var(--mono);font-size:13px;
@@ -430,7 +430,7 @@ footer .down{color:var(--down)}
   .block-head{gap:9px;flex-wrap:wrap;row-gap:6px}
   .block-head h2{font-size:13px;letter-spacing:.08em;flex:none}
   .idx,.stamp{font-size:13px}
-  .cal-nav{padding:10px 0 8px}
+  .cal-nav,.deal-nav{padding:10px 0 8px;min-height:48px}
   .cal-nav span{font-size:16px}
   .cal-head{font-size:13px}
   canvas{height:210px}
@@ -439,7 +439,7 @@ footer .down{color:var(--down)}
   .tape-note{font-size:13px}
   .cal-stats{font-size:13px}
   .cal-legend{font-size:13px}
-  .deal-nav{width:100%;justify-content:flex-start;margin-left:0;margin-top:7px}
+  .deal-nav{width:100%;justify-content:flex-start;margin-top:0}
 
   th{padding:10px 8px;font-size:14px;letter-spacing:.02em}
   td{padding:13px 8px;font-size:14px}
