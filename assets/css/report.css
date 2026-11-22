@@ -20,10 +20,11 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 /* —— 顶部任务栏：与看板同款结构（品牌 / 状态 / 工具） —— */
 .report-bar{
   position:relative;z-index:20;
-  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
-  gap:16px 24px;padding:22px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"brand actions" "meta meta";align-items:center;
+  gap:14px 24px;padding:22px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;
 }
-.rb-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.rb-brand{grid-area:brand;display:flex;align-items:center;gap:14px;min-width:0}
 .rb-logo{width:56px;height:56px;flex:none;display:grid;place-items:center}
 .rb-logo svg{width:52px;height:52px;display:block}
 .rb-title{min-width:0}
@@ -36,13 +37,14 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
   color:var(--muted-2);letter-spacing:.12em;white-space:nowrap;
 }
 .rb-meta{
-  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+  grid-area:meta;
+  display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;
   gap:8px 20px;font-family:var(--mono);font-size:13px;color:var(--muted);min-width:0;
 }
 .rb-status{display:inline-flex;align-items:center;gap:8px;color:var(--text);
   letter-spacing:.04em;white-space:nowrap}
 .rb-status .dot{width:6px;height:6px;background:var(--accent);display:inline-block;flex:none}
-.rb-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.rb-actions{grid-area:actions;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .report-bar a.btn{display:inline-flex;align-items:center;justify-content:center;
   text-decoration:none;line-height:1.2;height:34px}
 .rb-actions button{height:34px}
@@ -157,17 +159,6 @@ article .ta-c{text-align:center}
   display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
   margin-top:18px;padding-top:12px;border-top:1px solid var(--line);
   font-family:var(--mono);font-size:13px;color:var(--muted-2);letter-spacing:.06em;
-}
-
-@media(max-width:1200px){
-  .report-bar{
-    grid-template-columns:minmax(0,1fr) auto;
-    grid-template-areas:"brand actions" "meta meta";
-    row-gap:14px;
-  }
-  .rb-brand{grid-area:brand}
-  .rb-meta{grid-area:meta;justify-content:flex-start}
-  .rb-actions{grid-area:actions}
 }
 
 @media(max-width:900px){
