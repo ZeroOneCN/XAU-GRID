@@ -64,6 +64,13 @@
   --gold-1:#C9F7FF;
   --gold-2:#3DDCFF;
   --gold-3:#0A5A70;
+  /* LOGO 专用黄金色，与冷青强调色解耦 */
+  --logo-1:#FFE9A8;
+  --logo-2:#E3A72F;
+  --logo-3:#7A4A08;
+  /* 多空手数：冷青 / 琥珀，深色底高对比 */
+  --long:#3DDCFF;
+  --short:#F2B33D;
   --brand-slash:#3DDCFF;
 
   --buy:#3DDCFF;
@@ -189,6 +196,12 @@
   --gold-1:#A9E9F7;
   --gold-2:#00708F;
   --gold-3:#06485C;
+  /* 浅色底改用更深的金与青，保证可读 */
+  --logo-1:#E8B33A;
+  --logo-2:#B87808;
+  --logo-3:#6B3F04;
+  --long:#006C8A;
+  --short:#9A5B00;
   --brand-slash:#00708F;
 
   --buy:#00708F;

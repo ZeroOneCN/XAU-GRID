@@ -23,18 +23,21 @@ function render(d){
   }
 
   setText('floating', money(d.summary.floating), cls(d.summary.floating));
-  setText('realized', money(d.summary.today_realized), cls(d.summary.today_realized));
-  setText('realizedTotal', money(d.summary.history_realized ?? 0), cls(d.summary.history_realized ?? 0));
+  setText('realized', money(d.summary.history_realized ?? 0), cls(d.summary.history_realized ?? 0));
   setText('balValue', moneyAbs(d.account.balance), cls(d.account.balance));
-  $('closedLine').textContent = `${d.summary.closed_today} 笔平仓`;
   $('count').textContent = d.summary.positions;
-  $('lotLine').textContent = `多 ${d.summary.buy_lots.toFixed(2)} / 空 ${d.summary.sell_lots.toFixed(2)} 手`;
+  $('buyLots').textContent = d.summary.buy_lots.toFixed(2);
+  $('sellLots').textContent = d.summary.sell_lots.toFixed(2);
   setText('net', d.summary.net_lots.toFixed(2), 'neutral');
-  setText('win', d.summary.win_rate == null ? '—' : d.summary.win_rate.toFixed(1) + '%',
-          d.summary.win_rate == null ? 'neutral' : (d.summary.win_rate >= 70 ? 'up' : 'neutral'));
-  $('winHist').textContent = d.summary.history_win_rate == null
-    ? `历史 — · 累计 ${d.summary.history_closed ?? 0} 笔`
-    : `历史 ${d.summary.history_win_rate.toFixed(1)}% · 累计 ${d.summary.history_closed ?? 0} 笔`;
+  // 胜率：今日有平仓用今日口径，否则直接落到历史口径，不留占位杠
+  const todayRate = d.summary.win_rate;
+  const histRate = d.summary.history_win_rate;
+  const useToday = todayRate != null && (d.summary.closed_today || 0) > 0;
+  const rate = useToday ? todayRate : histRate;
+  const rateN = useToday ? d.summary.closed_today : d.summary.history_closed;
+  setText('win', rate == null ? '—' : rate.toFixed(1) + '%',
+          rate == null ? 'neutral' : (rate >= 70 ? 'up' : 'neutral'));
+  $('winNote').textContent = rate == null ? '暂无平仓' : `${useToday ? '今日' : '历史'} · ${rateN ?? 0} 笔`;
 
   const rows = d.positions.map(p => `<tr>
       <td class="ticket hide-mobile">#${p.ticket}</td>
@@ -181,6 +184,54 @@ function curveHover(e){
   drawCurve(lastCurve, hoverIdx);
 }
 
+/* 表头说明气泡：固定在问号上方，窄屏自动夹在视口内；点外部或再次点击关闭 */
+let tipScrollTries = 0;
+
+function placePipsTip(){
+  const btn = $('pipsHelp'), tip = $('pipsTip');
+  if(!btn || !tip || tip.hidden) return;
+  const r = btn.getBoundingClientRect();
+  const th = btn.closest('th');
+  const anchorTop = th ? th.getBoundingClientRect().top : r.top;
+  const vw = document.documentElement.clientWidth;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let top = Math.min(r.top, anchorTop) - h - 10;
+  if(top < 8 && tipScrollTries < 2){
+    // 上方空间不足时先把页面向上让出空间，保证气泡完整位于表头上方
+    tipScrollTries++;
+    window.scrollBy(0, top - 8);
+    requestAnimationFrame(() => requestAnimationFrame(placePipsTip));
+    return;
+  }
+  const left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, vw - w - 8));
+  tip.style.left = left + 'px';
+  tip.style.top = Math.max(8, top) + 'px';
+  tip.style.visibility = 'visible';
+  // 渲染后按实际宽度再校正一次，保证窄屏留出边距、不贴边
+  let rect = tip.getBoundingClientRect();
+  if(rect.right > vw - 6 || rect.left < 6){
+    tip.style.left = Math.max(8, Math.min(rect.left, vw - rect.width - 8)) + 'px';
+    rect = tip.getBoundingClientRect();
+  }
+  const arrow = Math.max(10, Math.min(rect.width - 10, r.left + r.width / 2 - rect.left));
+  tip.style.setProperty('--arrow-x', arrow + 'px');
+}
+
+function togglePipsTip(force){
+  const btn = $('pipsHelp'), tip = $('pipsTip');
+  if(!btn || !tip) return;
+  const open = force === undefined ? tip.hidden : force;
+  if(open){
+    tipScrollTries = 0;
+    tip.hidden = false;
+    tip.style.visibility = 'hidden';
+    placePipsTip();
+  }else{
+    tip.hidden = true;
+  }
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
 function bindEvents(){
   $('dealPrev').onclick = () => loadDeals(dealsState.page - 1);
   $('dealNext').onclick = () => loadDeals(dealsState.page + 1);
@@ -189,6 +240,12 @@ function bindEvents(){
   $('calNext').onclick = () => shiftMonth(1);
   $('pngBtn').onclick = () => { location.href = '/api/export/png'; };
   $('reportBtn').onclick = () => { location.href = STATIC ? 'report.html' : '/report.html'; };
+
+  // 波动列说明：问号点击开关，点其他位置或 Esc 关闭
+  $('pipsHelp').onclick = e => { e.stopPropagation(); togglePipsTip(); };
+  $('pipsTip').onclick = e => e.stopPropagation();
+  document.addEventListener('click', () => togglePipsTip(false));
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') togglePipsTip(false); });
 
   // 邀请码一键复制（静态云端页同样可用）
   $('icodeBtn').onclick = async () => {

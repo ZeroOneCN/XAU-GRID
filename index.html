@@ -31,7 +31,7 @@
         <svg viewBox="0 0 1408 1024" role="img" aria-hidden="true">
           <defs>
             <linearGradient id="goldFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="var(--gold-1)"/><stop offset=".5" stop-color="var(--gold-2)"/><stop offset="1" stop-color="var(--gold-3)"/>
+              <stop offset="0" stop-color="var(--logo-1)"/><stop offset=".5" stop-color="var(--logo-2)"/><stop offset="1" stop-color="var(--logo-3)"/>
             </linearGradient>
           </defs>
           <path d="M149.83552 896H192.07552a64 64 0 0 1 0 128H64.07552a64 64 0 0 1-61.376-82.176l132.672-448A64 64 0 0 1 196.74752 448h374.656a64 64 0 0 1 61.376 45.824l132.672 448A64 64 0 0 1 704.07552 1024H448.07552a64 64 0 0 1 0-128h170.24L523.59552 576H244.55552l-94.72 320z" fill="url(#goldFill)"/>
@@ -79,9 +79,8 @@
         <b id="floating">—</b>
       </div>
       <div class="cell">
-        <span>已实现 <i>REALIZED</i></span>
+        <span>累计已实现 <i>REALIZED</i></span>
         <b id="realized">—</b>
-        <small>累计 <b id="realizedTotal">—</b></small>
       </div>
       <div class="cell">
         <span>风险率 <i>RISK</i></span>
@@ -95,8 +94,8 @@
 
     <div class="metaline">
       <span>持仓 <b id="count">0</b> 笔 · 净敞口 <b id="net">0.00</b></span>
-      <span><b id="lotLine">多 0.00 / 空 0.00 手</b></span>
-      <span>胜率 <b id="win">—</b> <em id="winHist">历史 —</em> <em id="closedLine">0 笔平仓</em></span>
+      <span>多 <b id="buyLots" class="long">0.00</b> / 空 <b id="sellLots" class="short">0.00</b> 手</span>
+      <span>胜率 <b id="win">—</b> <em id="winNote"></em></span>
       <span>来源 <b id="sSource">—</b></span>
       <span class="px"><b id="priceBadge">XAUUSDm —</b></span>
     </div>
@@ -111,7 +110,7 @@
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th title="1 点 = 0.01 美元价格变动，不是盈亏金额">波动(点)</th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
+        <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th><span class="help-wrap">波动(点)<button type="button" class="help-btn" id="pipsHelp" aria-label="波动列说明" aria-expanded="false">?</button><span class="help-tip" id="pipsTip" role="tooltip" hidden>1 点 = 0.01 美元价格变动，表示价格波动幅度，不是盈亏金额。</span></span></th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
         <tbody id="positions"><tr><td colspan="8" class="empty">等待数据…</td></tr></tbody>
       </table>
     </div>
