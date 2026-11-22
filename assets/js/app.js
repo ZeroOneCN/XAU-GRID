@@ -184,52 +184,63 @@ function curveHover(e){
   drawCurve(lastCurve, hoverIdx);
 }
 
-/* 表头说明气泡：固定在问号上方，窄屏自动夹在视口内；点外部或再次点击关闭 */
-let tipScrollTries = 0;
+/* 指标 / 表头说明气泡：固定定位，避免被滚动容器裁切 */
+let helpBtn = null, helpTip = null, helpTries = 0;
 
-function placePipsTip(){
-  const btn = $('pipsHelp'), tip = $('pipsTip');
-  if(!btn || !tip || tip.hidden) return;
-  const r = btn.getBoundingClientRect();
-  const th = btn.closest('th');
-  const anchorTop = th ? th.getBoundingClientRect().top : r.top;
+function placeHelpTip(){
+  if(!helpBtn || !helpTip || helpTip.hidden) return;
+  const r = helpBtn.getBoundingClientRect();
+  const below = helpBtn.dataset.place === 'below';
   const vw = document.documentElement.clientWidth;
-  const w = tip.offsetWidth, h = tip.offsetHeight;
-  let top = Math.min(r.top, anchorTop) - h - 10;
-  if(top < 8 && tipScrollTries < 2){
-    // 上方空间不足时先把页面向上让出空间，保证气泡完整位于表头上方
-    tipScrollTries++;
-    window.scrollBy(0, top - 8);
-    requestAnimationFrame(() => requestAnimationFrame(placePipsTip));
-    return;
+  const w = helpTip.offsetWidth, h = helpTip.offsetHeight;
+  let top;
+  if(below){
+    top = Math.min(r.bottom + 10, window.innerHeight - h - 8);
+  }else{
+    // 表头上方：空间不足时先把页面上移让出空间，保证气泡完整位于表头上方
+    const th = helpBtn.closest('th');
+    const anchorTop = th ? th.getBoundingClientRect().top : r.top;
+    top = anchorTop - h - 10;
+    if(top < 8 && helpTries < 2){
+      helpTries++;
+      window.scrollBy(0, top - 8);
+      requestAnimationFrame(() => requestAnimationFrame(placeHelpTip));
+      return;
+    }
+    top = Math.max(8, top);
   }
   const left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, vw - w - 8));
-  tip.style.left = left + 'px';
-  tip.style.top = Math.max(8, top) + 'px';
-  tip.style.visibility = 'visible';
+  helpTip.style.left = left + 'px';
+  helpTip.style.top = top + 'px';
+  helpTip.style.visibility = 'visible';
   // 渲染后按实际宽度再校正一次，保证窄屏留出边距、不贴边
-  let rect = tip.getBoundingClientRect();
+  let rect = helpTip.getBoundingClientRect();
   if(rect.right > vw - 6 || rect.left < 6){
-    tip.style.left = Math.max(8, Math.min(rect.left, vw - rect.width - 8)) + 'px';
-    rect = tip.getBoundingClientRect();
+    helpTip.style.left = Math.max(8, Math.min(rect.left, vw - rect.width - 8)) + 'px';
+    rect = helpTip.getBoundingClientRect();
   }
   const arrow = Math.max(10, Math.min(rect.width - 10, r.left + r.width / 2 - rect.left));
-  tip.style.setProperty('--arrow-x', arrow + 'px');
+  helpTip.style.setProperty('--arrow-x', arrow + 'px');
 }
 
-function togglePipsTip(force){
-  const btn = $('pipsHelp'), tip = $('pipsTip');
-  if(!btn || !tip) return;
-  const open = force === undefined ? tip.hidden : force;
-  if(open){
-    tipScrollTries = 0;
-    tip.hidden = false;
-    tip.style.visibility = 'hidden';
-    placePipsTip();
-  }else{
-    tip.hidden = true;
-  }
-  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+function closeHelpTip(){
+  if(helpTip){ helpTip.hidden = true; helpTip.style.visibility = ''; }
+  if(helpBtn) helpBtn.setAttribute('aria-expanded', 'false');
+  helpBtn = null; helpTip = null;
+}
+
+function toggleHelpTip(btn){
+  const tip = document.getElementById(btn.dataset.help);
+  if(!tip) return;
+  if(helpBtn === btn && !tip.hidden){ closeHelpTip(); return; }
+  closeHelpTip();
+  helpBtn = btn; helpTip = tip; helpTries = 0;
+  tip.hidden = false;
+  btn.setAttribute('aria-expanded', 'true');
+  // 内联说明（如保证金风险率）直接展开，不做浮层定位
+  if(tip.classList.contains('risk-note')) return;
+  tip.style.visibility = 'hidden';
+  placeHelpTip();
 }
 
 function bindEvents(){
@@ -241,11 +252,15 @@ function bindEvents(){
   $('pngBtn').onclick = () => { location.href = '/api/export/png'; };
   $('reportBtn').onclick = () => { location.href = STATIC ? 'report.html' : '/report.html'; };
 
-  // 波动列说明：问号点击开关，点其他位置或 Esc 关闭
-  $('pipsHelp').onclick = e => { e.stopPropagation(); togglePipsTip(); };
-  $('pipsTip').onclick = e => e.stopPropagation();
-  document.addEventListener('click', () => togglePipsTip(false));
-  document.addEventListener('keydown', e => { if(e.key === 'Escape') togglePipsTip(false); });
+  // 指标/表头说明：问号点击开关，点其他位置或 Esc 关闭
+  document.querySelectorAll('.help-btn').forEach(btn => {
+    btn.onclick = e => { e.stopPropagation(); toggleHelpTip(btn); };
+  });
+  document.querySelectorAll('.help-tip, .risk-note').forEach(tip => {
+    tip.onclick = e => e.stopPropagation();
+  });
+  document.addEventListener('click', closeHelpTip);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeHelpTip(); });
 
   // 邀请码一键复制（静态云端页同样可用）
   $('icodeBtn').onclick = async () => {

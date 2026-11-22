@@ -67,37 +67,45 @@
   <section class="overview" aria-label="账户总览">
     <div class="rail">
       <div class="cell">
-        <span>权益 <i>EQUITY</i></span>
-        <b id="sEquity">—</b>
-      </div>
-      <div class="cell">
-        <span>余额 <i>BALANCE</i></span>
+        <span>余额</span>
         <b id="balValue">—</b>
       </div>
       <div class="cell">
-        <span>浮盈 <i>FLOATING</i></span>
+        <span>净值</span>
+        <b id="sEquity">—</b>
+      </div>
+      <div class="cell">
+        <span>保证金</span>
+        <b id="sMargin">—</b>
+      </div>
+      <div class="cell">
+        <span>保证金风险率 <button type="button" class="help-btn" id="riskHelp" data-help="riskTip" aria-label="保证金风险率说明" aria-expanded="false">?</button></span>
+        <b id="sLevel">—</b>
+      </div>
+      <div class="cell">
+        <span>浮盈</span>
         <b id="floating">—</b>
       </div>
       <div class="cell">
-        <span>累计已实现 <i>REALIZED</i></span>
+        <span>利润实现</span>
         <b id="realized">—</b>
       </div>
       <div class="cell">
-        <span>风险率 <i>RISK</i></span>
-        <b id="sLevel">—</b>
-      </div>
-      <div class="cell cell-meta">
-        <span>保证金 <i>MARGIN</i></span>
-        <b id="sMargin">—</b>
+        <span>胜率</span>
+        <b id="win">—</b>
+        <small id="winNote"></small>
       </div>
     </div>
 
     <div class="metaline">
       <span>持仓 <b id="count">0</b> 笔 · 净敞口 <b id="net">0.00</b></span>
       <span>多 <b id="buyLots" class="long">0.00</b> / 空 <b id="sellLots" class="short">0.00</b> 手</span>
-      <span>胜率 <b id="win">—</b> <em id="winNote"></em></span>
       <span>来源 <b id="sSource">—</b></span>
       <span class="px"><b id="priceBadge">XAUUSDm —</b></span>
+    </div>
+
+    <div class="risk-note" id="riskTip" role="note" hidden>
+      <b>保证金风险率</b> = 净值 ÷ 已用保证金 × 100%。数值越高，说明保证金占用越低、账户越安全；它不是亏损风险，也不是爆仓概率。
     </div>
   </section>
 
@@ -110,7 +118,7 @@
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th><span class="help-wrap">波动(点)<button type="button" class="help-btn" id="pipsHelp" aria-label="波动列说明" aria-expanded="false">?</button><span class="help-tip" id="pipsTip" role="tooltip" hidden>1 点 = 0.01 美元价格变动，表示价格波动幅度，不是盈亏金额。</span></span></th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
+        <thead><tr><th class="hide-mobile">订单</th><th>方向</th><th>手数</th><th class="hide-mobile">开仓价</th><th class="hide-mobile">现价</th><th><span class="help-wrap">波动(点)<button type="button" class="help-btn" id="pipsHelp" data-help="pipsTip" data-place="above" aria-label="波动列说明" aria-expanded="false">?</button><span class="help-tip" id="pipsTip" role="tooltip" hidden>1 点 = 0.01 美元价格变动，表示价格波动幅度，不是盈亏金额。</span></span></th><th>浮盈 / USD</th><th class="hide-mobile">时长</th></tr></thead>
         <tbody id="positions"><tr><td colspan="8" class="empty">等待数据…</td></tr></tbody>
       </table>
     </div>

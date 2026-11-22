@@ -77,7 +77,8 @@ const Theme = (() => {
     paint();
   }
   function cycle(){
-    set(mode === 'auto' ? 'light' : mode === 'light' ? 'dark' : 'auto');
+    // 按“当前实际显示的主题”取反，保证一次点击就出现变化
+    set(resolve(mode) === 'light' ? 'dark' : 'light');
   }
   // 跟随系统模式下，系统主题变化要即时生效
   const onSys = () => { if(mode === 'auto') paint(); };

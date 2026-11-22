@@ -117,29 +117,26 @@ a{color:var(--accent)}
 /* —— 账户总览：一条数据轨 —— */
 .overview{margin-top:22px}
 .rail{
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) 150px;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
   gap:1px;background:var(--line);
   border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   container-type:inline-size;
 }
-.cell{background:var(--bg);padding:18px 12px 20px;min-width:0}
+.cell{background:var(--bg);padding:18px 10px 20px;min-width:0}
 .cell>span{
-  display:flex;align-items:baseline;gap:8px;margin-bottom:12px;
-  font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--muted);
+  display:flex;align-items:center;gap:6px;margin-bottom:12px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--muted);
   text-transform:uppercase;white-space:nowrap;
 }
-.cell>span i{font-style:normal;font-size:12px;color:var(--muted-2);letter-spacing:.08em}
 .cell>b{
   display:block;font-family:var(--mono);font-weight:700;line-height:1;
-  font-size:clamp(22px,2.45cqw,38px);letter-spacing:-.04em;
+  font-size:clamp(20px,2.05cqw,34px);letter-spacing:-.04em;
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 .cell small{
   display:block;margin-top:9px;font-family:var(--mono);font-size:13px;
-  color:var(--muted);white-space:nowrap;
+  color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.cell small b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
-.cell-meta>b{font-size:clamp(22px,2cqw,30px);letter-spacing:-.02em}
 
 .metaline{
   display:flex;flex-wrap:wrap;gap:8px 24px;padding:14px 2px 0;
@@ -150,6 +147,15 @@ a{color:var(--accent)}
 .metaline b.short{color:var(--short)}
 .metaline em{font-style:normal;color:var(--muted-2)}
 .metaline .px{margin-left:auto;color:var(--accent);letter-spacing:.04em}
+
+/* 保证金风险率说明：内联展开，避免遮挡上方七个核心数值 */
+.risk-note{
+  margin-top:12px;padding:12px 14px;
+  border-left:2px solid var(--accent);background:var(--accent-soft);
+  font-family:var(--font-sans);font-size:13px;line-height:1.7;color:var(--para);
+}
+.risk-note b{color:var(--text);font-weight:700}
+.risk-note[hidden]{display:none}
 
 /* —— 分区 —— */
 .block{margin-top:40px;min-width:0}
@@ -201,6 +207,11 @@ th[title]{cursor:help;text-decoration:underline dotted var(--help-line);text-und
   width:10px;height:10px;margin-left:-5px;
   background:var(--tip-bg);border-right:1px solid var(--tip-border);
   border-bottom:1px solid var(--tip-border);transform:rotate(45deg);
+}
+.help-tip.below::after{
+  bottom:auto;top:-6px;
+  border-right:0;border-bottom:0;
+  border-left:1px solid var(--tip-border);border-top:1px solid var(--tip-border);
 }
 .help-tip[hidden]{display:none}
 td{
@@ -373,8 +384,9 @@ footer .down{color:var(--down)}
 /* 1100 仍保持总览一行；再窄改为 3 列换行 */
 @media(max-width:1040px){
   .rail{grid-template-columns:repeat(3,minmax(0,1fr))}
+  /* 7 张主卡换行时，最后一张（胜率）撑满整行，避免出现空白格 */
+  .rail .cell:last-child{grid-column:1/-1}
   .cell>b{font-size:clamp(26px,4.2cqw,36px)}
-  .cell-meta>b{font-size:clamp(24px,3.6cqw,30px)}
 }
 
 @media(max-width:1200px){
@@ -405,9 +417,11 @@ footer .down{color:var(--down)}
   .theme{padding:0 9px}
 
   .rail{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rail .cell:last-child{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap}
+  .rail .cell:last-child>span{margin-bottom:0}
+  .rail .cell:last-child small{margin-top:0}
   .cell{padding:16px 12px 18px}
   .cell>b{font-size:clamp(22px,6vw,28px)}
-  .cell-meta>b{font-size:clamp(22px,5.4vw,26px)}
   .cell>span{margin-bottom:10px}
   .metaline{gap:7px 16px;font-size:13px;padding-top:12px}
   .metaline .px{margin-left:0}
@@ -446,5 +460,4 @@ footer .down{color:var(--down)}
   .wordmark p{display:none}
   .cell>b{font-size:clamp(21px,6.2vw,27px)}
   .cal-grid{gap:2px}
-  .cell>span i{display:none}
 }
