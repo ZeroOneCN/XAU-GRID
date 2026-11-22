@@ -24,16 +24,13 @@ function render(d){
 
   setText('floating', money(d.summary.floating), cls(d.summary.floating));
   setText('realized', money(d.summary.today_realized), cls(d.summary.today_realized));
-  $('equityLine').textContent = `入金基线 $${Number(d.baseline || 0).toFixed(2)}`;
   setText('balValue', moneyAbs(d.account.balance), cls(d.account.balance));
   $('closedLine').textContent = `${d.summary.closed_today} 笔平仓`;
   $('count').textContent = d.summary.positions;
   $('lotLine').textContent = `多 ${d.summary.buy_lots.toFixed(2)} / 空 ${d.summary.sell_lots.toFixed(2)} 手`;
   setText('net', d.summary.net_lots.toFixed(2), 'neutral');
-  $('expoLine').textContent = Math.abs(d.summary.net_lots) < 0.01 ? '双边完全对冲' : (d.summary.net_lots > 0 ? '偏多敞口' : '偏空敞口');
   setText('win', d.summary.win_rate == null ? '—' : d.summary.win_rate.toFixed(1) + '%',
           d.summary.win_rate == null ? 'neutral' : (d.summary.win_rate >= 70 ? 'up' : 'neutral'));
-  $('marginLine').textContent = `保证金率 ${d.account.margin_level.toFixed(0)}%`;
 
   const rows = d.positions.map(p => `<tr>
       <td class="ticket hide-mobile">#${p.ticket}</td>
@@ -48,22 +45,14 @@ function render(d){
   $('positions').innerHTML = rows || '<tr><td colspan="8" style="text-align:center;color:var(--muted-2);padding:30px">当前无持仓</td></tr>';
   $('tableTag').textContent = `OPEN POSITIONS · ${d.summary.positions}`;
 
-  const total = d.summary.buy_lots + d.summary.sell_lots || 1;
-  const bp = 100 * d.summary.buy_lots / total;
-  $('buyBar').style.width = bp + '%'; $('sellBar').style.width = (100 - bp) + '%';
-  $('buyLots').textContent = d.summary.buy_lots.toFixed(2) + ' 手';
-  $('sellLots').textContent = d.summary.sell_lots.toFixed(2) + ' 手';
-
   setText('sEquity', moneyAbs(d.account.equity), cls(d.account.equity));
   setText('sMargin', moneyAbs(d.account.margin), cls(d.account.margin));
   $('sLevel').textContent = d.account.margin_level.toFixed(0) + '%';
   $('sSource').textContent = live ? 'MT5 终端' : (cached ? '离线缓存' : '演示模拟器');
 
-  baseline = d.baseline || 5000;
   $('curveTag').textContent = live ? `历史权益 · ${d.summary.curve_deals || 0} 笔` : '权益曲线';
   lastCurve = d.equity_curve || [];
   if(hoverIdx >= lastCurve.length) hoverIdx = -1;
-  if(lastCurve.length) baseline = lastCurve[lastCurve.length - 1].base ?? baseline;
   const firstT = lastCurve.length ? lastCurve[0].t : '—';
   $('chartNote').innerHTML = `<span>${rangeLabels[currentRange]} · ${firstT} → 现在</span><span>更新 ${(d.server_time || '').slice(11)}</span>`;
   $('chartNote').title = `数据更新时间 ${d.server_time}`;

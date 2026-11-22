@@ -23,7 +23,7 @@ function drawCurve(points, hover = -1){
 
   const cGrid = cssVar('--grid-line'), cAxis = cssVar('--axis'), cAxis2 = cssVar('--axis-2');
   const cCurveUp = cssVar('--curve-up'), cCurveDown = cssVar('--curve-down');
-  const cCurveAccent = cssVar('--curve-accent'), cCurveGold = cssVar('--curve-gold');
+  const cCurveAccent = cssVar('--curve-accent');
   const cHalo = cssVar('--panel-top'), cHover = cssVar('--hover-line');
   const cTipBg = cssVar('--tip-bg'), cTipBorder = cssVar('--tip-border'), cTipText = cssVar('--tip-text');
   const fillAlpha = parseFloat(cssVar('--curve-fill-a')) || 0.22;
@@ -32,21 +32,18 @@ function drawCurve(points, hover = -1){
   const padR = 10, padT = 14, padB = narrow ? 24 : 28;
   const rv = points.map(p => p.v ?? 0);
   const ev = points.map(p => p.eq ?? p.v ?? 0);
-  const bv = points.map(p => p.base ?? baseline);
-  const all = rv.concat(ev, bv);
+  const all = rv.concat(ev);
   let lo = Math.min(...all), hi = Math.max(...all);
   const pad = Math.max((hi - lo) * 0.12, 1);
   lo -= pad; hi += pad;
 
-  // —— Y 轴：固定 5 档，金额与看板同口径；标签宽度反推左边距 ——
+  // —— Y 轴：固定 5 档，完整金额（不缩写）；标签宽度反推左边距 ——
   const yTicks = 5;
-  const kDigits = (hi - lo) < 20 ? 4 : ((hi - lo) < 200 ? 3 : 2);
+  const fmtY = v => (v < 0 ? '−$' : '$')
+    + Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   const yTexts = [];
   for(let k = 0; k < yTicks; k++){
-    const v = hi - k * (hi - lo) / (yTicks - 1);
-    const av = Math.abs(v);
-    yTexts.push((v < 0 ? '−$' : '$') + (av >= 1000 ? (av / 1000).toFixed(kDigits) + 'k'
-                                                     : av.toFixed(2)));
+    yTexts.push(fmtY(hi - k * (hi - lo) / (yTicks - 1)));
   }
   ctx.font = `${narrow ? 9 : 10}px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
   const maxLabelW = Math.max(...yTexts.map(t => ctx.measureText(t).width));
@@ -129,8 +126,7 @@ function drawCurve(points, hover = -1){
   tickIdx.forEach(i => { if(i !== 0 && i !== last) place(i, 'center', !narrow); });
 
   // —— 主权益线渐变填充 ——
-  const baseNow = bv[last];
-  const rising = ev[last] >= baseNow;
+  const rising = ev[last] >= ev[0];
   const line = rising ? cCurveUp : cCurveDown;
   const dot = rising ? cssVar('--dot-up') : cssVar('--dot-down');
   const rgb = rising ? cssVar('--up-rgb') : cssVar('--down-rgb');
@@ -156,26 +152,9 @@ function drawCurve(points, hover = -1){
   ctx.strokeStyle = line; ctx.lineWidth = 2.2; ctx.stroke();
   ctx.lineJoin = 'miter';
 
-  // —— 入金基线：终于最上层，避免被遮挡 ——
-  ctx.setLineDash([7, 5]);
-  ctx.beginPath(); bv.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
-  ctx.strokeStyle = cHalo; ctx.lineWidth = 5.4; ctx.stroke();
-  ctx.strokeStyle = cCurveGold; ctx.lineWidth = 2.6; ctx.stroke();
-  ctx.setLineDash([]);
-  const baseLabel = '入金 ' + moneyAbs(baseNow);
-  const blw = ctx.measureText(baseLabel).width + 10;
-  const blx = Math.max(padL + 2, Math.min(w - padR - blw, padL + 4));
-  const bly = Math.max(padT, Math.min(py(baseNow) - 18, padT + ph - 16));
-  ctx.fillStyle = cTipBg; roundRect(ctx, blx, bly, blw, 15, 2); ctx.fill();
-  ctx.fillStyle = cCurveGold; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillText(baseLabel, blx + 5, bly + 8);
-  ctx.textBaseline = 'alphabetic';
-
   // —— 末端点 ——
   ctx.beginPath(); ctx.arc(px(last), py(ev[last]), 3.6, 0, Math.PI * 2);
   ctx.fillStyle = dot; ctx.fill();
-  const ln1 = document.querySelector('.curve-legend .ln1');
-  if(ln1) ln1.style.borderColor = line;
 
   // —— 读数提示：限制在画布内，不越出视口 ——
   if(hover >= 0 && hover < points.length){

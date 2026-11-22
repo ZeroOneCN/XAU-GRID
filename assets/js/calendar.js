@@ -47,8 +47,8 @@ function renderCalendar(){
     const alpha = has ? (light ? 0.20 + 0.40 * ratio : 0.32 + 0.6 * ratio) : 0;
     const rgb = cssVar(v > 0 ? '--up-rgb' : '--down-rgb');
     const bg = has ? `rgba(${rgb},${alpha.toFixed(2)})` : '';
-    // 与看板共用金额口径：≥1000 紧凑为 x.xxk，<1000 保留两位小数
-    const label = has ? money(v) : '';
+    // 收益日历保留紧凑口径：≥1000 为 x.xxk，<1000 两位小数
+    const label = has ? moneyCompact(v) : '';
     const ink = has ? inkFor(rgb, alpha) : '';
     const darkInk = ink === '#050607';
     html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}`
@@ -57,7 +57,7 @@ function renderCalendar(){
           + ` title="${key}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}"><span class="d">${day}</span>`
           + `${has ? `<span class="v">${label}</span>` : ''}</div>`;
   }
-  html += `<div class="cal-stats"><span>本月 <b style="color:${monthTotal >= 0 ? 'var(--up)' : 'var(--down)'}">${monthTotal >= 0 ? '+' : '−'}$${Math.abs(monthTotal).toFixed(2)}</b></span>`
+  html += `<div class="cal-stats"><span>本月 <b style="color:${monthTotal >= 0 ? 'var(--up)' : 'var(--down)'}">${moneyCompact(monthTotal)}</b></span>`
         + `<span>盈 ${wins} / 亏 ${losses}</span></div>`;
   $('calGrid').innerHTML = html;
   $('calTag').textContent = `${Object.keys(dailyMap).filter(k => dailyMap[k] !== 0).length} DAYS`;
