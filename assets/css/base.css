@@ -1,57 +1,67 @@
 /* ============================================================
- * base.css — 全局重置、液态背景、排版、动效与滚动条
+ * Base：极简高对比底子
+ * - 近黑纯色底 + 极淡工程网格，无动画、无光斑、无玻璃模糊
+ * - 统一系统字体与等宽数字
  * ============================================================ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-html{scroll-behavior:smooth}
-
+*{box-sizing:border-box}
+html{
+  -webkit-text-size-adjust:100%;
+  background:var(--bg);
+  color-scheme:dark;
+}
+html[data-theme="light"]{color-scheme:light}
 body{
-  position:relative;
+  margin:0;
   min-height:100vh;
-  padding:22px 26px 30px;
   color:var(--text);
-  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  letter-spacing:.2px;
-  background:
-    radial-gradient(1100px 620px at 8% -12%,var(--glow1) 0%,transparent 62%),
-    radial-gradient(900px 560px at 96% -4%,var(--glow2) 0%,transparent 58%),
-    radial-gradient(760px 480px at 52% 108%,var(--glow3) 0%,transparent 60%),
-    var(--bg);
-  background-attachment:fixed;
-  transition:background .5s var(--ease),color .35s var(--ease);
+  font-family:var(--font-sans);
+  font-size:14px;
+  line-height:1.55;
+  letter-spacing:.01em;
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(to right,var(--grid-faint) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--grid-faint) 1px,transparent 1px);
+  background-size:88px 88px;
+  background-position:0 0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-/* 液态光晕：两枚缓慢漂移的高斯光斑，营造"玻璃背后有流动液体"的层次 */
-body::before,body::after{
-  content:"";position:fixed;z-index:-1;pointer-events:none;border-radius:50%;
-  filter:blur(90px);opacity:.5;
-}
+/* 顶部一条国际橙，像发射台标识带 */
 body::before{
-  width:460px;height:460px;top:-140px;left:12%;
-  background:radial-gradient(circle,rgba(79,179,255,.30),transparent 68%);
-  animation:drift1 26s var(--ease) infinite alternate;
+  content:"";
+  position:fixed;
+  inset:0 0 auto 0;
+  height:2px;
+  background:var(--accent);
+  z-index:80;
+  pointer-events:none;
 }
-body::after{
-  width:420px;height:420px;bottom:-160px;right:8%;
-  background:radial-gradient(circle,rgba(245,198,93,.22),transparent 68%);
-  animation:drift2 32s var(--ease) infinite alternate;
+body::after{content:none;display:none}
+
+h1,h2,h3,p,figure{margin:0}
+b,strong{font-weight:700}
+a{color:inherit;text-decoration:none}
+button{
+  font:inherit;
+  color:inherit;
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  cursor:pointer;
 }
-:root[data-theme="light"] body::before{opacity:.34}
-:root[data-theme="light"] body::after{opacity:.28}
-@keyframes drift1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(70px,60px,0) scale(1.12)}}
-@keyframes drift2{from{transform:translate3d(0,0,0) scale(1.08)}to{transform:translate3d(-80px,-50px,0) scale(.95)}}
-@media (prefers-reduced-motion:reduce){
-  body::before,body::after{animation:none}
-  *,*::before,*::after{transition:none!important}
+button:disabled{opacity:.35;cursor:not-allowed}
+input,select,textarea{font:inherit;color:inherit}
+img,svg{display:block;max-width:100%}
+
+::selection{background:var(--accent);color:var(--accent-ink)}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:0}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
 }
-
-.wrap{max-width:1680px;margin:0 auto}
-
-/* 通用滚动条：细、圆、融入玻璃 */
-*::-webkit-scrollbar{width:7px;height:7px}
-*::-webkit-scrollbar-track{background:transparent}
-*::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
-*::-webkit-scrollbar-thumb:hover{background:var(--btn-hover-border);background-clip:padding-box}
-
-/* 文字选中 */
-::selection{background:rgba(79,179,255,.32);color:var(--text)}

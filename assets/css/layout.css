@@ -1,125 +1,160 @@
 /* ============================================================
- * layout.css — 网格布局 / 曲线 / 日历 / 分页 / 响应式
+ * layout.css — 全局骨架 / KPI 数据带 / 曲线 / 日历 / 分页 / 响应式
+ * 极简任务控制风：细线分隔、方角、克制留白、稳定栅格。
  * ============================================================ */
 
-/* —— KPI 栅格 ——
- * 用 auto-fit + 固定最小宽实现随可用宽度自适应：列宽只由栅格决定（1fr），
- * 不受卡片内数值长度影响，同一视口内刷新数据不会跳宽；
- * align-items:start 让卡片按内容高度收缩，不被同行最高卡片拉长。
- */
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,196px),1fr));
-  gap:14px;margin-bottom:14px;
-  align-items:start;
+.wrap{
+  max-width:1560px;
+  margin:0 auto;
+  padding:26px 32px 44px;
+  position:relative;
+  z-index:1;
 }
 
 /* —— 主栅格 —— */
-.grid{display:grid;gap:14px}
-.row-top{grid-template-columns:minmax(0,1.65fr) minmax(300px,.85fr);align-items:start}
-.row-charts{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:14px}
+.grid{display:grid;gap:20px}
+.row-top{grid-template-columns:minmax(0,1.7fr) minmax(320px,.8fr);align-items:start}
+.row-charts{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:20px}
 .row-charts>.panel{display:flex;flex-direction:column}
 .row-charts .pad{flex:1;display:flex;flex-direction:column}
-.side-stack{display:flex;flex-direction:column;gap:14px}
-.pad{padding:16px 18px}
+.side-stack{display:flex;flex-direction:column;gap:20px}
+.pad{padding:18px 20px}
+
+/* —— KPI 数据带 ——
+ * 主指标独占一行，其余四项等分；1px 网格线由 gap + 背景色构成，
+ * 这样在 4/2/1 列切换时分割线自动成立，不需要为每个断点补边框。
+ */
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  margin-bottom:20px;
+}
+.kpi{
+  position:relative;
+  min-width:0;
+  min-height:132px;
+  padding:22px 24px 20px;
+  background:var(--panel);
+  container-type:inline-size;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+.kpi.hero{
+  grid-column:1/-1;
+  min-height:0;
+  padding:30px 28px 26px;
+  box-shadow:inset 3px 0 0 var(--accent);
+}
 
 /* —— 权益曲线 —— */
 canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y}
-.range-bar{display:flex;gap:6px;margin-bottom:10px}
-.range-bar button{padding:7px 13px;font-size:12px;border-radius:7px}
-.range-bar button.active{color:var(--active-text);background:var(--accent);border-color:var(--accent);font-weight:700;
-  box-shadow:0 4px 12px rgba(79,179,255,.35)}
-.curve-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
-.curve-legend i{display:inline-block;width:14px;height:0;border-top:2px solid;margin-right:4px;vertical-align:middle}
+.range-bar{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--line);width:max-content}
+.range-bar button{
+  padding:7px 14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  border:0;border-left:1px solid var(--line);border-radius:0;color:var(--muted);
+}
+.range-bar button:first-child{border-left:0}
+.range-bar button:hover{color:var(--text);background:var(--hover-bg)}
+.range-bar button.active{color:var(--active-text);background:var(--accent);font-weight:700;box-shadow:none}
+.curve-legend{display:flex;gap:18px;font-size:11px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.curve-legend i{display:inline-block;width:16px;height:0;border-top:1px solid;margin-right:6px;vertical-align:middle}
 .curve-legend .ln1{border-color:var(--curve-up)}
 .curve-legend .ln2{border-color:var(--curve-accent);border-top-style:dashed}
 .curve-legend .ln3{border-color:var(--curve-gold);border-top-style:dashed}
-.chart-note{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:12px;color:var(--note);font-family:var(--mono)}
+.chart-note{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:11px;color:var(--note);font-family:var(--mono);font-variant-numeric:tabular-nums}
 
 /* —— 收益日历 —— */
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-.cal-nav button{padding:4px 9px;font-size:11px}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-nav button{padding:4px 10px;font-size:11px}
 .cal-nav button:disabled{opacity:.3;cursor:not-allowed}
-.cal-nav span{font-family:var(--mono);font-size:16px;color:var(--text)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-.cal-head{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
+.cal-nav span{font-family:var(--mono);font-size:16px;color:var(--text);letter-spacing:.04em}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-head{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;letter-spacing:.08em}
 .cal-cell{
-  aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  aspect-ratio:1;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   font-family:var(--mono);color:var(--cal-text);background:var(--cal-bg);line-height:1.1;
-  border:1px solid var(--line-soft);transition:transform .2s var(--ease);
+  border:1px solid var(--line-soft);transition:none;
 }
-.cal-cell.has{color:var(--cal-has-text);text-shadow:0 1px 2px var(--cal-shadow);box-shadow:var(--glass-inner)}
-.cal-cell.has:hover{transform:scale(1.06)}
+.cal-cell.has{color:var(--cal-has-text);text-shadow:0 1px 2px var(--cal-shadow);box-shadow:none}
+.cal-cell.has:hover{filter:brightness(1.08)}
 .cal-cell.has .d{opacity:.95}
 .cal-cell.blank{background:transparent;border-color:transparent}
-.cal-cell.today{outline:1.5px solid var(--gold);outline-offset:-1px}
+.cal-cell.today{outline:1px solid var(--accent);outline-offset:-1px}
 .cal-cell .d{font-size:15px;opacity:.9}
 .cal-cell .v{font-size:14px;font-weight:700;letter-spacing:-.6px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.cal-stats{grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.cal-stats{grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums}
 .cal-stats b{font-weight:700}
-.cal-legend{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-top:14px}
-.cal-legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin:0 4px -1px 0;border:1px solid var(--line)}
+.cal-legend{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-top:14px}
+.cal-legend .sw{display:inline-block;width:12px;height:12px;border-radius:0;margin:0 4px -1px 0;border:1px solid var(--line)}
 
 /* —— 平仓历史分页 —— */
-.deal-nav{margin-left:auto;display:flex;align-items:center;gap:7px}
+.deal-nav{margin-left:auto;display:flex;align-items:center;gap:8px}
 .deal-nav .tag{margin-left:0}
-.deal-nav button{padding:4px 9px;font-size:12px;line-height:1.2}
-.deal-nav #dealPage{font-family:var(--mono);font-size:12px;color:var(--text);min-width:54px;text-align:center}
-.deal-nav select{background:var(--btn-bg);color:var(--text);border:1px solid var(--glass-border);border-radius:8px;
-  padding:4px 6px;font-size:11px;font-family:inherit;cursor:pointer;box-shadow:var(--neu-raised)}
+.deal-nav button{padding:4px 10px;font-size:11px;line-height:1.2}
+.deal-nav #dealPage{font-family:var(--mono);font-size:11px;color:var(--text);min-width:54px;text-align:center;font-variant-numeric:tabular-nums}
+.deal-nav select{
+  background:var(--input-bg);color:var(--text);border:1px solid var(--line);border-radius:0;
+  padding:4px 6px;font-size:11px;font-family:var(--mono);cursor:pointer;box-shadow:none;
+}
 .deals-scroll{max-height:330px}
 .deals-scroll td:first-child,.deals-scroll th:first-child{color:var(--muted)}
 .deals-scroll .side{vertical-align:middle}
 
 /* —— 页脚 —— */
-footer{margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;color:var(--footer-text);font-size:11px}
+footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:18px;flex-wrap:wrap;color:var(--footer-text);font-size:11px;font-family:var(--mono)}
 footer b{color:var(--footer-b);font-weight:500}
-footer b.money-legend-up{color:var(--up)}footer b.money-legend-down{color:var(--down)}
-.progress{height:3px;background:var(--progress-bg);border-radius:3px;margin-top:14px;overflow:hidden;box-shadow:var(--neu-pressed)}
-.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--bar-1),var(--accent));width:100%;
-  box-shadow:0 0 8px var(--accent)}
+footer b.money-legend-up{color:var(--up)}
+footer b.money-legend-down{color:var(--down)}
+.progress{height:2px;background:var(--progress-bg);border-radius:0;margin-top:14px;overflow:hidden;box-shadow:none}
+.progress i{display:block;height:100%;background:var(--accent);width:100%;box-shadow:none}
 
 /* ============================================================
  * 响应式
  * ============================================================ */
+@media(max-width:1240px){
+  .wrap{padding:24px 24px 40px}
+  .row-top{grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr)}
+}
+
 @media(max-width:1100px){
   .grid,.row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
 }
 
-/* KPI 列数由 auto-fit 决定；4 列区间让主卡跨两列，避免出现 4+1 孤行 */
-@media(min-width:878px) and (max-width:1087px){
-  .kpi.hero{grid-column:span 2}
+@media(max-width:900px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 @media(max-width:700px){
-  body{padding:12px 12px 20px}
-  header{gap:8px;margin-bottom:12px}
-  .logo{width:38px;height:38px}
-  .logo svg{width:36px;height:36px}
-  .brand h1{font-size:15px;letter-spacing:.5px;white-space:nowrap}
-  .brand p{font-size:9px;letter-spacing:1px}
-  .spacer{display:none}
-  .chip{padding:6px 9px;font-size:10px}
-  button,.btn{padding:7px 10px;font-size:10px}
-  .theme-toggle{padding:3px}
-  .theme-toggle .tt-ico{width:24px;height:24px}
-  .theme-toggle .tt-knob{width:24px;height:24px;top:3px;left:3px}
-  .theme-toggle[data-mode="light"] .tt-knob{transform:translateX(27px)}
-  .theme-toggle[data-mode="dark"] .tt-knob{transform:translateX(54px)}
-  .invite{padding:6px 10px;font-size:10px}
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  .kpis .hero{grid-column:1/-1}
-  .card{padding:12px 14px;border-radius:14px}
-  .kpi .label{font-size:9px;letter-spacing:.6px}
-  .kpi .value{font-size:22px;margin-top:6px}
-  .kpi.hero .value{font-size:34px}
+  .wrap{padding:18px 14px 32px}
+  .masthead{gap:14px;padding:18px 0 14px;margin-bottom:18px}
+  .mast-brand{gap:12px}
+  .logo{width:36px;height:36px}
+  .logo svg{width:34px;height:34px}
+  .brand h1{font-size:18px;letter-spacing:.02em}
+  .brand p{font-size:8px;letter-spacing:.18em}
+  .mast-side{gap:10px}
+  .mast-actions{gap:6px}
+  .chip{padding:0;font-size:10px}
+  .mast-meta{gap:10px}
+  button,.btn{padding:7px 10px;font-size:10px;height:32px}
+  .theme-toggle .tt-ico{width:26px;height:26px}
+  .invite{padding:0 10px;font-size:10px;height:32px}
+  .icode-copy{height:32px}
+  .kpi{padding:18px 16px 16px;min-height:112px}
+  .kpi.hero{padding:22px 18px 20px}
+  .kpi .label{font-size:9px;letter-spacing:.10em}
+  .kpi .value{margin-top:8px}
   .kpi .sub{font-size:9px;margin-top:6px}
-  .kpi-tag{right:12px;top:10px;font-size:9px;padding:3px 6px}
-  .grid{gap:9px;margin-top:9px!important}
-  .row-top,.row-charts{grid-template-columns:minmax(0,1fr)}
-  .panel-head{padding:11px 14px}
+  .kpi-tag{right:14px;top:16px;font-size:9px;padding:0}
+  .grid{gap:12px}
+  .row-top,.row-charts{grid-template-columns:minmax(0,1fr);margin-top:12px}
+  .panel-head{padding:12px 14px}
   .panel-head h2{font-size:12px}
-  .pad{padding:12px 14px}
+  .pad{padding:14px}
   canvas{height:170px}
   .range-bar button{padding:6px 9px;font-size:10px}
   .curve-legend{gap:8px;font-size:9px}
@@ -140,6 +175,10 @@ footer b.money-legend-up{color:var(--up)}footer b.money-legend-down{color:var(--
   .hide-mobile{display:none}
   .scroll{max-height:none}
   .deals-scroll{max-height:260px}
-  section.panel{margin-top:9px!important}
+  section.panel{margin-top:12px!important}
   footer{font-size:9px;gap:7px;line-height:1.6}
+}
+
+@media(max-width:380px){
+  .kpis{grid-template-columns:minmax(0,1fr)}
 }

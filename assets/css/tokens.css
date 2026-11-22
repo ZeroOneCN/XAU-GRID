@@ -1,121 +1,250 @@
 /* ============================================================
- * tokens.css — 设计令牌（Design Tokens）
- * 玻璃液态 + 新拟态（Neumorphism）设计系统的单一真相源。
- * 主题由 <html data-theme="dark|light"> 控制，JS 在加载前写入，
- * 避免首屏闪白。所有颜色语义保持：绿=盈利 / 红=亏损 / 金=品牌。
- * 保留全部旧变量名，确保 JS 曲线/日历 cssVar() 调用不失效。
+ * 设计基调：极简 / 高对比 / 美式航天任务控制
+ * 近黑底、冷白字、单一国际橙强调色；无玻璃模糊、无光斑。
+ * 所有变量名保持不变，供 dashboard / report / canvas / calendar 复用。
  * ============================================================ */
 :root{
-  color-scheme:dark;
+  --font-sans:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
 
-  /* —— 语义色 —— */
-  --up:#00d6a0;--down:#ff5266;--accent:#4fb3ff;--gold:#f5c65d;
-  --up-rgb:0,214,160;--down-rgb:255,82,102;--accent-rgb:79,179,255;
-  --up-soft:rgba(0,214,160,.14);--down-soft:rgba(255,82,102,.14);
-  --accent-soft:rgba(79,179,255,.14);--gold-soft:rgba(245,198,93,.14);
-  --accent-border:rgba(79,179,255,.28);--gold-border:rgba(245,198,93,.30);--gold-line:rgba(245,198,93,.62);
+  --bg:#050607;
+  --bg-2:#080A0C;
+  --panel:#0B0E11;
+  --panel-top:#0B0E11;
+  --panel-bottom:#080A0C;
 
-  /* —— Canvas 专用色 —— */
-  --curve-up:#00d6a0;--curve-down:#ff5266;--curve-accent:#5cc6ff;--curve-gold:#f5c65d;
-  --curve-fill-a:0.30;
-  --dot-up:#7ff0cd;--dot-down:#ff9aa7;
+  --text:#F3F6F8;
+  --muted:#9AA5AE;
+  --muted-2:#69737C;
+  --strong:#FFFFFF;
+  --subtle:#7C868F;
+  --para:#C9D2D9;
+  --note:#8B959E;
+  --symbol:#E6EDF3;
+  --duration:#A7B3BD;
+  --pct:#3BE08F;
 
-  /* —— 文字 —— */
-  --text:#eef4fb;--muted:#8ea2b9;--muted-2:#647891;--note:#7a8ea7;
-  --footer-text:#6b7d93;--footer-b:#9db1c8;--symbol:#a8bbd0;--duration:#8497ad;
+  --line:#1F262D;
+  --line-soft:#161C22;
+  --td-line:#171D23;
+  --td-border:#232A31;
+  --help-line:#3A444D;
+  --stat-line:#171D23;
+  --th-bg:transparent;
+  --th-border:#1F262D;
 
-  /* —— 玻璃液态核心 token —— */
-  /* 玻璃面：半透明底 + 背景模糊 + 上下高光描边（液态质感的来源） */
-  --glass-bg:linear-gradient(145deg,rgba(28,42,62,.72),rgba(14,22,36,.62));
-  --glass-bg-2:linear-gradient(145deg,rgba(24,36,54,.78),rgba(11,18,30,.70));
-  --glass-blur:blur(22px) saturate(150%);
-  --glass-border:rgba(255,255,255,.085);
-  --glass-border-hi:rgba(255,255,255,.16);
-  --glass-shadow:0 18px 48px -12px rgba(0,0,0,.62),0 2px 8px rgba(0,0,0,.28);
-  --glass-inner:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.20);
-  /* 新拟态：凸起（raised）与凹陷（pressed） */
-  --neu-raised:7px 7px 18px rgba(3,7,14,.72),-6px -6px 16px rgba(90,124,160,.08);
-  --neu-pressed:inset 4px 4px 10px rgba(3,7,14,.70),inset -4px -4px 10px rgba(90,124,160,.07);
-  --neu-btn:linear-gradient(145deg,rgba(32,48,70,.9),rgba(16,26,42,.9));
+  --glass-bg:rgba(11,14,17,.94);
+  --glass-bg-2:#0F1318;
+  --glass-border:#242C34;
+  --glass-border-hi:#39434C;
+  --glass-blur:none;
+  --glass-shadow:none;
+  --glass-inner:none;
 
-  /* —— 结构（兼容旧名，指向玻璃语义） —— */
-  --bg:#060a12;--glow1:#12324a;--glow2:#2a1e46;--glow3:#0d3a3a;
-  --panel-top:#131e2e;--panel-bottom:#0d1624;
-  --card-top:#162337;--card-bottom:#101a2a;
-  --line:rgba(255,255,255,.075);--line-soft:rgba(255,255,255,.05);
-  --td-line:rgba(255,255,255,.045);--stat-line:rgba(255,255,255,.05);
-  --chip-bg:rgba(18,30,46,.66);--btn-bg:rgba(22,34,52,.82);
-  --btn-hover:rgba(34,52,76,.92);--btn-hover-border:rgba(120,170,220,.5);
-  --tag-bg:rgba(255,255,255,.05);--tag-text:#9fb2c9;--tag-border:rgba(255,255,255,.1);
-  --active-text:#08111c;--card-sheen:rgba(255,255,255,.05);--row-hover:rgba(79,179,255,.08);--scrollbar:#33455c;
-  --bar-bg:rgba(255,255,255,.08);--bar-1:#1d86c9;--bar-2:#c7901f;
-  --progress-bg:rgba(255,255,255,.06);--brand-slash:#5d7692;--help-line:#5a6f88;
+  --neu-raised:none;
+  --neu-pressed:none;
+  --neu-btn:#11151A;
 
-  /* —— 日历 / 曲线 —— */
-  --cal-bg:rgba(255,255,255,.045);--cal-text:#93a8bf;--cal-has-text:#ffffff;--cal-shadow:#000a;
-  --grid-line:rgba(255,255,255,.07);--axis:#8ea2b9;--axis-2:#6d7f96;--hover-line:#7fb6e8;
-  --tip-bg:rgba(10,17,28,.94);--tip-border:rgba(90,190,255,.45);--tip-text:#aebfd4;
+  --accent:#FF4D00;
+  --accent-border:rgba(255,77,0,.52);
+  --accent-soft:rgba(255,77,0,.12);
+  --active-text:#050607;
 
-  /* —— 品牌金渐变 —— */
-  --gold-1:#fff0c2;--gold-2:#f5c65d;--gold-3:#b4811c;--logo-shadow:rgba(0,0,0,.6);
+  --up:#3BE08F;
+  --down:#FF5A67;
+  --neutral:#A7B3BD;
+  --up-rgb:59,224,143;
+  --down-rgb:255,90,103;
 
-  /* —— 主题切换按钮 —— */
-  --toggle-bg:rgba(10,18,30,.7);--toggle-knob:linear-gradient(145deg,#ffe9a8,#f0b73f);
-  --toggle-shadow:0 4px 14px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
+  --gold:#A7B3BD;
+  --gold-border:rgba(167,179,189,.34);
+  --gold-soft:rgba(167,179,189,.10);
+  --gold-line:rgba(167,179,189,.40);
+  --gold-1:#FFC2A6;
+  --gold-2:#FF4D00;
+  --gold-3:#7A2200;
+  --brand-slash:#FF4D00;
 
-  --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
-  --radius:18px;--radius-sm:11px;--radius-pill:999px;
-  --ease:cubic-bezier(.22,.9,.28,1);
+  --buy:#FF4D00;
+  --sell:#A7B3BD;
+
+  --bar-bg:#171D23;
+  --bar-1:#FF4D00;
+  --bar-2:#A7B3BD;
+
+  --btn-bg:#0B0E11;
+  --btn-hover:#141A20;
+  --btn-hover-border:#3A434C;
+  --chip-bg:transparent;
+  --tag-bg:transparent;
+  --tag-border:#2A323A;
+  --tag-text:#A7B3BD;
+
+  --hover-bg:rgba(255,255,255,.045);
+  --hover-border:#3A434C;
+  --row-hover:rgba(255,255,255,.035);
+  --zebra:rgba(255,255,255,.012);
+  --input-bg:#0B0E11;
+  --quote-bg:#0B0E11;
+  --quote-border:#242C34;
+  --scrollbar:#2C343C;
+  --toggle-bg:#0B0E11;
+  --toggle-knob:#FF4D00;
+  --toggle-shadow:none;
+  --footer-text:#6E7881;
+  --footer-b:#A7B3BD;
+  --progress-bg:#171D23;
+
+  --logo-shadow:none;
+  --glow1:transparent;
+  --glow2:transparent;
+  --glow3:transparent;
+
+  --radius:2px;
+  --radius-sm:1px;
+  --radius-pill:2px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --duration:.18s;
+
+  /* 图表 / 日历 */
+  --grid-line:rgba(255,255,255,.06);
+  --axis:rgba(255,255,255,.45);
+  --axis-2:rgba(255,255,255,.22);
+  --hover-line:rgba(255,255,255,.35);
+  --tip-bg:#0B0E11;
+  --tip-border:#39434C;
+  --tip-text:#F3F6F8;
+  --dot-up:#3BE08F;
+  --dot-down:#FF5A67;
+  --curve-up:#3BE08F;
+  --curve-down:#FF5A67;
+  --curve-accent:#FF4D00;
+  --curve-gold:#A7B3BD;
+  --curve-fill-a:.10;
+  --cal-bg:#0B0E11;
+  --cal-text:#A7B3BD;
+  --cal-has-text:#FFFFFF;
+  --cal-shadow:rgba(0,0,0,.35);
+
+  /* 页面专用 */
+  --grid-faint:rgba(255,255,255,.018);
+  --accent-ink:#050607;
 }
 
-/* ============================================================
- * 浅色主题：同一套 token 重新配对，绿盈红亏语义不变。
- * ============================================================ */
-:root[data-theme="light"]{
-  color-scheme:light;
+/* —— 浅色：纸白 + 近黑字 + 同一国际橙 —— */
+[data-theme="light"]{
+  --bg:#F4F5F6;
+  --bg-2:#EDEFF1;
+  --panel:#FFFFFF;
+  --panel-top:#FFFFFF;
+  --panel-bottom:#FBFCFD;
 
-  --up:#00996b;--down:#d92f43;--accent:#1263bd;--gold:#b57d12;
-  --up-rgb:0,153,107;--down-rgb:217,47,67;--accent-rgb:18,99,189;
-  --up-soft:rgba(0,153,107,.12);--down-soft:rgba(217,47,67,.12);
-  --accent-soft:rgba(18,99,189,.12);--gold-soft:rgba(181,125,18,.12);
-  --accent-border:rgba(18,99,189,.32);--gold-border:rgba(181,125,18,.30);--gold-line:rgba(181,125,18,.66);
+  --text:#0A0C0E;
+  --muted:#59636B;
+  --muted-2:#7E8790;
+  --strong:#000000;
+  --subtle:#7E8790;
+  --para:#2C343A;
+  --note:#6E7881;
+  --symbol:#0A0C0E;
+  --duration:#59636B;
+  --pct:#0E8A5F;
 
-  --curve-up:#007d54;--curve-down:#c32035;--curve-accent:#0a55a6;--curve-gold:#98700d;
-  --curve-fill-a:0.16;
-  --dot-up:#00a878;--dot-down:#e2374a;
+  --line:#D6DBE0;
+  --line-soft:#E2E6EA;
+  --td-line:#E4E8EC;
+  --td-border:#D6DBE0;
+  --help-line:#A7B0B8;
+  --stat-line:#E4E8EC;
+  --th-bg:transparent;
+  --th-border:#D6DBE0;
 
-  --text:#14243a;--muted:#5a6d84;--muted-2:#71839a;--note:#64768c;
-  --footer-text:#7c8ca1;--footer-b:#46586e;--symbol:#3d5068;--duration:#5b6d82;
+  --glass-bg:rgba(255,255,255,.96);
+  --glass-bg-2:#F7F8F9;
+  --glass-border:#D6DBE0;
+  --glass-border-hi:#B9C2C9;
+  --glass-blur:none;
+  --glass-shadow:none;
+  --glass-inner:none;
 
-  --glass-bg:linear-gradient(145deg,rgba(255,255,255,.90),rgba(238,244,251,.78));
-  --glass-bg-2:linear-gradient(145deg,rgba(255,255,255,.94),rgba(232,240,249,.84));
-  --glass-blur:blur(20px) saturate(135%);
-  --glass-border:rgba(255,255,255,.9);
-  --glass-border-hi:rgba(255,255,255,1);
-  --glass-shadow:0 18px 44px -14px rgba(35,60,95,.28),0 2px 10px rgba(35,60,95,.08);
-  --glass-inner:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(120,150,185,.12);
-  --neu-raised:8px 8px 20px rgba(120,145,180,.30),-7px -7px 18px rgba(255,255,255,.9);
-  --neu-pressed:inset 5px 5px 11px rgba(120,145,180,.34),inset -5px -5px 11px rgba(255,255,255,.95);
-  --neu-btn:linear-gradient(145deg,#ffffff,#e7eef7);
+  --neu-raised:none;
+  --neu-pressed:none;
+  --neu-btn:#F0F2F4;
 
-  --bg:#eaf0f7;--glow1:#cfe0f2;--glow2:#e6dcf6;--glow3:#d3ece8;
-  --panel-top:#ffffff;--panel-bottom:#f4f8fd;
-  --card-top:#ffffff;--card-bottom:#f5f9fe;
-  --line:rgba(30,60,100,.10);--line-soft:rgba(30,60,100,.07);
-  --td-line:rgba(30,60,100,.06);--stat-line:rgba(30,60,100,.07);
-  --chip-bg:rgba(255,255,255,.82);--btn-bg:rgba(255,255,255,.9);
-  --btn-hover:#eaf2fb;--btn-hover-border:rgba(30,110,190,.4);
-  --tag-bg:#eef4fb;--tag-text:#4a5c73;--tag-border:rgba(30,60,100,.1);
-  --active-text:#ffffff;--card-sheen:rgba(255,255,255,0);--row-hover:rgba(18,99,189,.07);--scrollbar:#b8c8da;
-  --bar-bg:rgba(30,60,100,.10);--bar-1:#4b92d6;--bar-2:#d1a02f;
-  --progress-bg:rgba(30,60,100,.10);--brand-slash:#9aadc1;--help-line:#9aadc1;
+  --accent:#D93F00;
+  --accent-border:rgba(217,63,0,.50);
+  --accent-soft:rgba(217,63,0,.08);
+  --active-text:#FFFFFF;
 
-  --cal-bg:rgba(30,60,100,.05);--cal-text:#4a5c73;--cal-has-text:#ffffff;--cal-shadow:rgba(0,0,0,.28);
-  --grid-line:rgba(30,60,100,.09);--axis:#5a6d83;--axis-2:#6a7d93;--hover-line:#8fb0d4;
-  --tip-bg:rgba(255,255,255,.96);--tip-border:rgba(30,110,190,.35);--tip-text:#384b61;
+  --up:#0E8A5F;
+  --down:#C62839;
+  --neutral:#5C666E;
+  --up-rgb:14,138,95;
+  --down-rgb:198,40,57;
 
-  --gold-1:#f7d98a;--gold-2:#c8971f;--gold-3:#8a6208;--logo-shadow:rgba(184,134,11,.35);
+  --gold:#6E7A84;
+  --gold-border:rgba(110,122,132,.34);
+  --gold-soft:rgba(110,122,132,.08);
+  --gold-line:rgba(110,122,132,.40);
+  --gold-1:#FF9A66;
+  --gold-2:#D93F00;
+  --gold-3:#7A2200;
+  --brand-slash:#D93F00;
 
-  --toggle-bg:rgba(255,255,255,.9);--toggle-knob:linear-gradient(145deg,#ffe9a8,#e0a92e);
-  --toggle-shadow:0 4px 14px rgba(60,90,130,.24),inset 0 1px 0 rgba(255,255,255,.9);
+  --buy:#D93F00;
+  --sell:#6E7A84;
+
+  --bar-bg:#E3E7EA;
+  --bar-1:#D93F00;
+  --bar-2:#6E7A84;
+
+  --btn-bg:#FFFFFF;
+  --btn-hover:#F0F2F4;
+  --btn-hover-border:#B9C2C9;
+  --chip-bg:transparent;
+  --tag-bg:transparent;
+  --tag-border:#D6DBE0;
+  --tag-text:#59636B;
+
+  --hover-bg:rgba(0,0,0,.04);
+  --hover-border:#B9C2C9;
+  --row-hover:rgba(0,0,0,.035);
+  --zebra:rgba(0,0,0,.015);
+  --input-bg:#FFFFFF;
+  --quote-bg:#FFFFFF;
+  --quote-border:#D6DBE0;
+  --scrollbar:#C1C8CE;
+  --toggle-bg:#FFFFFF;
+  --toggle-knob:#D93F00;
+  --toggle-shadow:none;
+  --footer-text:#7E8790;
+  --footer-b:#3B444B;
+  --progress-bg:#E3E7EA;
+
+  --logo-shadow:none;
+  --glow1:transparent;
+  --glow2:transparent;
+  --glow3:transparent;
+
+  --grid-line:rgba(0,0,0,.07);
+  --axis:rgba(0,0,0,.55);
+  --axis-2:rgba(0,0,0,.25);
+  --hover-line:rgba(0,0,0,.35);
+  --tip-bg:#FFFFFF;
+  --tip-border:#B9C2C9;
+  --tip-text:#0A0C0E;
+  --dot-up:#0E8A5F;
+  --dot-down:#C62839;
+  --curve-up:#0E8A5F;
+  --curve-down:#C62839;
+  --curve-accent:#D93F00;
+  --curve-gold:#6E7A84;
+  --curve-fill-a:.08;
+  --cal-bg:#FFFFFF;
+  --cal-text:#59636B;
+  --cal-has-text:#FFFFFF;
+  --cal-shadow:rgba(0,0,0,.25);
+
+  --grid-faint:rgba(0,0,0,.032);
+  --accent-ink:#FFFFFF;
 }
