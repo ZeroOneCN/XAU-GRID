@@ -68,6 +68,10 @@
   --logo-1:#FFE9A8;
   --logo-2:#E3A72F;
   --logo-3:#7A4A08;
+  /* 黄金强调文字（邀请链接/邀请码）：沿用 --logo 金色，保证主题对比度 */
+  --gold-ink:var(--logo-1);
+  --gold-edge:rgba(227,167,47,.58);
+  --gold-fill:rgba(227,167,47,.10);
   /* 多空手数：冷青 / 琥珀，深色底高对比 */
   --long:#3DDCFF;
   --short:#F2B33D;
@@ -200,6 +204,10 @@
   --logo-1:#E8B33A;
   --logo-2:#B87808;
   --logo-3:#6B3F04;
+  /* 浅色主题：用更深的一段金色，保证白底上的可读性 */
+  --gold-ink:var(--logo-3);
+  --gold-edge:rgba(184,120,8,.55);
+  --gold-fill:rgba(184,120,8,.08);
   --long:#006C8A;
   --short:#9A5B00;
   --brand-slash:#00708F;

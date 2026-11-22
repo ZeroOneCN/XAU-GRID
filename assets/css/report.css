@@ -21,9 +21,9 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 .report-bar{
   position:relative;z-index:20;
   display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
-  gap:16px 20px;padding:22px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;
+  gap:16px 20px;padding:22px 0 18px;border-bottom:1px solid var(--line);margin-bottom:20px;
 }
-.rb-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.rb-brand{display:flex;align-items:center;gap:14px;min-width:0}
 .rb-logo{width:56px;height:56px;flex:none;display:grid;place-items:center}
 .rb-logo svg{width:52px;height:52px;display:block}
 .rb-title{min-width:0}
@@ -33,7 +33,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 }
 .rb-title small{
   display:block;margin-top:7px;font-family:var(--mono);font-size:12px;
-  color:var(--muted-2);letter-spacing:.06em;white-space:nowrap;
+  color:var(--muted-2);letter-spacing:.12em;white-space:nowrap;
 }
 .rb-meta{
   display:flex;align-items:center;justify-content:center;
@@ -95,11 +95,11 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:2px;backgroun
 .report-tag{margin-left:auto;font-family:var(--mono);font-size:13px;
   color:var(--muted-2);letter-spacing:.08em;white-space:nowrap}
 
-/* —— 日报正文：平面文档 —— */
+/* —— 日报正文：与看板一致的平面文档（无卡片底、无侧边内缩） —— */
 article{
   max-width:100%;margin:0;
-  background:var(--panel);border:1px solid var(--line);border-radius:0;
-  padding:34px 40px 40px;min-height:420px;box-shadow:none;
+  background:transparent;border:0;border-radius:0;
+  padding:28px 0 34px;min-height:420px;box-shadow:none;
 }
 article h1{
   font-size:clamp(23px,2.4vw,32px);font-weight:800;line-height:1.2;letter-spacing:-.01em;
@@ -139,15 +139,15 @@ article table{width:100%;border-collapse:separate;border-spacing:0;font-size:15p
 article th{
   text-align:left;color:var(--muted);font-weight:500;background:transparent;
   font-family:var(--mono);font-size:14px;letter-spacing:.06em;text-transform:uppercase;
-  padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  padding:13px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
   vertical-align:middle;
 }
 article td{
-  padding:12px 12px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
+  padding:15px 12px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
   font-variant-numeric:tabular-nums;color:var(--para);white-space:nowrap;vertical-align:middle;
   text-align:left;
 }
-article tbody tr:nth-child(even) td{background:var(--zebra)}
+/* 平铺表格：与看板一致，不用斑马纹，只保留行分隔线 */
 article tr:hover td{background:var(--row-hover)}
 article tr:last-child td{border-bottom:none}
 article .ta-r{text-align:right}
@@ -167,7 +167,7 @@ article .ta-c{text-align:center}
 
 @media(max-width:900px){
   .report-shell{padding:0 22px 38px}
-  article{padding:26px 24px 30px}
+  article{padding:24px 0 28px}
 }
 
 @media(max-width:700px){
@@ -186,7 +186,7 @@ article .ta-c{text-align:center}
   .report-head{gap:8px}
   .report-head h2{font-size:13px;letter-spacing:.06em}
   .report-tag{font-size:13px;letter-spacing:.04em}
-  article{padding:18px 15px 26px;min-height:320px}
+  article{padding:18px 0 26px;min-height:320px}
   article h1{font-size:22px;padding-bottom:12px}
   article h2{font-size:15px;margin-top:24px;padding-top:12px}
   article h2::before{top:13px}

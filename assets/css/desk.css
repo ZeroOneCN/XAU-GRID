@@ -89,28 +89,20 @@ a{color:var(--accent)}
   grid-area:tools;display:flex;align-items:center;justify-content:flex-end;
   gap:7px;flex-wrap:wrap;min-width:0;
 }
-.theme{display:inline-flex;align-items:center;gap:7px;padding:0 10px}
-.theme-lamp{
-  width:7px;height:7px;display:inline-block;flex:none;
-  border:1px solid var(--accent-border);background:transparent;
-}
-.theme-word::after{content:"AUTO"}
-.theme[data-mode="light"] .theme-word::after{content:"LIGHT"}
-.theme[data-mode="dark"] .theme-word::after{content:"DARK"}
-.theme[data-mode="light"] .theme-lamp{background:var(--accent);border-color:var(--accent)}
-.theme[data-mode="dark"] .theme-lamp{background:var(--text);border-color:var(--text)}
+/* 主题切换控件样式在共享的 theme-control.css 中 */
 
 .invite{
   display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 13px;
-  border:1px solid var(--accent-border);color:var(--accent);
+  border:1px solid var(--gold-edge);color:var(--gold-ink);
   text-decoration:none;font-family:var(--mono);font-size:13px;
   letter-spacing:.03em;white-space:nowrap;
 }
-.invite:hover{background:var(--accent-soft)}
+.invite:hover{background:var(--gold-fill);border-color:var(--gold-ink);color:var(--gold-ink)}
 .icode{display:inline-flex;align-items:center;gap:7px}
+.icode:hover{border-color:var(--gold-edge);color:var(--gold-ink)}
 .ic-label{color:var(--muted)}
-.ic-val{color:var(--text);text-transform:uppercase}
-.ic-ico{color:var(--muted-2)}
+.ic-val{color:var(--gold-ink);text-transform:uppercase}
+.ic-ico{color:var(--gold-edge)}
 .icode.copied{border-color:var(--up);color:var(--up)}
 .icode.copied .ic-val{color:var(--up)}
 

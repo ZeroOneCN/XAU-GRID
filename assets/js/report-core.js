@@ -1,58 +1,8 @@
 /* ============================================================
- * report-core.js — 主题管理器 + Markdown 渲染
- * 与看板 core.js 同款三态主题，保证两个页面视觉一致。
+ * report-core.js — Markdown 渲染（主题逻辑在共享的 theme.js）
  * ============================================================ */
 const $ = id => document.getElementById(id);
 const STATIC = window.__XAU_STATIC__ === true;
-
-const Theme = (() => {
-  const KEY = 'xau-grid-theme';
-  const mq = window.matchMedia('(prefers-color-scheme: light)');
-  let mode = document.documentElement.dataset.mode || localStorage.getItem(KEY) || 'auto';
-  const listeners = [];
-  function resolve(m){ return m === 'light' || (m === 'auto' && mq.matches) ? 'light' : 'dark'; }
-  function paint(){
-    const effective = resolve(mode);
-    document.documentElement.dataset.mode = mode;
-    document.documentElement.dataset.theme = effective;
-    const toggle = $('themeToggle');
-    if(toggle){
-      toggle.dataset.mode = mode;
-      const label = mode === 'auto' ? '跟随系统' : (mode === 'light' ? '浅色' : '深色');
-      toggle.title = `主题：${label}（点击切换）`;
-      toggle.setAttribute('aria-label', `主题 ${label}，点击切换`);
-    }
-    const tl = $('themeLabel');
-    if(tl) tl.textContent = `主题 ${mode === 'auto' ? '跟随设备' : (mode === 'light' ? '浅色' : '深色')}`;
-    listeners.forEach(fn => { try{ fn(); }catch(_){} });
-  }
-  function set(next){
-    mode = next;
-    try{ localStorage.setItem(KEY, mode); }catch(_){}
-    paint();
-  }
-  function cycle(){
-    // 按“当前实际显示的主题”取反，保证一次点击就出现变化
-    set(resolve(mode) === 'light' ? 'dark' : 'light');
-  }
-  const onSys = () => { if(mode === 'auto') paint(); };
-  mq.addEventListener ? mq.addEventListener('change', onSys) : mq.addListener(onSys);
-  return {
-    cycle,
-    get mode(){ return mode; },
-    onChange(fn){ listeners.push(fn); },
-    init(){
-      paint();
-      const toggle = $('themeToggle');
-      if(toggle){
-        toggle.addEventListener('click', cycle);
-        toggle.addEventListener('keydown', e => {
-          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); cycle(); }
-        });
-      }
-    },
-  };
-})();
 
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function inline(s){

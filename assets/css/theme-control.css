@@ -1,0 +1,15 @@
+/* ============================================================
+ * theme-control.css — 主题切换控件（看板 / 日报共用同一套样式）
+ * 依赖 tokens.css 的 --accent / --text 令牌。
+ * ============================================================ */
+
+.theme{display:inline-flex;align-items:center;gap:7px;padding:0 10px}
+.theme-lamp{
+  width:7px;height:7px;display:inline-block;flex:none;
+  border:1px solid var(--accent-border);background:transparent;
+}
+.theme-word::after{content:"AUTO"}
+.theme[data-mode="light"] .theme-word::after{content:"LIGHT"}
+.theme[data-mode="dark"] .theme-word::after{content:"DARK"}
+.theme[data-mode="light"] .theme-lamp{background:var(--accent);border-color:var(--accent)}
+.theme[data-mode="dark"] .theme-lamp{background:var(--text);border-color:var(--text)}
