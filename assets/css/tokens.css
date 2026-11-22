@@ -242,8 +242,8 @@
   --curve-fill-a:.08;
   --cal-bg:#FFFFFF;
   --cal-text:#59636B;
-  --cal-has-text:#FFFFFF;
-  --cal-shadow:rgba(0,0,0,.25);
+  --cal-has-text:#0A0C0E;
+  --cal-shadow:transparent;
 
   --grid-faint:rgba(0,0,0,.032);
   --accent-ink:#FFFFFF;

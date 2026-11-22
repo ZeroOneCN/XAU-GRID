@@ -163,7 +163,7 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
 .cal-nav button{padding:4px 10px;font-size:11px}
 .cal-nav button:disabled{opacity:.3;cursor:not-allowed}
 .cal-nav span{font-family:var(--mono);font-size:16px;color:var(--text);letter-spacing:.04em}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;container-type:inline-size}
 .cal-head{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;letter-spacing:.08em}
 .cal-cell{
   aspect-ratio:1;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
@@ -171,12 +171,16 @@ canvas{width:100%;height:280px;display:block;cursor:crosshair;touch-action:pan-y
   border:1px solid var(--line-soft);transition:none;
 }
 .cal-cell.has{color:var(--cal-has-text);text-shadow:0 1px 2px var(--cal-shadow);box-shadow:none}
+.cal-cell.has.ink-dark{text-shadow:none}
 .cal-cell.has:hover{filter:brightness(1.08)}
 .cal-cell.has .d{opacity:.95}
 .cal-cell.blank{background:transparent;border-color:transparent}
 .cal-cell.today{outline:1px solid var(--accent);outline-offset:-1px}
-.cal-cell .d{font-size:15px;opacity:.9}
-.cal-cell .v{font-size:14px;font-weight:700;letter-spacing:-.6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cal-cell .d{font-size:clamp(10px,3.2cqw,15px);opacity:.9}
+.cal-cell .v{
+  font-size:clamp(9px,2.75cqw,13px);font-weight:700;letter-spacing:-.2px;
+  white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.1;
+}
 .cal-stats{
   grid-column:1/-1;display:flex;justify-content:space-between;gap:6px;margin-top:12px;
   font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums;
@@ -266,8 +270,6 @@ footer b.money-legend-down{color:var(--down)}
   .range-bar button{padding:6px 9px;font-size:10px}
   .curve-legend{gap:8px;font-size:9px}
   .chart-note{font-size:9px}
-  .cal-cell .d{font-size:11px}
-  .cal-cell .v{font-size:clamp(9px,2.65vw,11px);letter-spacing:-.9px}
   .cal-head{font-size:9px}
   .cal-nav span{font-size:12px}
   .cal-stats{font-size:10px}

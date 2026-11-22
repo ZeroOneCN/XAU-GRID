@@ -147,12 +147,11 @@ function tick(){
 }
 
 function curveHover(e){
-  if(!lastCurve.length) return;
+  if(!lastCurve.length || !chartGeom) return;
   const cv = $('curve'), r = cv.getBoundingClientRect();
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const x = clientX - r.left;
-  const padL = cv.clientWidth < 480 ? 48 : 58, padR = 12;
-  const pw = cv.clientWidth - padL - padR;
+  const {padL, pw} = chartGeom;
   const i = Math.round((x - padL) / pw * (lastCurve.length - 1));
   hoverIdx = Math.max(0, Math.min(lastCurve.length - 1, i));
   drawCurve(lastCurve, hoverIdx);
@@ -193,10 +192,34 @@ function bindEvents(){
     };
   });
 
-  $('curve').addEventListener('mousemove', curveHover);
-  $('curve').addEventListener('mouseleave', () => { hoverIdx = -1; drawCurve(lastCurve, -1); });
-  $('curve').addEventListener('touchmove', curveHover, {passive:true});
-  window.addEventListener('resize', () => { const cv = $('curve'); if(cv.clientWidth) drawCurve(lastCurve, hoverIdx); });
+  // 曲线读数：悬停 + 点击 + 拖动（触摸同样支持），指针几何由 chart.js 提供
+  let dragging = false;
+  const cv = $('curve');
+  cv.addEventListener('pointerdown', e => {
+    dragging = true;
+    try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+    curveHover(e);
+  });
+  cv.addEventListener('pointermove', e => {
+    if(dragging || e.pointerType === 'mouse') curveHover(e);
+  });
+  const endDrag = e => {
+    if(!dragging) return;
+    dragging = false;
+    try{ cv.releasePointerCapture(e.pointerId); }catch(_){}
+  };
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+  cv.addEventListener('pointerleave', () => {
+    if(!dragging){ hoverIdx = -1; drawCurve(lastCurve, -1); }
+  });
+  let rzT = 0;
+  window.addEventListener('resize', () => {
+    const c = $('curve');
+    if(c.clientWidth) drawCurve(lastCurve, hoverIdx);
+    clearTimeout(rzT);
+    rzT = setTimeout(renderCalendar, 160);
+  });
 
   // 主题切换后重绘 Canvas 与日历（两者颜色都取自 CSS 变量）
   Theme.onChange(() => { drawCurve(lastCurve, hoverIdx); renderCalendar(); });

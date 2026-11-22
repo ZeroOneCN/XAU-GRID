@@ -70,19 +70,40 @@ function inline(s){
 }
 function md2html(src){
   const lines=src.split('\n');
-  let out='',i=0,inTable=false,firstRow=false;
-  const closeTable=()=>{if(inTable){out+='</table>';inTable=false;}};
+  let out='',i=0;
+  let rows=null, aligns=null;
+  const emitTable=()=>{
+    if(!rows || !rows.length) return;
+    const width=rows[0].length;
+    const sig=(aligns||[]).map(a=>a==='ta-r'?'r':(a==='ta-c'?'c':'l')).join('')
+      || 'l'.repeat(width);
+    out+=`<table class="cols-${width} al-${sig}">`;
+    rows.forEach((cells,ri)=>{
+      const tag=ri===0?'th':'td';
+      out+='<tr>'+cells.map((c,ci)=>{
+        const a=aligns && aligns[ci] ? ' '+aligns[ci] : '';
+        return `<${tag} class="c${ci+1}${a}">${inline(c)}</${tag}>`;
+      }).join('')+'</tr>';
+    });
+    out+='</table>';
+    rows=null; aligns=null;
+  };
   while(i<lines.length){
     const l=lines[i];
     if(l.startsWith('| ')){
-      if(/^[\s:|-]+$/.test(l)){i++;continue;}       // 分隔行
       const cells=l.split('|').slice(1,-1).map(x=>x.trim());
-      if(!inTable){out+='<table>';inTable=true;firstRow=true;}
-      const tag=firstRow?'th':'td';
-      out+='<tr>'+cells.map(c=>`<${tag}>${inline(c)}</${tag}>`).join('')+'</tr>';
-      firstRow=false;i++;continue;
+      if(/^[\s:|-]+$/.test(l)){       // 分隔行：记录列对齐
+        aligns=cells.map(c=>{
+          const left=c.startsWith(':'), right=c.endsWith(':');
+          return left&&right?'ta-c':(right?'ta-r':'');
+        });
+        i++;continue;
+      }
+      if(!rows) rows=[];
+      rows.push(cells);
+      i++;continue;
     }
-    closeTable();
+    emitTable();
     if(l.startsWith('# ')) out+=`<h1>${inline(l.slice(2))}</h1>`;
     else if(l.startsWith('## ')) out+=`<h2>${inline(l.slice(3))}</h2>`;
     else if(l.startsWith('> ')) out+=`<blockquote>${inline(l.slice(2))}</blockquote>`;
@@ -92,6 +113,6 @@ function md2html(src){
     else if(l.trim()) out+=`<p>${inline(l)}</p>`;
     i++;
   }
-  closeTable();
+  emitTable();
   return out;
 }

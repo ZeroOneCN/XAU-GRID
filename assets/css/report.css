@@ -1,139 +1,195 @@
 /* ============================================================
- * report.css — 日报页视觉（复用 tokens.css / base.css / components.css）
- * 玻璃液态卡片 + 新拟态按钮 + 自定义交易日日历
+ * report.css — 日报页：冷青极简任务控制风
+ * 复用 tokens.css / base.css / components.css，方角、细线、无玻璃。
  * ============================================================ */
 
 /* 日报页派生色：从全局 token 映射到日报语义 */
 :root{
-  --glow:var(--glow1);--panel:var(--panel-top);--panel2:var(--panel-bottom);
+  --glow:var(--glow1);--panel2:var(--panel-bottom);
   --subtle:var(--muted-2);--input-bg:var(--btn-bg);--hover-bg:var(--btn-hover);--hover-border:var(--btn-hover-border);
-  --para:var(--text);--quote-bg:var(--cal-bg);--quote-border:var(--accent-border);--strong:var(--gold);
+  --para:var(--text);--quote-bg:var(--accent-soft);--quote-border:var(--accent-border);
   --neutral:var(--text);--buy:var(--accent);--sell:var(--gold);--pct:var(--accent);
-  --th-bg:var(--tag-bg);--th-border:var(--tag-border);--td-border:var(--td-line);
-  --zebra:rgba(127,146,169,.045);--row-hover:var(--row-hover);
-}
-:root[data-theme="light"]{
-  --zebra:rgba(30,60,100,.035);
+  --th-bg:transparent;--th-border:var(--line);--td-border:var(--td-line);
 }
 
-body{padding:20px 26px 50px;line-height:1.75}
+body{padding:0;line-height:1.75}
 
-/* —— 顶部工具条：玻璃胶囊 ——
- * 注意：不要用 .bar，会和看板“敞口进度条”的 .bar 冲突（height:10px + overflow:hidden）。
- * 工具栏必须独立类名，避免被压扁后裁掉导航按钮。
- */
+.report-shell{max-width:1120px;margin:0 auto;padding:0 32px 46px}
+
+/* —— 顶部工具条：与看板同款任务栏 —— */
 .report-bar{
-  position:relative;z-index:20;overflow:visible;
-  max-width:920px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-  padding:13px 16px;
-  background:var(--glass-bg);
-  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-  border:1px solid var(--glass-border);border-radius:var(--radius);
-  box-shadow:var(--glass-shadow),var(--glass-inner);
+  position:relative;z-index:20;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  padding:24px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;
 }
-.rb-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.rb-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.rb-mark{
+  width:38px;height:38px;flex:none;display:grid;place-items:center;
+  border:1px solid var(--accent-border);color:var(--accent);background:transparent;
+}
+.rb-mark svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;
+  stroke-linecap:square;stroke-linejoin:miter}
+.rb-title{min-width:0}
+.rb-title b{
+  display:block;font-size:clamp(16px,1.7vw,21px);font-weight:800;line-height:1.15;
+  letter-spacing:.02em;white-space:nowrap;
+}
+.rb-title small{
+  display:block;margin-top:6px;font-family:var(--mono);font-size:9px;
+  color:var(--muted-2);letter-spacing:.20em;white-space:nowrap;
+}
 .rb-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
-.report-bar b{font-size:14px;letter-spacing:.5px}
-.report-bar a.btn{line-height:1.2}
+.report-bar a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;line-height:1.2}
 
 /* —— 自定义交易日选择器 —— */
 .datepick{position:relative}
 .dp-trigger{display:flex;align-items:center;gap:7px;min-width:158px;justify-content:flex-start;
   font-family:var(--mono);font-size:12px;padding:7px 11px}
-.dp-trigger svg{width:14px;height:14px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.7}
+.dp-trigger svg{width:14px;height:14px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.7}
 .dp-trigger .caret{margin-left:auto;color:var(--muted);font-size:10px}
 .dp-panel{
   position:absolute;right:0;top:calc(100% + 7px);z-index:40;width:296px;
-  /* 先铺一层不透明底色，再叠玻璃渐变：日历下方是正文，纯透明会读不清 */
-  background-color:var(--panel-top);
-  background-image:var(--glass-bg-2);
-  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-  border:1px solid var(--glass-border-hi);border-radius:14px;padding:13px;
-  box-shadow:var(--glass-shadow),var(--glass-inner);
+  background:var(--panel);border:1px solid var(--line);border-radius:0;padding:13px;
+  box-shadow:none;
 }
 .dp-panel[hidden]{display:none}
 .dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .dp-head strong{font-size:13px;letter-spacing:.4px;font-family:var(--mono)}
 .dp-nav{width:30px;height:28px;padding:0;font-size:17px;line-height:1;text-align:center}
 .dp-week,.dp-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
-.dp-week span{text-align:center;font-size:10px;color:var(--muted);padding:3px 0}
+.dp-week span{text-align:center;font-size:10px;color:var(--muted);padding:3px 0;letter-spacing:.08em}
 .dp-grid{margin-top:3px}
-.dp-day{height:34px;min-width:0;padding:0;border:1px solid transparent;border-radius:8px;
+.dp-day{height:34px;min-width:0;padding:0;border:1px solid transparent;border-radius:0;
   background:transparent;color:var(--text);font-family:var(--mono);font-size:12px;position:relative;
   box-shadow:none}
-.dp-day.has{border-color:var(--line);background:var(--input-bg);box-shadow:var(--neu-raised)}
-.dp-day.has:hover{border-color:var(--hover-border);background:var(--hover-bg)}
+.dp-day.has{border-color:var(--line);background:var(--bg-2)}
+.dp-day.has:hover{border-color:var(--accent-border);background:var(--hover-bg);color:var(--accent)}
 .dp-day.off{color:var(--subtle);opacity:.4;cursor:not-allowed}
-.dp-day.off:hover{border-color:transparent;background:transparent;transform:none}
-.dp-day.sel,.dp-day.sel:hover{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;transform:none}
+.dp-day.off:hover{border-color:transparent;background:transparent}
+.dp-day.sel,.dp-day.sel:hover{background:var(--accent);border-color:var(--accent);
+  color:var(--accent-ink);font-weight:700}
 .dp-day.today::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
-  width:4px;height:4px;border-radius:50%;background:var(--gold)}
-.dp-day.sel.today::after{background:#fff}
+  width:4px;height:4px;background:var(--accent)}
+.dp-day.sel.today::after{background:var(--accent-ink)}
 .dp-empty{height:34px}
 .dp-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;
   margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
 .dp-foot small{color:var(--subtle);font-size:10px}
 .dp-latest{padding:4px 9px;font-size:11px}
 
-/* —— 日报正文：玻璃纸张 —— */
-article{
-  max-width:920px;margin:0 auto;
-  background:var(--glass-bg-2);
-  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-  border:1px solid var(--glass-border);border-radius:var(--radius);
-  box-shadow:var(--glass-shadow),var(--glass-inner);
-  padding:30px 36px 40px;min-height:400px;
+/* —— 日报标题带 —— */
+.report-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.report-head .sec-index{
+  font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);
+  letter-spacing:.08em;line-height:1;
 }
-article h1{font-size:25px;letter-spacing:.4px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-article h2{font-size:16px;letter-spacing:.6px;margin:28px 0 12px;color:var(--gold);
-  padding-left:11px;border-left:3px solid var(--gold)}
-article p{font-size:13px;color:var(--para);margin:6px 0}
-article blockquote{font-size:12px;color:var(--muted);background:var(--quote-bg);border-left:2px solid var(--quote-border);
-  border-radius:0 6px 6px 0;padding:9px 14px;margin:8px 0}
-article .bullet,article .num{padding-left:14px;position:relative}
-article .bullet::before,article .num::before{content:"";position:absolute;left:2px;top:11px;
-  width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.report-head h2{font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:.16em;color:var(--muted)}
+.report-tag{margin-left:auto;font-family:var(--mono);font-size:9px;
+  color:var(--muted-2);letter-spacing:.14em;white-space:nowrap}
+
+/* —— 日报正文：平面文档 —— */
+article{
+  max-width:100%;margin:0;
+  background:var(--panel);border:1px solid var(--line);border-radius:0;
+  padding:34px 40px 40px;min-height:420px;box-shadow:none;
+}
+article h1{
+  font-size:clamp(23px,2.4vw,32px);font-weight:800;line-height:1.2;letter-spacing:-.01em;
+  margin-bottom:14px;padding-bottom:16px;border-bottom:1px solid var(--line);
+}
+article h2{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  margin:30px 0 12px;padding-top:16px;border-top:1px solid var(--line-soft);
+}
+article h2::before{content:"";width:3px;height:14px;background:var(--accent);flex:none}
+article p{font-size:13px;color:var(--para);margin:7px 0;line-height:1.85}
+article blockquote{
+  font-family:var(--mono);font-size:11px;color:var(--para);letter-spacing:.02em;
+  background:var(--quote-bg);border-left:2px solid var(--quote-border);border-radius:0;
+  padding:9px 14px;margin:0 0 1px;
+}
+article blockquote:first-of-type{margin-top:14px}
+article .bullet,article .num{padding-left:18px;position:relative}
+article .bullet::before{content:"";position:absolute;left:2px;top:12px;
+  width:5px;height:5px;background:var(--accent)}
+article .num::before{content:"";position:absolute;left:0;top:12px;
+  width:9px;height:1px;background:var(--accent)}
 article strong{font-family:var(--mono);font-weight:700;color:var(--strong)}
-article hr{border:none;border-top:1px solid var(--line);margin:26px 0 12px}
-/* 数据配色：绿盈 / 红亏 / 金字段 / 蓝方向 */
+article hr{border:none;border-top:1px solid var(--line);margin:30px 0 12px}
+/* 数据配色：绿盈 / 红亏 / 青字段 / 方向 */
 article .up{color:var(--up);font-weight:700}
 article .down{color:var(--down);font-weight:700}
 article .neutral{color:var(--neutral)}
 article .buy{color:var(--buy);font-weight:700}
 article .sell{color:var(--sell);font-weight:700}
 article .pct{color:var(--pct);font-weight:700}
-article table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0 4px}
-article th{text-align:left;color:var(--muted);font-weight:600;background:var(--th-bg);
-  padding:8px 10px;border-bottom:1px solid var(--th-border);white-space:nowrap}
-article td{padding:7px 10px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
-  color:var(--para);white-space:nowrap}
+
+/* —— 日报表格 —— */
+article table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin:12px 0 6px}
+article th{
+  text-align:left;color:var(--muted);font-weight:500;background:transparent;
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+article td{
+  padding:11px 12px;border-bottom:1px solid var(--td-border);font-family:var(--mono);
+  font-variant-numeric:tabular-nums;color:var(--para);white-space:nowrap;vertical-align:middle;
+}
 article tbody tr:nth-child(even) td{background:var(--zebra)}
 article tr:hover td{background:var(--row-hover)}
 article tr:last-child td{border-bottom:none}
 article th:last-child,article td:last-child{text-align:right}
-#tip{text-align:center;color:var(--muted);font-size:12px;padding:30px}
+article .ta-r{text-align:right}
+article .ta-c{text-align:center}
+#tip{text-align:center;color:var(--muted);font-size:12px;padding:34px}
+
+.report-foot{
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  margin-top:18px;padding-top:12px;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:9px;color:var(--muted-2);letter-spacing:.12em;
+}
+
+@media(max-width:900px){
+  .report-shell{padding:0 22px 38px}
+  article{padding:26px 24px 30px}
+}
 
 @media(max-width:700px){
-  body{padding:10px 10px 30px}
-  .report-bar{padding:9px 11px;gap:7px}
-  .report-bar b{font-size:12px}
-  .rb-brand{flex:1 1 100%}
+  .report-shell{padding:0 14px 30px}
+  .report-bar{padding:18px 0 14px;gap:12px}
+  .rb-brand{gap:10px}
+  .rb-mark{width:32px;height:32px}
+  .rb-mark svg{width:17px;height:17px}
+  .rb-title b{font-size:15px}
+  .rb-title small{font-size:8px;letter-spacing:.14em}
   .rb-actions{flex:1 1 100%;margin-left:0;justify-content:flex-start;gap:6px}
-  .theme-toggle{padding:3px}
-  .theme-toggle .tt-ico{width:24px;height:24px}
-  .theme-toggle .tt-knob{width:24px;height:24px;top:3px;left:3px}
-  .theme-toggle[data-mode="light"] .tt-knob{transform:translateX(27px)}
-  .theme-toggle[data-mode="dark"] .tt-knob{transform:translateX(54px)}
-  article{padding:18px 15px 26px;border-radius:14px}
-  article h1{font-size:19px}
-  article h2{font-size:14px;margin-top:22px}
-  article table{font-size:10px;display:block;overflow-x:auto;white-space:nowrap}
-  article th,article td{padding:6px 7px}
-  /* 关键：.report-bar 有 backdrop-filter，会成为 fixed 的包含块；
-     这里改成相对工具栏的 absolute，弹层才会出现在屏幕内。 */
+  .report-head{gap:8px}
+  .report-head h2{font-size:10px;letter-spacing:.10em}
+  .report-tag{font-size:8px;letter-spacing:.08em}
+  article{padding:18px 15px 26px;min-height:320px}
+  article h1{font-size:20px;padding-bottom:12px}
+  article h2{font-size:11px;margin-top:22px;padding-top:12px}
+  article p{font-size:12px;line-height:1.8}
+  article blockquote{font-size:10px;padding:8px 10px}
+  article table{font-size:10px;display:block;overflow-x:auto;white-space:nowrap;margin:10px 0 4px}
+  article th,article td{padding:8px 8px}
+  /* 窄屏隐藏次要列：平仓明细去掉订单/品种，持仓去掉订单/开仓价 */
+  article table.al-llllrr th:nth-child(2),article table.al-llllrr td:nth-child(2),
+  article table.al-llllrr th:nth-child(3),article table.al-llllrr td:nth-child(3),
+  article table.al-llrrrr th:nth-child(1),article table.al-llrrrr td:nth-child(1),
+  article table.al-llrrrr th:nth-child(4),article table.al-llrrrr td:nth-child(4){display:none}
+  .report-foot{font-size:8px;letter-spacing:.06em}
+  /* .report-bar 有 backdrop-filter 时是 fixed 的包含块；此处保持相对定位弹层 */
   .datepick{position:static}
   .dp-panel{position:absolute;left:50%;right:auto;top:calc(100% + 10px);bottom:auto;
-    width:min(348px,calc(100vw - 20px));max-width:none;transform:translateX(-50%);
-    z-index:60;box-shadow:var(--glass-shadow)}
+    width:min(348px,calc(100vw - 20px));max-width:none;transform:translateX(-50%);z-index:60}
   .dp-trigger{min-width:140px}
+}
+
+@media(max-width:460px){
+  .rb-title small{display:none}
+  .report-head{flex-wrap:wrap;row-gap:4px}
+  .report-tag{margin-left:0}
 }
