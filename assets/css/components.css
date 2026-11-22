@@ -35,11 +35,11 @@ button:focus-visible,.btn:focus-visible{outline:1px solid var(--accent);outline-
   padding:22px 0 18px;border-bottom:1px solid var(--line);margin-bottom:26px;
 }
 .mast-brand{display:flex;align-items:center;gap:16px;min-width:0}
-.logo{width:44px;height:44px;display:grid;place-items:center;flex:none}
-.logo svg{width:42px;height:42px;filter:none}
+.logo{width:56px;height:56px;display:grid;place-items:center;flex:none}
+.logo svg{width:54px;height:54px;filter:none}
 .brand{min-width:0}
 .brand h1{
-  font-size:clamp(20px,2vw,30px);font-weight:800;line-height:1;letter-spacing:.03em;
+  font-size:clamp(16px,1.45vw,22px);font-weight:800;line-height:1;letter-spacing:.04em;
   white-space:nowrap;text-transform:uppercase;
 }
 .brand h1 .slash{color:var(--accent);font-weight:400;margin:0 .16em}

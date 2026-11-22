@@ -11,17 +11,12 @@
   z-index:1;
 }
 
-/* —— 01/02 指挥主视窗 —— */
+/* —— 01 指挥主视窗：权益/余额 → 浮盈/已实现/风险率 —— */
 .command-deck{
-  display:grid;
-  grid-template-columns:minmax(0,1.7fr) minmax(320px,.9fr);
-  gap:1px;
-  background:var(--line);
+  background:var(--panel);
   border:1px solid var(--line);
   margin-bottom:1px;
 }
-.cmd-main,.cmd-exposure{background:var(--panel);min-width:0}
-.cmd-exposure{display:flex;flex-direction:column}
 
 .cmd-head{
   display:flex;align-items:center;gap:12px;
@@ -40,16 +35,15 @@
   letter-spacing:.10em;white-space:nowrap;
 }
 
-/* 权益 / 余额：主视觉 */
-.cmd-equity{
-  display:grid;
-  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
-  gap:1px;background:var(--line);
+/* 主视觉：权益 / 余额 */
+.cmd-hero{
+  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+  gap:1px;background:var(--line);border-top:1px solid var(--line);
 }
-.cmd-metric{background:var(--panel);padding:26px 28px 22px;min-width:0}
+.cmd-metric{background:var(--panel);padding:28px 28px 24px;min-width:0}
 .cmd-label{
   display:block;font-family:var(--mono);font-size:10px;color:var(--muted);
-  letter-spacing:.20em;text-transform:uppercase;margin-bottom:12px;
+  letter-spacing:.20em;text-transform:uppercase;margin-bottom:14px;
 }
 .cmd-value{
   display:block;font-family:var(--mono);
@@ -57,44 +51,28 @@
   font-weight:700;line-height:.95;letter-spacing:-.045em;
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
-.cmd-value.sm{font-size:clamp(34px,3.8vw,60px);color:var(--text)}
-.cmd-note{
-  display:block;margin-top:12px;font-family:var(--mono);font-size:11px;
-  color:var(--muted);letter-spacing:.03em;line-height:1.5;
-}
-.cmd-note b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.cmd-value.sm{font-size:clamp(36px,4vw,62px)}
 
-/* 次级指标条 */
-.cmd-strip{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+/* 核心三项：字号明显大于次级带 */
+.cmd-core{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   gap:1px;background:var(--line);border-top:1px solid var(--line);
 }
-.strip-cell{background:var(--panel);padding:16px 22px;min-width:0}
-.strip-cell span{
-  display:block;font-family:var(--mono);font-size:9px;color:var(--muted-2);
-  letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;
+.core-cell{background:var(--panel);padding:20px 26px 22px;min-width:0}
+.core-cell>span{
+  display:block;font-family:var(--mono);font-size:10px;color:var(--muted-2);
+  letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px;white-space:nowrap;
 }
-.strip-cell b{
-  display:block;font-family:var(--mono);font-size:18px;font-weight:700;
+.core-cell>b{
+  display:block;font-family:var(--mono);font-size:clamp(28px,2.9vw,44px);
+  font-weight:700;line-height:1;letter-spacing:-.02em;
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
-
-/* 当前敞口 */
-.expo-hero{display:flex;align-items:baseline;gap:10px;padding:24px 24px 0;min-width:0}
-.expo-hero .cmd-value{font-size:clamp(40px,4.4vw,72px)}
-.expo-unit{
-  font-family:var(--mono);font-size:9px;color:var(--muted-2);
-  letter-spacing:.16em;white-space:nowrap;
+.core-cell small{
+  display:block;margin-top:10px;font-family:var(--mono);font-size:11px;
+  color:var(--muted);letter-spacing:.02em;white-space:nowrap;
 }
-.cmd-exposure>.cmd-note{padding:0 24px}
-.expo-side-list{padding:18px 24px 0;display:flex;flex-direction:column;gap:10px}
-.expo-side{
-  display:flex;justify-content:space-between;align-items:baseline;
-  font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.10em;
-}
-.expo-side b{color:var(--text);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-.cmd-exposure .bar{margin:14px 24px 0}
-.cmd-exposure>.cmd-note:last-child{padding:10px 24px 20px;margin-top:auto}
+.core-cell small b{display:inline;font-size:12px;font-weight:600;letter-spacing:0}
 
 /* —— 次级数据带 —— */
 .aux-band{
@@ -102,19 +80,21 @@
   gap:1px;background:var(--line);border:1px solid var(--line);border-top:0;
   margin-bottom:20px;
 }
-.aux-cell{background:var(--panel);padding:14px 22px;min-width:0}
-.aux-cell span{
+.aux-cell{background:var(--panel);padding:16px 22px;min-width:0}
+.aux-cell>span{
   display:block;font-family:var(--mono);font-size:9px;color:var(--muted-2);
-  letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px;white-space:nowrap;
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;white-space:nowrap;
 }
 .aux-cell b{
-  display:block;font-family:var(--mono);font-size:20px;font-weight:700;
-  font-variant-numeric:tabular-nums;white-space:nowrap;
+  display:block;font-family:var(--mono);font-size:22px;font-weight:700;
+  font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.1;
 }
 .aux-cell small{
-  display:block;margin-top:3px;font-family:var(--mono);font-size:9px;
-  color:var(--muted-2);white-space:nowrap;
+  display:block;margin-top:4px;font-family:var(--mono);font-size:10px;
+  color:var(--muted);white-space:nowrap;
 }
+.aux-cell small + small{color:var(--muted-2);margin-top:2px}
+.legacy-hide{display:none !important}
 
 /* —— 分区面板 —— */
 .section-block{margin-bottom:20px}
@@ -215,8 +195,8 @@ footer b.money-legend-down{color:var(--down)}
  * ============================================================ */
 @media(max-width:1240px){
   .wrap{padding:24px 24px 40px}
-  .command-deck{grid-template-columns:minmax(0,1.5fr) minmax(300px,.9fr)}
   .cmd-metric{padding:22px 24px 20px}
+  .core-cell{padding:18px 22px 20px}
 }
 
 @media(max-width:920px){
@@ -225,9 +205,6 @@ footer b.money-legend-down{color:var(--down)}
 }
 
 @media(max-width:900px){
-  .command-deck{grid-template-columns:minmax(0,1fr)}
-  .cmd-exposure{border-top:1px solid var(--line)}
-  .cmd-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
   .aux-band{grid-template-columns:repeat(2,minmax(0,1fr))}
   .archive-head{margin-top:4px}
 }
@@ -236,9 +213,9 @@ footer b.money-legend-down{color:var(--down)}
   .wrap{padding:18px 14px 32px}
   .masthead{gap:14px;padding:18px 0 14px;margin-bottom:18px}
   .mast-brand{gap:12px}
-  .logo{width:36px;height:36px}
-  .logo svg{width:34px;height:34px}
-  .brand h1{font-size:18px;letter-spacing:.02em}
+  .logo{width:40px;height:40px}
+  .logo svg{width:38px;height:38px}
+  .brand h1{font-size:15px;letter-spacing:.03em}
   .brand p{font-size:8px;letter-spacing:.18em}
   .mast-side{gap:10px}
   .mast-actions{gap:6px}
@@ -250,18 +227,18 @@ footer b.money-legend-down{color:var(--down)}
   .icode-copy{height:32px}
   .cmd-head{padding:11px 16px}
   .cmd-title{font-size:9px;letter-spacing:.12em}
-  .cmd-metric{padding:18px 16px 16px}
-  .cmd-label{font-size:9px;letter-spacing:.14em;margin-bottom:9px}
+  .cmd-metric{padding:20px 16px 18px}
+  .cmd-label{font-size:9px;letter-spacing:.14em;margin-bottom:10px}
   .cmd-value{font-size:clamp(46px,11vw,58px)}
   .cmd-value.sm{font-size:clamp(34px,8vw,44px)}
-  .cmd-note{font-size:10px;margin-top:9px}
-  .strip-cell{padding:13px 16px}
-  .strip-cell b{font-size:16px}
-  .expo-hero{padding:18px 16px 0}
-  .cmd-exposure>.cmd-note,.expo-side-list{padding-left:16px;padding-right:16px}
-  .cmd-exposure .bar{margin-left:16px;margin-right:16px}
-  .aux-cell{padding:12px 16px}
-  .aux-cell b{font-size:17px}
+  .core-cell{padding:16px 16px 18px}
+  .core-cell>span{font-size:9px;letter-spacing:.10em;margin-bottom:9px}
+  .core-cell>b{font-size:clamp(26px,7.6vw,34px)}
+  .core-cell small{font-size:10px;margin-top:8px}
+  .core-cell small b{font-size:11px}
+  .aux-cell{padding:13px 16px}
+  .aux-cell b{font-size:19px}
+  .aux-cell small{font-size:9px}
   .row-charts{grid-template-columns:minmax(0,1fr)}
   .panel-head{padding:12px 14px}
   .panel-head h2{font-size:12px}
@@ -283,8 +260,9 @@ footer b.money-legend-down{color:var(--down)}
 }
 
 @media(max-width:600px){
-  .cmd-equity{grid-template-columns:minmax(0,1fr)}
-  .cmd-metric+.cmd-metric{border-top:1px solid var(--line)}
+  .cmd-hero{grid-template-columns:minmax(0,1fr)}
+  .cmd-core{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .core-cell.risk{grid-column:1/-1}
 }
 
 @media(max-width:460px){

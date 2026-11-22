@@ -78,59 +78,60 @@
   </header>
 
   <section class="command-deck">
-    <div class="cmd-main">
-      <div class="cmd-head">
-        <span class="sec-index">01</span>
-        <span class="cmd-title">ACCOUNT OVERVIEW / 账户总览</span>
-        <span class="cmd-tag" id="priceBadge">XAUUSDm —</span>
-      </div>
+    <div class="cmd-head">
+      <span class="sec-index">01</span>
+      <span class="cmd-title">ACCOUNT OVERVIEW / 账户总览</span>
+      <span class="cmd-tag" id="priceBadge">XAUUSDm —</span>
+    </div>
 
-      <div class="cmd-equity">
-        <div class="cmd-metric">
-          <span class="cmd-label">权益 EQUITY / USD</span>
-          <b class="cmd-value" id="sEquity">—</b>
-          <span class="cmd-note" id="equityLine">入金基线 —</span>
-        </div>
-        <div class="cmd-metric">
-          <span class="cmd-label">余额 BALANCE / USD</span>
-          <b class="cmd-value sm" id="balValue">—</b>
-          <span class="cmd-note">已用保证金 <b id="sMargin">—</b></span>
-        </div>
+    <!-- 主视觉：权益 / 余额 -->
+    <div class="cmd-hero">
+      <div class="cmd-metric">
+        <span class="cmd-label">权益 EQUITY / USD</span>
+        <b class="cmd-value" id="sEquity">—</b>
       </div>
-
-      <div class="cmd-strip">
-        <div class="strip-cell"><span>当前浮盈</span><b class="money up" id="floating">$0.00</b></div>
-        <div class="strip-cell"><span>今日已实现</span><b class="money up" id="realized">$0.00</b></div>
-        <div class="strip-cell"><span>风险</span><b id="marginLine">保证金率 —</b></div>
-        <div class="strip-cell"><span>持仓笔数</span><b id="count">0</b></div>
+      <div class="cmd-metric">
+        <span class="cmd-label">余额 BALANCE / USD</span>
+        <b class="cmd-value sm" id="balValue">—</b>
       </div>
     </div>
 
-    <aside class="cmd-exposure">
-      <div class="cmd-head">
-        <span class="sec-index">02</span>
-        <span class="cmd-title">CURRENT EXPOSURE / 当前敞口</span>
+    <!-- 核心三项：浮盈 / 已实现 / 风险率 -->
+    <div class="cmd-core">
+      <div class="core-cell">
+        <span>当前浮盈</span>
+        <b class="money" id="floating">$0.00</b>
       </div>
-      <div class="expo-hero">
-        <b class="cmd-value" id="net">0.00</b>
-        <span class="expo-unit">LOTS NET</span>
+      <div class="core-cell">
+        <span>今日已实现</span>
+        <b class="money" id="realized">$0.00</b>
       </div>
-      <div class="cmd-note" id="expoLine">双边完全对冲</div>
-      <div class="expo-side-list">
-        <div class="expo-side"><span>BUY</span><b id="buyLots">0.00 手</b></div>
-        <div class="expo-side"><span>SELL</span><b id="sellLots">0.00 手</b></div>
+      <div class="core-cell risk">
+        <span>风险率 / 保证金率</span>
+        <b id="sLevel">—</b>
+        <small>已用保证金 <b id="sMargin">—</b></small>
       </div>
-      <div class="bar"><i class="b" id="buyBar" style="width:50%"></i><i class="s" id="sellBar" style="width:50%"></i></div>
-      <div class="cmd-note" id="lotLine">多 0.00 / 空 0.00 手</div>
-    </aside>
+    </div>
   </section>
 
+  <!-- 次级指标：敞口、持仓、胜率、数据源 -->
   <section class="aux-band">
+    <div class="aux-cell">
+      <span>当前净敞口</span><b id="net">0.00</b>
+      <small id="expoLine">双边完全对冲</small>
+      <small id="lotLine">多 0.00 / 空 0.00 手</small>
+    </div>
+    <div class="aux-cell"><span>持仓笔数</span><b id="count">0</b></div>
     <div class="aux-cell"><span>今日胜率</span><b id="win">—</b><small id="closedLine">0 笔平仓</small></div>
-    <div class="aux-cell"><span>维持保证金率</span><b id="sLevel">—</b></div>
     <div class="aux-cell"><span>数据来源</span><b id="sSource">—</b></div>
-    <div class="aux-cell"><span>刷新间隔</span><b>2 SEC</b></div>
   </section>
+
+  <!-- JS 仍会写入的旧字段：仅从视觉移除，保留 id 与接口口径 -->
+  <div class="legacy-hide" hidden aria-hidden="true">
+    <span id="equityLine"></span><span id="marginLine"></span>
+    <span id="buyLots"></span><span id="sellLots"></span>
+    <i id="buyBar"></i><i id="sellBar"></i>
+  </div>
 
   <section class="panel glass pos-panel section-block">
     <div class="panel-head">

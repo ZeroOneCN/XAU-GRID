@@ -25,7 +25,7 @@ function render(d){
   setText('floating', money(d.summary.floating), cls(d.summary.floating));
   setText('realized', money(d.summary.today_realized), cls(d.summary.today_realized));
   $('equityLine').textContent = `入金基线 $${Number(d.baseline || 0).toFixed(2)}`;
-  $('balValue').textContent = '$' + d.account.balance.toFixed(2);
+  setText('balValue', moneyAbs(d.account.balance), cls(d.account.balance));
   $('closedLine').textContent = `${d.summary.closed_today} 笔平仓`;
   $('count').textContent = d.summary.positions;
   $('lotLine').textContent = `多 ${d.summary.buy_lots.toFixed(2)} / 空 ${d.summary.sell_lots.toFixed(2)} 手`;
@@ -54,8 +54,8 @@ function render(d){
   $('buyLots').textContent = d.summary.buy_lots.toFixed(2) + ' 手';
   $('sellLots').textContent = d.summary.sell_lots.toFixed(2) + ' 手';
 
-  $('sEquity').textContent = '$' + d.account.equity.toFixed(2);
-  $('sMargin').textContent = '$' + d.account.margin.toFixed(2);
+  setText('sEquity', moneyAbs(d.account.equity), cls(d.account.equity));
+  setText('sMargin', moneyAbs(d.account.margin), cls(d.account.margin));
   $('sLevel').textContent = d.account.margin_level.toFixed(0) + '%';
   $('sSource').textContent = live ? 'MT5 终端' : (cached ? '离线缓存' : '演示模拟器');
 
@@ -138,9 +138,14 @@ function tick(){
   if(serverClock){
     const t = new Date(serverClock.replace(' ', 'T'));
     if(!STATIC) t.setSeconds(t.getSeconds() + Math.max(0, Math.floor((Date.now() - serverClockAt) / 1000)));
-    $('clock').textContent = (STATIC ? '快照 ' : 'MT5 ') + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds());
+    const day = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
+    $('clock').textContent = (STATIC ? '快照 ' : 'MT5 ') + day + ' '
+      + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds());
   }else{
-    $('clock').textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+    const t = new Date();
+    const day = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
+    $('clock').textContent = (STATIC ? '快照 ' : 'MT5 ') + day + ' '
+      + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds());
   }
   const pct = Math.min(100, (Date.now() - start) / period * 100);
   $('bar').style.width = pct + '%';

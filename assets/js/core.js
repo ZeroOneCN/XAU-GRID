@@ -7,7 +7,13 @@
 /* —— DOM / 格式化工具 —— */
 const $ = id => document.getElementById(id);
 const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-const money = v => (v >= 0 ? '+$' : '−$') + Math.abs(v).toFixed(2);
+/* 金额口径：≥1000 用 1.11k 紧凑写法；<1000 保留两位小数。看板与日历共用。 */
+const compactNum = v => {
+  const abs = Math.abs(v);
+  return abs >= 1000 ? (abs / 1000).toFixed(2) + 'k' : abs.toFixed(2);
+};
+const money = v => (v >= 0 ? '+$' : '−$') + compactNum(v);
+const moneyAbs = v => (v < 0 ? '−$' : '$') + compactNum(v);
 const cls = v => v > 0 ? 'up' : (v < 0 ? 'down' : 'neutral');
 const pad2 = n => String(n).padStart(2, '0');
 const monthStr = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;

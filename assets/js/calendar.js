@@ -47,13 +47,8 @@ function renderCalendar(){
     const alpha = has ? (light ? 0.20 + 0.40 * ratio : 0.32 + 0.6 * ratio) : 0;
     const rgb = cssVar(v > 0 ? '--up-rgb' : '--down-rgb');
     const bg = has ? `rgba(${rgb},${alpha.toFixed(2)})` : '';
-    // 千级以上改用紧凑写法，避免长金额在窄格子里溢出；精确值放在 title 中
-    const abs = Math.abs(v);
-    const label = has
-      ? (abs >= 1000
-          ? `${v > 0 ? '+' : '−'}$${(abs / 1000).toFixed(2)}k`
-          : `${v > 0 ? '+' : '−'}$${abs.toFixed(2)}`)
-      : '';
+    // 与看板共用金额口径：≥1000 紧凑为 x.xxk，<1000 保留两位小数
+    const label = has ? money(v) : '';
     const ink = has ? inkFor(rgb, alpha) : '';
     const darkInk = ink === '#050607';
     html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}`

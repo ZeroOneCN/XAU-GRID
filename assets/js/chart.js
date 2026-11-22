@@ -38,14 +38,15 @@ function drawCurve(points, hover = -1){
   const pad = Math.max((hi - lo) * 0.12, 1);
   lo -= pad; hi += pad;
 
-  // —— Y 轴：固定 5 档，标签宽度反推左边距，避免大金额被裁 ——
+  // —— Y 轴：固定 5 档，金额与看板同口径；标签宽度反推左边距 ——
   const yTicks = 5;
-  const yDigits = (hi - lo) < 20 ? 1 : 0;
+  const kDigits = (hi - lo) < 20 ? 4 : ((hi - lo) < 200 ? 3 : 2);
   const yTexts = [];
   for(let k = 0; k < yTicks; k++){
     const v = hi - k * (hi - lo) / (yTicks - 1);
-    yTexts.push('$' + v.toLocaleString('en-US',
-      {minimumFractionDigits:yDigits, maximumFractionDigits:yDigits}));
+    const av = Math.abs(v);
+    yTexts.push((v < 0 ? '−$' : '$') + (av >= 1000 ? (av / 1000).toFixed(kDigits) + 'k'
+                                                     : av.toFixed(2)));
   }
   ctx.font = `${narrow ? 9 : 10}px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
   const maxLabelW = Math.max(...yTexts.map(t => ctx.measureText(t).width));
@@ -161,7 +162,7 @@ function drawCurve(points, hover = -1){
   ctx.strokeStyle = cHalo; ctx.lineWidth = 5.4; ctx.stroke();
   ctx.strokeStyle = cCurveGold; ctx.lineWidth = 2.6; ctx.stroke();
   ctx.setLineDash([]);
-  const baseLabel = '入金 $' + Math.round(baseNow).toLocaleString('en-US');
+  const baseLabel = '入金 ' + moneyAbs(baseNow);
   const blw = ctx.measureText(baseLabel).width + 10;
   const blx = Math.max(padL + 2, Math.min(w - padR - blw, padL + 4));
   const bly = Math.max(padT, Math.min(py(baseNow) - 18, padT + ph - 16));
@@ -185,10 +186,8 @@ function drawCurve(points, hover = -1){
     ctx.beginPath(); ctx.arc(x, y, 3.8, 0, Math.PI * 2); ctx.fillStyle = dot; ctx.fill();
 
     const label = tOf(points[hover]) || '';
-    const rText = '已实现 $' + rv[hover].toLocaleString('en-US',
-      {minimumFractionDigits:2, maximumFractionDigits:2});
-    const eText = '账户   $' + ev[hover].toLocaleString('en-US',
-      {minimumFractionDigits:2, maximumFractionDigits:2});
+    const rText = '已实现 ' + money(rv[hover]);
+    const eText = '账户   ' + moneyAbs(ev[hover]);
     ctx.font = `${narrow ? 10 : 11}px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
     const bw = Math.min(Math.max(ctx.measureText(label).width, ctx.measureText(rText).width,
       ctx.measureText(eText).width) + 18, w - 8);
