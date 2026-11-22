@@ -77,6 +77,11 @@ function render(d){
   $('sSource').textContent = live ? 'MT5 终端' : (cached ? '离线缓存' : '演示模拟器');
 
   $('curveTag').textContent = live ? `剔除出入金 · ${d.summary.curve_deals || 0} 笔` : '交易权益 · 剔除出入金';
+  // 图例里的入金基线取末点的累计净入金，随账户出入金自动更新
+  const lastPt = (d.equity_curve || []).slice(-1)[0];
+  $('baseNote').textContent = (lastPt && lastPt.base != null)
+    ? `入金基线 · ${moneyAbs(lastPt.base)}`
+    : '入金基线 · 已剔除出入金';
   lastCurve = d.equity_curve || [];
   if(hoverIdx >= lastCurve.length) hoverIdx = -1;
   const firstT = lastCurve.length ? lastCurve[0].t : '—';

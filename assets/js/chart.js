@@ -26,7 +26,6 @@ function drawCurve(points, hover = -1){
   const cCurveAccent = cssVar('--curve-accent');
   const cHalo = cssVar('--panel-top'), cHover = cssVar('--hover-line');
   const cTipBg = cssVar('--tip-bg'), cTipBorder = cssVar('--tip-border'), cTipText = cssVar('--tip-text');
-  const fillAlpha = parseFloat(cssVar('--curve-fill-a')) || 0.22;
 
   const narrow = w < 520;
   const padR = 10, padT = 16, padB = narrow ? 30 : 32;
@@ -135,58 +134,65 @@ function drawCurve(points, hover = -1){
     ctx.setLineDash([]);
   }
 
-  // —— 主曲线渐变填充（按整体方向取色，保持低透明度不抢线） ——
-  const rising = adj[last] >= adj[0];
-  const rgb = rising ? cssVar('--up-rgb') : cssVar('--down-rgb');
-
-  const grad = ctx.createLinearGradient(0, padT, 0, padT + ph);
-  grad.addColorStop(0, `rgba(${rgb},${fillAlpha})`); grad.addColorStop(1, `rgba(${rgb},0)`);
-  ctx.beginPath(); ctx.moveTo(px(0), padT + ph);
-  adj.forEach((v, i) => ctx.lineTo(px(i), py(v)));
-  ctx.lineTo(px(last), padT + ph); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
-
   // —— 主线底色描边（一次画完整条，保证转折处平滑衔接） ——
   ctx.beginPath();
   adj.forEach((v, i) => i ? ctx.lineTo(px(i), py(v)) : ctx.moveTo(px(i), py(v)));
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
   ctx.strokeStyle = cHalo; ctx.lineWidth = 4.4; ctx.stroke();
 
-  // —— 按斜率正负分段着色：上涨绿、下跌红，拐点即为数据点 ——
+  // —— 着色规则：只看点是否高于入金基线（adj=0），与涨跌方向无关 ——
+  // adj > 0 绿 / adj < 0 红 / adj = 0 中性；跨零轴的那一段在交点处换色
+  const cNeutral = cAxis2;
+  const sideColor = v => v > 0 ? cCurveUp : (v < 0 ? cCurveDown : cNeutral);
+  const strokeSeg = (x1, y1, x2, y2, color) => {
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color; ctx.lineWidth = 2.2; ctx.stroke();
+  };
   for(let i = 1; i <= last; i++){
-    ctx.beginPath();
-    ctx.moveTo(px(i - 1), py(adj[i - 1]));
-    ctx.lineTo(px(i), py(adj[i]));
-    ctx.strokeStyle = adj[i] >= adj[i - 1] ? cCurveUp : cCurveDown;
-    ctx.lineWidth = 2.2;
-    ctx.stroke();
+    const a = adj[i - 1], b = adj[i];
+    const x1 = px(i - 1), y1 = py(a), x2 = px(i), y2 = py(b);
+    const sa = a > 0 ? 1 : (a < 0 ? -1 : 0);
+    const sb = b > 0 ? 1 : (b < 0 ? -1 : 0);
+    if(sa === sb){
+      strokeSeg(x1, y1, x2, y2, sideColor(a));
+    }else if(sa === 0 || sb === 0){
+      // 端点恰好落在基线上：整段按另一侧着色，并在基线上收口
+      strokeSeg(x1, y1, x2, y2, sideColor(sa === 0 ? b : a));
+    }else{
+      // 真正跨越基线：a、b 异号，求与 adj=0 的交点后分段换色
+      const t = a / (a - b);
+      const xc = x1 + (x2 - x1) * t, yc = py(0);
+      strokeSeg(x1, y1, xc, yc, sideColor(a));
+      strokeSeg(xc, yc, x2, y2, sideColor(b));
+    }
   }
   ctx.lineJoin = 'miter'; ctx.lineCap = 'butt';
 
-  // —— 末端点：取最后一段的方向色 ——
-  const lastColor = last > 0 ? (adj[last] >= adj[last - 1] ? cCurveUp : cCurveDown) : cCurveAccent;
-  const dot = last > 0 ? (adj[last] >= adj[last - 1] ? cssVar('--dot-up') : cssVar('--dot-down')) : cssVar('--curve-accent');
+  // —— 末端点：按末值相对基线的位置取色 ——
+  const lastColor = sideColor(adj[last]);
+  const dot = adj[last] > 0 ? cssVar('--dot-up')
+    : (adj[last] < 0 ? cssVar('--dot-down') : cssVar('--curve-accent'));
   ctx.beginPath(); ctx.arc(px(last), py(adj[last]), 3.6, 0, Math.PI * 2);
   ctx.fillStyle = dot; ctx.fill();
 
-  // —— 读数提示：限制在画布内，不越出视口 ——
+  // —— 读数提示：曲线值 / 当时累计净入金 / 原始权益 ——
   if(hover >= 0 && hover < points.length){
     const x = px(hover), y = py(adj[hover]);
-    const segColor = hover > 0
-      ? (adj[hover] >= adj[hover - 1] ? cCurveUp : cCurveDown)
-      : lastColor;
+    const segColor = sideColor(adj[hover]);
+    const baseAt = points[hover].base != null ? points[hover].base : 0;
     ctx.setLineDash([3, 3]); ctx.strokeStyle = cHover; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + ph); ctx.stroke();
     ctx.setLineDash([]);
     ctx.beginPath(); ctx.arc(x, y, 3.8, 0, Math.PI * 2); ctx.fillStyle = segColor; ctx.fill();
 
     const label = tOf(points[hover]) || '';
-    const rText = '交易权益 ' + money(adj[hover]);
+    const rText = '曲线值   ' + money(adj[hover]);
+    const dText = '净入金   ' + moneyAbs(baseAt);
     const eText = '原始权益 ' + moneyAbs(raw[hover]);
     ctx.font = `13px "JetBrains Mono", Consolas, "SFMono-Regular", monospace`;
     const bw = Math.min(Math.max(ctx.measureText(label).width, ctx.measureText(rText).width,
-      ctx.measureText(eText).width) + 20, w - 8);
-    const bh = 68;
+      ctx.measureText(dText).width, ctx.measureText(eText).width) + 20, w - 8);
+    const bh = 89;
     let bx = x + 12;
     if(bx + bw > w - 4) bx = x - bw - 12;
     bx = Math.max(4, Math.min(bx, w - bw - 4));
@@ -199,7 +205,8 @@ function drawCurve(points, hover = -1){
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillStyle = cTipText; ctx.fillText(label, bx + 10, by + 15);
     ctx.fillStyle = segColor; ctx.fillText(rText, bx + 10, by + 34);
-    ctx.fillStyle = cCurveAccent; ctx.fillText(eText, bx + 10, by + 53);
+    ctx.fillStyle = cAxis; ctx.fillText(dText, bx + 10, by + 53);
+    ctx.fillStyle = cCurveAccent; ctx.fillText(eText, bx + 10, by + 72);
     ctx.textBaseline = 'alphabetic';
   }
 }

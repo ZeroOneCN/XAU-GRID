@@ -138,9 +138,10 @@
         <button data-range="90">90D</button><button data-range="all" class="active">ALL</button>
       </div>
       <div class="legend">
-        <span><i class="l1"></i>盈利段</span>
-        <span><i class="l3"></i>亏损段</span>
-        <span><i class="l2"></i>盈亏零轴 · 已剔除出入金</span>
+        <span><i class="l1"></i>高于入金基线（盈利）</span>
+        <span><i class="l3"></i>低于入金基线（亏损）</span>
+        <span><i class="l2"></i><span id="baseNote">入金基线</span></span>
+        <span class="legend-rule">只看点位相对基线，与涨跌方向无关</span>
       </div>
     </div>
     <canvas id="curve"></canvas>
