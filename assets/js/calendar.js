@@ -70,9 +70,10 @@ function renderCalendar(){
           + ` title="${key}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}"><span class="d">${day}</span>`
           + `${has ? `<span class="v">${label}</span>` : ''}</div>`;
   }
-  html += `<div class="cal-stats"><span>本月 <b style="color:${monthTotal >= 0 ? 'var(--up)' : 'var(--down)'}">${moneyCompact(monthTotal)}</b></span>`
-        + `<span>盈 ${wins} / 亏 ${losses}</span></div>`;
   $('calGrid').innerHTML = html;
+  $('calStats').innerHTML =
+    `<span>本月 <b style="color:${monthTotal >= 0 ? 'var(--up)' : 'var(--down)'}">${moneyCompact(monthTotal)}</b></span>`
+    + `<span>盈 ${wins} / 亏 ${losses}</span>`;
   $('calTag').textContent = `${Object.keys(dailyMap).filter(k => dailyMap[k] !== 0).length} DAYS`;
 }
 

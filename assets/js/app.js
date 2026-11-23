@@ -36,9 +36,11 @@ function render(d){
       + (d.published_at ? ` · 发布 ${d.published_at.slice(0, 16)} ${localTz}` : '')
       + (ageMin > 15 ? ` · 已延迟 ${ageMin} 分钟` : '');
   }else{
-    $('hint').textContent = live ? '当前显示真实终端数据'
+    // 本地也标出 MT5 数据时间，和云端页脚保持同一套口径
+    const dataTime = `${d.server_time || '—'} ${srvTz}`;
+    $('hint').textContent = live ? `MT5 数据 ${dataTime} · 当前显示真实终端数据`
       : (cached ? `MT5 未连接，显示 ${d.cache_saved_at} ${localTz} 的缓存快照（${d.cache_age_seconds}秒前）`
-                : 'MT5 与缓存均不可用，当前为演示数据');
+                : `演示数据 · MT5 数据 ${dataTime}`);
   }
 
   setText('floating', money(d.summary.floating), cls(d.summary.floating));

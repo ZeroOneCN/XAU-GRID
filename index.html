@@ -17,7 +17,7 @@
 })();
 </script>
 <link rel="stylesheet" href="assets/css/tokens.css?v=d27153c9">
-<link rel="stylesheet" href="assets/css/desk.css?v=c5eab529">
+<link rel="stylesheet" href="assets/css/desk.css?v=1af353bc">
 <link rel="stylesheet" href="assets/css/theme-control.css?v=ec0df777">
 <!-- 静态托管标记：publish.py 会把下一行替换为 window.__XAU_STATIC__ = true; -->
 <script>window.__XAU_STATIC__ = true;  // publish.py: 静态托管强制静态模式</script>
@@ -158,6 +158,8 @@
       </div>
       <div class="row-bar cal-nav"><button id="calPrev" aria-label="上个月">‹</button><span id="calMonth">—</span><button id="calNext" aria-label="下个月">›</button></div>
       <div class="cal-grid" id="calGrid"></div>
+      <!-- 月合计/盈亏天数放在网格外：网格是 7 列固定轨道，塞进去会被挤到两边裁掉 -->
+      <div class="cal-stats" id="calStats"></div>
       <div class="cal-legend">
         <span>亏 <i class="sw" style="background:var(--down)"></i></span>
         <span><i class="sw" style="background:var(--cal-bg)"></i> 无交易</span>
@@ -221,7 +223,7 @@
 <script src="assets/js/core.js?v=ac8131db"></script>
 <script src="assets/js/theme.js?v=ab43a0a9"></script>
 <script src="assets/js/chart.js?v=42c0796a"></script>
-<script src="assets/js/calendar.js?v=32f4e120"></script>
-<script src="assets/js/app.js?v=8e3caa1f"></script>
+<script src="assets/js/calendar.js?v=ac27d2bc"></script>
+<script src="assets/js/app.js?v=678a08de"></script>
 </body>
 </html>
