@@ -455,3 +455,38 @@ footer .down{color:var(--down)}
   .cell>b{font-size:clamp(21px,6.2vw,27px)}
   .cal-grid{gap:2px}
 }
+
+/* ============================================================
+ * 移动端细化（2026-11-23）
+ * 目标：① 日历金额不再顶到格子边上；② 顶部工具区收紧，少占一屏；
+ *       ③ 统计/图例这类 nowrap 长串允许换行，不再横向溢出。
+ * ============================================================ */
+@media(max-width:760px){
+  .topbar{padding:16px 0 14px;gap:10px}
+  .topbar-main{gap:8px 14px;font-size:12px}
+  .status{font-size:12px;gap:6px}
+  .clock{font-size:12px}
+  .topbar-tools{gap:6px}
+  .logo{width:38px;height:38px}
+  .logo svg{width:36px;height:36px}
+  .invite{height:30px;padding:0 9px;font-size:12px}
+  button{height:30px;padding:0 9px;font-size:12px}
+  .wordmark p{display:none}
+
+  /* 日历：49px 的格子里要同时放下日期和金额 */
+  .cal-cell{gap:1px;padding:0 1px}
+  .cal-cell .d{font-size:12px;line-height:1}
+  .cal-cell .v{
+    font-size:clamp(10px,2.7cqw,12px);letter-spacing:-.3px;
+    max-width:100%;overflow:hidden;
+  }
+  .cal-stats{
+    flex-wrap:wrap;row-gap:4px;font-size:12px;
+    white-space:normal;min-width:0;
+  }
+  .cal-legend{flex-wrap:wrap;gap:6px 12px;font-size:12px}
+
+  /* 曲线说明 / 页脚：长串换行而不是硬撑 */
+  .tape-note{white-space:normal}
+  footer{line-height:1.6}
+}

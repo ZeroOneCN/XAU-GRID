@@ -20,6 +20,16 @@ function inkFor(rgbStr, alpha){
   return white >= dark ? '#FFFFFF' : '#050607';
 }
 
+/* 窄屏（手机）用更短的口径，保证金额能完整落在 49px 的格子里：
+ * ≥1000 → 1.2k / ≥100 → 619.7 / 其它 → 6.98；完整金额仍在 title 里 */
+function compactShort(v){
+  const abs = Math.abs(v);
+  if(abs >= 10000) return (abs / 1000).toFixed(0) + 'k';
+  if(abs >= 1000) return (abs / 1000).toFixed(1) + 'k';
+  if(abs >= 100) return abs.toFixed(1);
+  return abs.toFixed(2);
+}
+
 function renderCalendar(){
   const now = serverToday ? new Date(serverToday + 'T00:00:00') : new Date();
   const thisMonth = monthStr(now);
@@ -48,8 +58,10 @@ function renderCalendar(){
     const rgb = cssVar(v > 0 ? '--up-rgb' : '--down-rgb');
     const bg = has ? `rgba(${rgb},${alpha.toFixed(2)})` : '';
     // 收益日历保留紧凑口径（≥1000 为 x.xxk，<1000 两位小数）；
+    // 窄屏再收一档，否则 −619.67 这种会顶到格子边上被裁；
     // 单元格内省略货币符号以适配窄格，完整金额见 title 提示。
-    const label = has ? (v >= 0 ? '+' : '−') + compactNum(v) : '';
+    const narrow = document.documentElement.clientWidth < 560;
+    const label = has ? (v >= 0 ? '+' : '−') + (narrow ? compactShort(v) : compactNum(v)) : '';
     const ink = has ? inkFor(rgb, alpha) : '';
     const darkInk = ink === '#050607';
     html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}`

@@ -3,14 +3,14 @@
  * 依赖 core.js / chart.js / calendar.js
  * ============================================================ */
 
-/* 时区标签：off 为相对 UTC 的小时数（8 → UTC+8，5.5 → UTC+5:30） */
+/* 时区标签：off 为相对 UTC 的小时数（8 → (UTC+8)，5.5 → (UTC+5:30)） */
 function tzTag(off){
   if(off == null || !isFinite(off)) return '';
   const sign = off < 0 ? '-' : '+';
   const abs = Math.abs(off);
   const h = Math.floor(abs + 1e-6);
   const m = Math.round((abs - h) * 60);
-  return `UTC${sign}${h}${m ? ':' + pad2(m) : ''}`;
+  return `(UTC${sign}${h}${m ? ':' + pad2(m) : ''})`;
 }
 /* 浏览器本机时区偏移（小时） */
 const LOCAL_TZ = -new Date().getTimezoneOffset() / 60;
@@ -33,7 +33,7 @@ function render(d){
       ? Math.floor((Date.now() - new Date(d.published_at.replace(' ','T')).getTime()) / 60000) : 0;
     // 快照发布时间由发布机本地时钟生成，按本机时区标注；行情时间按 MT5 服务器时区标注
     $('hint').textContent = `云端快照 · MT5 数据 ${d.server_time || '—'} ${srvTz}`
-      + (d.published_at ? ` · 发布 ${d.published_at.slice(5, 16)} ${localTz}` : '')
+      + (d.published_at ? ` · 发布 ${d.published_at.slice(0, 16)} ${localTz}` : '')
       + (ageMin > 15 ? ` · 已延迟 ${ageMin} 分钟` : '');
   }else{
     $('hint').textContent = live ? '当前显示真实终端数据'
@@ -277,8 +277,12 @@ function bindEvents(){
   $('dealSize').onchange = e => { dealsState.size = Number(e.target.value); loadDeals(1); };
   $('calPrev').onclick = () => shiftMonth(-1);
   $('calNext').onclick = () => shiftMonth(1);
-  $('pngBtn').onclick = () => { location.href = '/api/export/png'; };
   $('reportBtn').onclick = () => { location.href = STATIC ? 'report.html' : '/report.html'; };
+  // 本地走服务端实时截图；云端只能用发布机生成的静态图（dashboard.png）
+  $('pngBtn').onclick = () => {
+    if(STATIC){ window.open('dashboard.png', '_blank'); return; }
+    location.href = '/api/export/png';
+  };
 
   // 指标/表头说明：问号点击开关，点其他位置或 Esc 关闭
   document.querySelectorAll('.help-btn').forEach(btn => {
@@ -352,7 +356,8 @@ function bindEvents(){
 function init(){
   Theme.init();
   if(STATIC){
-    $('pngBtn').style.display = 'none';
+    // 云端没有 /api/export/png：按钮改为下载发布机生成的静态截图（见 publish.py）
+    $('pngBtn').title = '下载看板 PNG（发布机当日快照）';
     document.querySelectorAll('#rangeBar button').forEach(b => {
       if(b.dataset.range !== 'all'){ b.disabled = true; b.title = '云端快照为全量数据'; b.style.opacity = '.4'; }
     });
