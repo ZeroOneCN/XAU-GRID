@@ -143,13 +143,22 @@ async function loadDeals(page){
   }
 }
 
-/* 出入金：仅展示 MT5 balance 类成交的真实聚合，无任何估算 */
+/* 出入金：仅展示 MT5 balance 类成交的真实聚合，无任何估算。
+   平台在穿仓后补的 balance 记录（comment=D-NULL）既不是入金也不是策略盈亏，
+   后端已从列表与入金基线里剔除，这里只把「排除了几笔」讲清楚。 */
 function renderCashflow(c){
   setText('cfDeposits', moneyAbs(c.deposits || 0), 'neutral');
   setText('cfWithdrawals', moneyAbs(c.withdrawals || 0), 'neutral');
   setText('cfNet', money(c.net || 0), cls(c.net || 0));
+  const exN = c.excluded_count || 0;
   $('cfCount').textContent = `${c.total || 0} 笔`;
-  $('cashflowTag').textContent = `BALANCE DEALS · ${(c.mode || '').toUpperCase()}`;
+  const tag = $('cashflowTag');
+  tag.textContent = `BALANCE DEALS · ${(c.mode || '').toUpperCase()}`
+    + (exN ? ` · 排除 ${exN} 笔平台补偿` : '');
+  tag.title = exN
+    ? `已排除 ${exN} 笔平台补偿（${(c.excluded_comments || []).join(', ')}）：`
+      + `${moneyAbs(c.excluded_amount || 0)}，不计入出入金，也不计入策略盈亏`
+    : '';
   const rows = (c.items || []).map(x => `<tr>
       <td>${x.time || '—'}</td>
       <td class="ticket ta-l hide-mobile">#${x.ticket || '—'}</td>
