@@ -180,8 +180,12 @@ async function loadCashflow(){
 
 async function poll(){
   try{
-    const url = STATIC ? 'snapshot.json' : `/api/snapshot?range=${currentRange}`;
-    const r = await fetch(url, {cache:'no-store'});
+    // 静态站每个区间各发布一份快照（snapshot_7/30/90.json），未生成时回退全量
+    const url = STATIC
+      ? (currentRange === 'all' ? 'snapshot.json' : `snapshot_${currentRange}.json`)
+      : `/api/snapshot?range=${currentRange}`;
+    let r = await fetch(url, {cache:'no-store'});
+    if(!r.ok && STATIC && currentRange !== 'all') r = await fetch('snapshot.json', {cache:'no-store'});
     const d = await r.json();
     render(d);
     if(!dealsState.loading && Date.now() - dealsState.lastFetch > 10000) loadDeals();
@@ -369,9 +373,7 @@ function init(){
   if(STATIC){
     // 云端没有 /api/export/png：按钮改为下载发布机生成的静态截图（见 publish.py）
     $('pngBtn').title = '下载看板 PNG（发布机当日快照）';
-    document.querySelectorAll('#rangeBar button').forEach(b => {
-      if(b.dataset.range !== 'all'){ b.disabled = true; b.title = '云端快照为全量数据'; b.style.opacity = '.4'; }
-    });
+    // 区间切换：publish.py 为 7/30/90 各发布一份快照，按钮保持可用
   }
   bindEvents();
   setInterval(tick, 200); tick();
