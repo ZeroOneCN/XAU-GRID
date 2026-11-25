@@ -9,12 +9,17 @@ const $ = id => document.getElementById(id);
 const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 /* 金额口径：
  * money / moneyAbs —— 完整数值，千分位 + 两位小数（总览、表格、图表）
- * moneyCompact     —— 紧凑写法，≥1000 用 1.11k，<1000 两位小数（仅收益日历）
+ * moneyCompact     —— 紧凑写法：≥100 万用 1.11m / 1m，≥1000 用 1.11k，其余两位小数（仅收益日历）
  */
 const fullNum = v => Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+/* 去掉无意义的尾零：1.00 → 1、1.50 → 1.5、1.11 → 1.11 */
+const trimZeros = s => s.replace(/\.?0+$/, '');
 const compactNum = v => {
   const abs = Math.abs(v);
-  return abs >= 1000 ? (abs / 1000).toFixed(2) + 'k' : abs.toFixed(2);
+  // 999,995 以上先进位到 m，避免出现 1000.00k 这种既长又别扭的写法
+  if(abs >= 999995) return trimZeros((abs / 1e6).toFixed(2)) + 'm';
+  if(abs >= 1000) return (abs / 1000).toFixed(2) + 'k';
+  return abs.toFixed(2);
 };
 const money = v => (v >= 0 ? '+$' : '−$') + fullNum(v);
 const moneyAbs = v => (v < 0 ? '−$' : '$') + fullNum(v);

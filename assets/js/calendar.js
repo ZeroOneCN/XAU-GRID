@@ -21,9 +21,11 @@ function inkFor(rgbStr, alpha){
 }
 
 /* 窄屏（手机）用更短的口径，保证金额能完整落在 49px 的格子里：
- * ≥1000 → 1.2k / ≥100 → 619.7 / 其它 → 6.98；完整金额仍在 title 里 */
+ * ≥100万 → 1.11m / 1m；≥10000 → 12k；≥1000 → 1.2k；≥100 → 619.7；其它 → 6.98。
+ * 完整金额仍在 title 里 */
 function compactShort(v){
   const abs = Math.abs(v);
+  if(abs >= 999995) return trimZeros((abs / 1e6).toFixed(2)) + 'm';
   if(abs >= 10000) return (abs / 1000).toFixed(0) + 'k';
   if(abs >= 1000) return (abs / 1000).toFixed(1) + 'k';
   if(abs >= 100) return abs.toFixed(1);
@@ -67,7 +69,7 @@ function renderCalendar(){
     html += `<div class="cal-cell ${has ? 'has ' + (v > 0 ? 'pos' : 'neg') : ''}`
           + `${darkInk ? ' ink-dark' : ''}${key === todayStr ? ' today' : ''}"`
           + `${bg ? ` style="background:${bg}${ink ? ';color:' + ink : ''}"` : ''}`
-          + ` title="${key}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}"><span class="d">${day}</span>`
+          + ` title="${key}: ${money(v)}"><span class="d">${day}</span>`
           + `${has ? `<span class="v">${label}</span>` : ''}</div>`;
   }
   $('calGrid').innerHTML = html;
